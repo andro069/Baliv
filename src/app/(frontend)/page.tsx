@@ -26,6 +26,16 @@ export default async function HomePage() {
   const heroDescription =
     cms?.hero?.description ??
     'Am Fuße von Stari Bar entsteht ein Wohnensemble mit 39 Einheiten, zwischen Olivenhainen, Bergen und Meer.'
+  const heroSlides =
+    cms?.hero?.slides && cms.hero.slides.length > 0
+      ? cms.hero.slides
+          .map((s) => ({
+            src: typeof s.image === 'object' && s.image !== null ? (s.image as any).url ?? '' : '',
+            alt: s.alt ?? '',
+          }))
+          .filter((s) => s.src)
+      : undefined
+
   const heroStats = cms?.hero?.stats ?? [
     { value: '39', label: 'Wohneinheiten' },
     { value: '2.400 €/m²', label: 'Ab Preis' },
@@ -89,7 +99,7 @@ export default async function HomePage() {
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <section className="relative h-screen min-h-[600px]">
-        <HeroSlider />
+        <HeroSlider slides={heroSlides} />
         <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <div className="max-w-xl">
             <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-6 font-raleway">

@@ -5,13 +5,16 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 
-const slides = [
+const defaultSlides = [
   { src: '/terrasse-meer.webp', alt: 'Terrasse mit Meerblick' },
   { src: '/interieur-wohnen-01.webp', alt: 'Wohnbereich mit Meerblick' },
   { src: '/interieur-wohnen-02.webp', alt: 'Modernes Wohninterieur' },
 ]
 
-export function HeroSlider() {
+type Slide = { src: string; alt: string }
+
+export function HeroSlider({ slides }: { slides?: Slide[] }) {
+  const activeSlides = slides && slides.length > 0 ? slides : defaultSlides
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 60 }, [
     Autoplay({ delay: 7000, stopOnInteraction: false }),
   ])
@@ -30,7 +33,7 @@ export function HeroSlider() {
   return (
     <div className="absolute inset-0 overflow-hidden" ref={emblaRef}>
       <div className="flex h-full">
-        {slides.map((slide, i) => (
+        {activeSlides.map((slide, i) => (
           <div key={i} className="relative flex-[0_0_100%] h-full">
             <Image
               src={slide.src}
@@ -44,7 +47,7 @@ export function HeroSlider() {
         ))}
       </div>
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2.5 items-center">
-        {slides.map((_, i) => (
+        {activeSlides.map((_, i) => (
           <button
             key={i}
             onClick={() => emblaApi?.scrollTo(i)}
