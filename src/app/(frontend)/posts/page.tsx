@@ -25,7 +25,7 @@ export default async function Page() {
       categories: true,
       meta: true,
     },
-  })
+  }).catch(() => ({ docs: [], totalDocs: 0, totalPages: 0, page: 1 }))
 
   return (
     <div className="pt-24 pb-24">

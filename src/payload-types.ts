@@ -112,10 +112,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    homepage: Homepage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1691,6 +1693,88 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  hero: {
+    headline: string;
+    subline?: string | null;
+    description?: string | null;
+    slides?:
+      | {
+          image: number | Media;
+          alt?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    stats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  lage?: {
+    headline?: string | null;
+    text1?: string | null;
+    text2?: string | null;
+    gallery?:
+      | {
+          image: number | Media;
+          alt?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    distances?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  wohnungen?: {
+    headline?: string | null;
+    types?:
+      | {
+          type: string;
+          tag?: string | null;
+          size?: string | null;
+          description?: string | null;
+          price?: string | null;
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  investment?: {
+    headline?: string | null;
+    text?: string | null;
+    stats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    badge?: string | null;
+  };
+  cta?: {
+    headline?: string | null;
+    description?: string | null;
+    note?: string | null;
+  };
+  kontakt?: {
+    email?: string | null;
+    whatsapp?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1730,6 +1814,100 @@ export interface FooterSelect<T extends boolean = true> {
               label?: T;
             };
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        headline?: T;
+        subline?: T;
+        description?: T;
+        slides?:
+          | T
+          | {
+              image?: T;
+              alt?: T;
+              id?: T;
+            };
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  lage?:
+    | T
+    | {
+        headline?: T;
+        text1?: T;
+        text2?: T;
+        gallery?:
+          | T
+          | {
+              image?: T;
+              alt?: T;
+              id?: T;
+            };
+        distances?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  wohnungen?:
+    | T
+    | {
+        headline?: T;
+        types?:
+          | T
+          | {
+              type?: T;
+              tag?: T;
+              size?: T;
+              description?: T;
+              price?: T;
+              image?: T;
+              id?: T;
+            };
+      };
+  investment?:
+    | T
+    | {
+        headline?: T;
+        text?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+        badge?: T;
+      };
+  cta?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+        note?: T;
+      };
+  kontakt?:
+    | T
+    | {
+        email?: T;
+        whatsapp?: T;
       };
   updatedAt?: T;
   createdAt?: T;
