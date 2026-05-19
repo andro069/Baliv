@@ -6,16 +6,16 @@ import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 
 const slides = [
+  { src: '/terrasse-meer.webp', alt: 'Terrasse mit Meerblick' },
   { src: '/stari-bar-altstadt.webp', alt: 'Stari Bar — die historische Festungsstadt' },
   { src: '/view-hafen.webp', alt: 'Blick auf Hafen und Adria' },
   { src: '/view-olivenhain.webp', alt: 'Olivenhaine von Polje' },
   { src: '/rumija-panorama.webp', alt: 'Rumija-Massiv und Bergblick' },
-  { src: '/terrasse-meer.webp', alt: 'Terrasse mit Meerblick' },
 ]
 
 export function HeroSlider() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 5000, stopOnInteraction: false }),
+    Autoplay({ delay: 7000, stopOnInteraction: false }),
   ])
   const [current, setCurrent] = useState(0)
 
@@ -45,12 +45,16 @@ export function HeroSlider() {
           </div>
         ))}
       </div>
-      <div className="absolute bottom-8 right-8 flex gap-2">
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2.5 items-center">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => emblaApi?.scrollTo(i)}
-            className={`w-8 h-[2px] transition-all duration-300 ${i === current ? 'bg-[#B69252]' : 'bg-white/40'}`}
+            className={`rounded-full transition-all duration-400 ${
+              i === current
+                ? 'w-2.5 h-2.5 bg-[#B69252]'
+                : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
+            }`}
             aria-label={`Slide ${i + 1}`}
           />
         ))}
