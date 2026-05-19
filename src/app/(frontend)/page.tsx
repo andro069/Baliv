@@ -106,12 +106,16 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-          <div className="relative">
-            <div className="aspect-[4/5] relative overflow-hidden">
-              <Image src="/stari-bar-altstadt.webp" alt="Stari Bar" fill className="object-cover" />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2 aspect-[16/9] relative overflow-hidden">
+              <Image src="/stari-bar-altstadt.webp" alt="Stari Bar Festung" fill className="object-cover" />
             </div>
-            <div className="absolute -bottom-6 -left-6 w-48 h-48 bg-[#A8B89A]/20 -z-10" />
-            <div className="absolute -top-6 -right-6 w-32 h-32 border border-[#B69252]/20 -z-10" />
+            <div className="aspect-square relative overflow-hidden">
+              <Image src="/view-olivenhain.webp" alt="Olivenhaine" fill className="object-cover" />
+            </div>
+            <div className="aspect-square relative overflow-hidden">
+              <Image src="/view-hafen.webp" alt="Hafen von Bar" fill className="object-cover" />
+            </div>
           </div>
         </div>
       </section>
