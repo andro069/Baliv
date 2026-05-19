@@ -10,9 +10,9 @@ import { PricingTimeline } from '@/components/PricingTimeline'
 import type { Media } from '@/payload-types'
 
 // Resolve media URL from a Payload upload field
-function mediaUrl(field: string | Media | null | undefined, fallback: string): string {
+function mediaUrl(field: number | string | Media | null | undefined, fallback: string): string {
   if (!field) return fallback
-  if (typeof field === 'string') return fallback
+  if (typeof field === 'string' || typeof field === 'number') return fallback
   return field.url ?? fallback
 }
 
@@ -195,7 +195,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-px bg-white/10">
-            {wohnungenTypes.map((unit: { type: string; tag?: string | null; size?: string | null; description?: string | null; price?: string | null; image?: string | Media | null }, i: number) => (
+            {wohnungenTypes.map((unit: { type: string; tag?: string | null; size?: string | null; description?: string | null; price?: string | null; image?: number | Media | null }, i: number) => (
               <div key={unit.type} className="group bg-[#151E39] overflow-hidden">
                 <div className="relative h-64 overflow-hidden">
                   <Image
