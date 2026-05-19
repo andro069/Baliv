@@ -18,7 +18,10 @@ function mediaUrl(field: number | string | Media | null | undefined, fallback: s
 
 export default async function HomePage() {
   const payload = await getPayload({ config })
-  const cms = await payload.findGlobal({ slug: 'homepage' }).catch(() => null)
+  const [cms, footerCms] = await Promise.all([
+    payload.findGlobal({ slug: 'homepage' }).catch(() => null),
+    payload.findGlobal({ slug: 'footer' }).catch(() => null),
+  ])
 
   // ── Hero defaults ────────────────────────────────────────────────────
   const heroHeadline = cms?.hero?.headline ?? 'Modern wohnen. Ursprünglich leben.'
@@ -91,6 +94,16 @@ export default async function HomePage() {
   const email = cms?.kontakt?.email ?? 'info@baliv-residence.com'
   const whatsapp = cms?.kontakt?.whatsapp ?? '+38268517873'
   const whatsappClean = whatsapp.replace(/\D/g, '')
+
+  // ── Footer CMS ───────────────────────────────────────────────────────
+  const footerAddress = (footerCms as any)?.address ?? 'Bjeliši BB · 85000 Bar, Montenegro'
+  const footerCopyright =
+    (footerCms as any)?.copyright ?? '© 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro'
+  const footerLegalLinks: { label: string; href: string }[] =
+    (footerCms as any)?.legalLinks ?? [
+      { label: 'Impressum', href: '/impressum' },
+      { label: 'Datenschutz', href: '/datenschutz' },
+    ]
 
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
@@ -366,27 +379,25 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-8 md:px-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div>
             <Image src="/logo-white.svg" alt="Baliv Residence" width={140} height={58} />
-            <p className="text-white/30 text-xs mt-4">Bjeliši BB · 85000 Bar, Montenegro</p>
+            <p className="text-white/30 text-xs mt-4">{footerAddress}</p>
             <p className="text-white/30 text-xs mt-1">
               {email} · {whatsapp}
             </p>
           </div>
           <div className="flex gap-6">
-            {['Impressum', 'Datenschutz'].map((link) => (
+            {footerLegalLinks.map((item) => (
               <Link
-                key={link}
-                href={`/${link.toLowerCase()}`}
+                key={item.href}
+                href={item.href}
                 className="text-white/30 hover:text-white/60 text-xs tracking-wide transition-colors"
               >
-                {link}
+                {item.label}
               </Link>
             ))}
           </div>
         </div>
         <div className="mt-10 pt-8 border-t border-white/10 max-w-7xl mx-auto px-8">
-          <p className="text-white/20 text-xs text-center">
-            © 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro
-          </p>
+          <p className="text-white/20 text-xs text-center">{footerCopyright}</p>
         </div>
       </footer>
     </main>

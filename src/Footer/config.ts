@@ -1,29 +1,49 @@
 import type { GlobalConfig } from 'payload'
 
-import { link } from '@/fields/link'
 import { revalidateFooter } from './hooks/revalidateFooter'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  label: 'Footer',
   access: {
     read: () => true,
   },
   fields: [
     {
-      name: 'navItems',
+      name: 'address',
+      label: 'Adresse',
+      type: 'text',
+      defaultValue: 'Bjeliši BB · 85000 Bar, Montenegro',
+    },
+    {
+      name: 'copyright',
+      label: 'Copyright-Text',
+      type: 'text',
+      defaultValue: '© 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro',
+    },
+    {
+      name: 'legalLinks',
+      label: 'Rechtliche Links (Impressum, Datenschutz…)',
       type: 'array',
-      fields: [
-        link({
-          appearances: false,
-        }),
+      maxRows: 4,
+      defaultValue: [
+        { label: 'Impressum', href: '/impressum' },
+        { label: 'Datenschutz', href: '/datenschutz' },
       ],
-      maxRows: 6,
-      admin: {
-        initCollapsed: true,
-        components: {
-          RowLabel: '@/Footer/RowLabel#RowLabel',
+      fields: [
+        {
+          name: 'label',
+          label: 'Bezeichnung',
+          type: 'text',
+          required: true,
         },
-      },
+        {
+          name: 'href',
+          label: 'Link',
+          type: 'text',
+          required: true,
+        },
+      ],
     },
   ],
   hooks: {
