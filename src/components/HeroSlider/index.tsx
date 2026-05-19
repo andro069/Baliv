@@ -7,10 +7,8 @@ import Image from 'next/image'
 
 const slides = [
   { src: '/terrasse-meer.webp', alt: 'Terrasse mit Meerblick' },
-  { src: '/stari-bar-altstadt.webp', alt: 'Stari Bar — die historische Festungsstadt' },
-  { src: '/view-hafen.webp', alt: 'Blick auf Hafen und Adria' },
-  { src: '/view-olivenhain.webp', alt: 'Olivenhaine von Polje' },
-  { src: '/rumija-panorama.webp', alt: 'Rumija-Massiv und Bergblick' },
+  { src: '/interieur-wohnen-01.webp', alt: 'Wohnbereich mit Meerblick' },
+  { src: '/interieur-wohnen-02.webp', alt: 'Modernes Wohninterieur' },
 ]
 
 export function HeroSlider() {
