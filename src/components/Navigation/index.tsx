@@ -43,6 +43,7 @@ export function Navigation() {
               width={160}
               height={66}
               priority
+              className="w-28 md:w-40"
             />
           </Link>
 

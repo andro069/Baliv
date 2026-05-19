@@ -51,20 +51,20 @@ export default function HomePage() {
 
         {/* Stats bar */}
         <div className="absolute bottom-0 left-0 right-0 z-10 bg-[#151E39]/80 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-8 py-5 grid grid-cols-3 divide-x divide-white/10">
+          <div className="max-w-7xl mx-auto px-2 md:px-8 py-4 md:py-5 grid grid-cols-3 divide-x divide-white/10">
             {[
               { value: '39', label: 'Wohneinheiten' },
-              { value: 'ab 2.400 €/m²', label: 'Schlüsselfertig' },
+              { value: '2.400 €/m²', label: 'Ab Preis' },
               { value: 'Dez. 2028', label: 'Fertigstellung' },
             ].map((stat) => (
-              <div key={stat.label} className="text-center px-4">
+              <div key={stat.label} className="text-center px-1 md:px-4">
                 <p
-                  className="text-white text-lg md:text-xl font-light"
+                  className="text-white text-sm md:text-xl font-light leading-tight"
                   style={{ fontFamily: 'var(--font-playfair), serif' }}
                 >
                   {stat.value}
                 </p>
-                <p className="text-white/50 text-xs tracking-widest uppercase mt-1">{stat.label}</p>
+                <p className="text-white/50 text-[9px] md:text-xs tracking-wider md:tracking-widest uppercase mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
