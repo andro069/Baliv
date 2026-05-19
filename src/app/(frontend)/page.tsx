@@ -96,11 +96,11 @@ export default async function HomePage() {
   const whatsappClean = whatsapp.replace(/\D/g, '')
 
   // ── Footer CMS ───────────────────────────────────────────────────────
-  const footerAddress = (footerCms as any)?.address ?? 'Bjeliši BB · 85000 Bar, Montenegro'
+  const footerAddress = footerCms?.address ?? 'Bjeliši BB · 85000 Bar, Montenegro'
   const footerCopyright =
-    (footerCms as any)?.copyright ?? '© 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro'
+    footerCms?.copyright ?? '© 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro'
   const footerLegalLinks: { label: string; href: string }[] =
-    (footerCms as any)?.legalLinks ?? [
+    (footerCms?.legalLinks as { label: string; href: string }[] | null | undefined) ?? [
       { label: 'Impressum', href: '/impressum' },
       { label: 'Datenschutz', href: '/datenschutz' },
     ]

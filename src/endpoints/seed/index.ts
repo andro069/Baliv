@@ -221,53 +221,22 @@ export const seed = async ({
       slug: 'header',
       data: {
         navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Posts',
-              url: '/posts',
-            },
-          },
-          {
-            link: {
-              type: 'reference',
-              label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
-              },
-            },
-          },
+          { label: 'Projekt', href: '/projekt' },
+          { label: 'Lage', href: '/lage' },
+          { label: 'Wohnungen', href: '/wohnungen' },
+          { label: 'Investment', href: '/investment' },
+          { label: 'Kontakt', href: '#kontakt' },
         ],
       },
     }),
     payload.updateGlobal({
       slug: 'footer',
       data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Admin',
-              url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/3.x/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
-            },
-          },
+        address: 'Bjeliši BB · 85000 Bar, Montenegro',
+        copyright: '© 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro',
+        legalLinks: [
+          { label: 'Impressum', href: '/impressum' },
+          { label: 'Datenschutz', href: '/datenschutz' },
         ],
       },
     }),
