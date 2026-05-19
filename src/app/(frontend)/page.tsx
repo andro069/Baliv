@@ -20,7 +20,7 @@ export default function HomePage() {
               Bar, Montenegro
             </p>
             <h1
-              className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6"
+              className="hero-headline text-4xl md:text-6xl lg:text-7xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
               Modern wohnen.
