@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Navigation } from '@/components/Navigation'
 import { HeroSlider } from '@/components/HeroSlider'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { PricingTimeline } from '@/components/PricingTimeline'
 
 export default function HomePage() {
   return (
@@ -197,6 +198,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+          <PricingTimeline />
         </div>
       </section>
 
