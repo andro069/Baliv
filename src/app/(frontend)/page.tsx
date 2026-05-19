@@ -1,12 +1,87 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { HeroSlider } from '@/components/HeroSlider'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PricingTimeline } from '@/components/PricingTimeline'
+import type { Media } from '@/payload-types'
 
-export default function HomePage() {
+// Resolve media URL from a Payload upload field
+function mediaUrl(field: string | Media | null | undefined, fallback: string): string {
+  if (!field) return fallback
+  if (typeof field === 'string') return fallback
+  return field.url ?? fallback
+}
+
+export default async function HomePage() {
+  const payload = await getPayload({ config })
+  const cms = await payload.findGlobal({ slug: 'homepage' }).catch(() => null)
+
+  // ── Hero defaults ────────────────────────────────────────────────────
+  const heroHeadline = cms?.hero?.headline ?? 'Modern wohnen. Ursprünglich leben.'
+  const heroSubline = cms?.hero?.subline ?? 'BAR · MONTENEGRO'
+  const heroDescription =
+    cms?.hero?.description ??
+    'Am Fuße von Stari Bar entsteht ein Wohnensemble mit 39 Einheiten, zwischen Olivenhainen, Bergen und Meer.'
+  const heroStats = cms?.hero?.stats ?? [
+    { value: '39', label: 'Wohneinheiten' },
+    { value: '2.400 €/m²', label: 'Ab Preis' },
+    { value: 'Dez. 2028', label: 'Fertigstellung' },
+  ]
+
+  // ── Lage defaults ────────────────────────────────────────────────────
+  const lageHeadline = cms?.lage?.headline ?? 'Zwischen Festung, Meer und Olivenhain.'
+  const lageText1 =
+    cms?.lage?.text1 ??
+    'Stari Bar zu Füßen, Rumija im Rücken, die Adria in Sichtweite. Ein Ort, an dem sich Orient und Okzident seit Jahrhunderten begegnen — und an dem Baliv Residence entsteht.'
+  const lageText2 =
+    cms?.lage?.text2 ??
+    'Eingebettet in über 100.000 Olivenbäume, nur 1,4 Kilometer unterhalb der historischen Festungsstadt. Sieben Minuten zur Bucht, zehn zum Hafen.'
+  const lageDistances = cms?.lage?.distances ?? [
+    { value: '1,4 km', label: 'Stari Bar Festung' },
+    { value: '10 Min', label: 'Erster Strand' },
+    { value: '10 Min', label: 'Hafen von Bar' },
+    { value: '45 Min', label: 'Flughafen Podgorica' },
+  ]
+
+  // ── Wohnungen defaults ───────────────────────────────────────────────
+  const wohnungenHeadline = cms?.wohnungen?.headline ?? 'Drei Typen. Ihre Wahl.'
+  const wohnungenTypes = cms?.wohnungen?.types ?? [
+    { type: 'Studio', tag: 'Erdgeschoss', size: '28–30 m²', description: 'Kompakter Einstieg mit Terrasse und direktem Gartenzugang. Ideal als Pied-à-terre oder Renditeobjekt.', price: 'ab 2.400 €/m²', image: null },
+    { type: 'Zweizimmer', tag: 'Alle Etagen', size: '47–52 m²', description: 'Die Wahl der meisten Käufer — mit Balkon oder Terrasse, verfügbar auf allen Stockwerken.', price: 'ab 2.400 €/m²', image: null },
+    { type: 'Penthouse', tag: 'Dachgeschoss', size: '73–81 m²', description: 'Dachterrasse 30–50 m², unverbauter Rundblick auf Meer, Berge und Stari Bar.', price: 'ab 3.000 €/m²', image: null },
+  ]
+  const fallbackImgs = ['/interieur-01.webp', '/interieur-wohnen-01.webp', '/interieur-wohnen-02.webp']
+
+  // ── Investment defaults ──────────────────────────────────────────────
+  const investHeadline = cms?.investment?.headline ?? 'Warum Bar. Warum jetzt.'
+  const investText =
+    cms?.investment?.text ??
+    'Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie bei Baliv Residence ab 2.400 €/m² — schlüsselfertig, hochwertig ausgestattet.'
+  const investStats = cms?.investment?.stats ?? [
+    { value: '6–8%', label: 'Bruttorendite' },
+    { value: '+130%', label: 'Preis 2020–2025' },
+    { value: '2028', label: 'EU-Beitritt' },
+  ]
+  const investBadge = cms?.investment?.badge ?? '+20% Preissteigerung 2025'
+
+  // ── CTA defaults ─────────────────────────────────────────────────────
+  const ctaHeadline = cms?.cta?.headline ?? 'Bereit für das erste Gespräch?'
+  const ctaDescription =
+    cms?.cta?.description ??
+    'Vollständiges Exposé mit Grundrissen, Preisliste und Verfügbarkeit — direkt vom Bauträger, deutschsprachig, ohne Makler.'
+  const ctaNote =
+    cms?.cta?.note ??
+    'Antwort in < 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger'
+
+  // ── Kontakt defaults ─────────────────────────────────────────────────
+  const email = cms?.kontakt?.email ?? 'info@baliv-residence.com'
+  const whatsapp = cms?.kontakt?.whatsapp ?? '+38268517873'
+  const whatsappClean = whatsapp.replace(/\D/g, '')
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -18,19 +93,21 @@ export default function HomePage() {
         <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <div className="max-w-xl">
             <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-6 font-raleway">
-              Bar, Montenegro
+              {heroSubline}
             </p>
             <h1
               className="hero-headline text-4xl md:text-6xl lg:text-7xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Modern wohnen.
-              <br />
-              Ursprünglich leben.
+              {heroHeadline.split('. ').map((line, i, arr) => (
+                <React.Fragment key={i}>
+                  {line}{i < arr.length - 1 ? '.' : ''}
+                  {i < arr.length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </h1>
             <p className="text-white/70 text-base md:text-lg leading-relaxed mb-10 max-w-md">
-              Am Fuße von Stari Bar entsteht ein Wohnensemble mit 39 Einheiten, zwischen
-              Olivenhainen, Bergen und Meer.
+              {heroDescription}
             </p>
             <div className="flex flex-wrap gap-4">
               <a
@@ -52,11 +129,7 @@ export default function HomePage() {
         {/* Stats bar */}
         <div className="absolute bottom-0 left-0 right-0 z-10 bg-[#151E39]/80 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-2 md:px-8 py-4 md:py-5 grid grid-cols-3 divide-x divide-white/10">
-            {[
-              { value: '39', label: 'Wohneinheiten' },
-              { value: '2.400 €/m²', label: 'Ab Preis' },
-              { value: 'Dez. 2028', label: 'Fertigstellung' },
-            ].map((stat) => (
+            {heroStats.map((stat: { value: string; label: string }) => (
               <div key={stat.label} className="text-center px-1 md:px-4">
                 <p
                   className="text-white text-sm md:text-xl font-light leading-tight"
@@ -64,7 +137,9 @@ export default function HomePage() {
                 >
                   {stat.value}
                 </p>
-                <p className="text-white/50 text-[9px] md:text-xs tracking-wider md:tracking-widest uppercase mt-1">{stat.label}</p>
+                <p className="text-white/50 text-[9px] md:text-xs tracking-wider md:tracking-widest uppercase mt-1">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>
@@ -80,26 +155,12 @@ export default function HomePage() {
               className="text-[#151E39] text-4xl md:text-5xl leading-tight mb-8"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Zwischen Festung,
-              <br />
-              Meer und Olivenhain.
+              {lageHeadline}
             </h2>
-            <p className="text-[#151E39]/60 text-base leading-relaxed font-light mb-6">
-              Stari Bar zu Füßen, Rumija im Rücken, die Adria in Sichtweite. Ein Ort, an dem
-              sich Orient und Okzident seit Jahrhunderten begegnen — und an dem Baliv Residence
-              entsteht.
-            </p>
-            <p className="text-[#151E39]/60 text-base leading-relaxed font-light mb-10">
-              Eingebettet in über 100.000 Olivenbäume, nur 1,4 Kilometer unterhalb der
-              historischen Festungsstadt. Sieben Minuten zur Bucht, zehn zum Hafen.
-            </p>
+            <p className="text-[#151E39]/60 text-base leading-relaxed font-light mb-6">{lageText1}</p>
+            <p className="text-[#151E39]/60 text-base leading-relaxed font-light mb-10">{lageText2}</p>
             <div className="grid grid-cols-2 gap-6">
-              {[
-                { label: 'Stari Bar Festung', value: '1,4 km' },
-                { label: 'Erster Strand', value: '10 Min' },
-                { label: 'Hafen von Bar', value: '10 Min' },
-                { label: 'Flughafen Podgorica', value: '45 Min' },
-              ].map((item) => (
+              {lageDistances.map((item: { value: string; label: string }) => (
                 <div key={item.label} className="border-l-2 border-[#B69252]/30 pl-4">
                   <p className="text-[#151E39] text-sm font-semibold">{item.value}</p>
                   <p className="text-[#151E39]/50 text-xs tracking-wide mt-0.5">{item.label}</p>
@@ -130,48 +191,25 @@ export default function HomePage() {
               className="text-white text-4xl md:text-5xl"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Drei Typen. Ihre Wahl.
+              {wohnungenHeadline}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-px bg-white/10">
-            {[
-              {
-                type: 'Studio',
-                size: '28–30 m²',
-                desc: 'Kompakter Einstieg mit Terrasse und direktem Gartenzugang. Ideal als Pied-à-terre oder Renditeobjekt.',
-                price: 'ab 2.400 €/m²',
-                img: '/interieur-01.webp',
-                tag: 'Erdgeschoss',
-              },
-              {
-                type: 'Zweizimmer',
-                size: '47–52 m²',
-                desc: 'Die Wahl der meisten Käufer — mit Balkon oder Terrasse, verfügbar auf allen Stockwerken.',
-                price: 'ab 2.400 €/m²',
-                img: '/interieur-wohnen-01.webp',
-                tag: 'Alle Etagen',
-              },
-              {
-                type: 'Penthouse',
-                size: '73–81 m²',
-                desc: 'Dachterrasse 30–50 m², unverbauter Rundblick auf Meer, Berge und Stari Bar.',
-                price: 'ab 3.000 €/m²',
-                img: '/interieur-wohnen-02.webp',
-                tag: 'Dachgeschoss',
-              },
-            ].map((unit) => (
+            {wohnungenTypes.map((unit: { type: string; tag?: string | null; size?: string | null; description?: string | null; price?: string | null; image?: string | Media | null }, i: number) => (
               <div key={unit.type} className="group bg-[#151E39] overflow-hidden">
                 <div className="relative h-64 overflow-hidden">
                   <Image
-                    src={unit.img}
+                    src={mediaUrl(unit.image, fallbackImgs[i] ?? '/interieur-01.webp')}
                     alt={unit.type}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-[#151E39]/40 group-hover:bg-[#151E39]/20 transition-colors duration-500" />
-                  <span className="absolute top-4 left-4 bg-[#B69252] text-white text-xs tracking-widest px-3 py-1">
-                    {unit.tag}
-                  </span>
+                  {unit.tag && (
+                    <span className="absolute top-4 left-4 bg-[#B69252] text-white text-xs tracking-widest px-3 py-1">
+                      {unit.tag}
+                    </span>
+                  )}
                 </div>
                 <div className="p-8">
                   <h3
@@ -181,7 +219,7 @@ export default function HomePage() {
                     {unit.type}
                   </h3>
                   <p className="text-[#B69252] text-sm tracking-wide mb-4">{unit.size}</p>
-                  <p className="text-white/50 text-sm leading-relaxed mb-6">{unit.desc}</p>
+                  <p className="text-white/50 text-sm leading-relaxed mb-6">{unit.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-white text-sm">{unit.price}</span>
                     <Link
@@ -210,13 +248,10 @@ export default function HomePage() {
               <Image src="/view-hafen.webp" alt="Bar Hafen" fill className="object-cover" />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-[#B69252] text-white p-8 max-w-[200px]">
-              <p
-                className="text-3xl mb-1"
-                style={{ fontFamily: 'var(--font-playfair), serif' }}
-              >
-                +20%
+              <p className="text-3xl mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                {investBadge.split(' ')[0]}
               </p>
-              <p className="text-xs tracking-wide opacity-80">Preissteigerung 2025</p>
+              <p className="text-xs tracking-wide opacity-80">{investBadge.split(' ').slice(1).join(' ')}</p>
             </div>
           </div>
           <div>
@@ -225,21 +260,11 @@ export default function HomePage() {
               className="text-[#151E39] text-4xl md:text-5xl leading-tight mb-8"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Warum Bar.
-              <br />
-              Warum jetzt.
+              {investHeadline}
             </h2>
-            <p className="text-[#151E39]/60 font-light leading-relaxed mb-10">
-              Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während
-              vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie
-              bei Baliv Residence ab 2.400 €/m² — schlüsselfertig, hochwertig ausgestattet.
-            </p>
+            <p className="text-[#151E39]/60 font-light leading-relaxed mb-10">{investText}</p>
             <div className="grid grid-cols-3 gap-8 mb-10">
-              {[
-                { value: '6–8%', label: 'Bruttorendite' },
-                { value: '+130%', label: 'Preis 2020–2025' },
-                { value: '2028', label: 'EU-Beitritt' },
-              ].map((stat) => (
+              {investStats.map((stat: { value: string; label: string }) => (
                 <div key={stat.label}>
                   <p
                     className="text-[#151E39] text-2xl md:text-3xl mb-1"
@@ -298,23 +323,20 @@ export default function HomePage() {
             className="text-white text-4xl md:text-6xl leading-tight mb-6"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Bereit für das
-            <br />
-            erste Gespräch?
+            {ctaHeadline}
           </h2>
           <p className="text-white/60 font-light text-lg mb-12 max-w-xl mx-auto">
-            Vollständiges Exposé mit Grundrissen, Preisliste und Verfügbarkeit — direkt vom
-            Bauträger, deutschsprachig, ohne Makler.
+            {ctaDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:info@baliv-residence.com"
+              href={`mailto:${email}`}
               className="px-10 py-4 bg-[#B69252] text-white text-sm tracking-widest uppercase hover:bg-[#a07e3e] transition-colors duration-300"
             >
               Exposé anfragen
             </a>
             <a
-              href={`https://wa.me/38268517873?text=${encodeURIComponent('Guten Tag, ich interessiere mich für Baliv Residence.')}`}
+              href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent('Guten Tag, ich interessiere mich für Baliv Residence.')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-10 py-4 border border-white/40 text-white text-sm tracking-widest uppercase hover:border-white hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-3"
@@ -325,9 +347,7 @@ export default function HomePage() {
               WhatsApp
             </a>
           </div>
-          <p className="text-white/30 text-xs mt-8 tracking-wide">
-            Antwort in &lt; 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger
-          </p>
+          <p className="text-white/30 text-xs mt-8 tracking-wide">{ctaNote}</p>
         </div>
       </section>
 
@@ -338,7 +358,7 @@ export default function HomePage() {
             <Image src="/logo-white.svg" alt="Baliv Residence" width={140} height={58} />
             <p className="text-white/30 text-xs mt-4">Bjeliši BB · 85000 Bar, Montenegro</p>
             <p className="text-white/30 text-xs mt-1">
-              info@baliv-residence.com · +382 68 517 873
+              {email} · {whatsapp}
             </p>
           </div>
           <div className="flex gap-6">
