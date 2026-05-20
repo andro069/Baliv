@@ -52,8 +52,8 @@ export default function ArchitekturPage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[80vh] min-h-[560px]">
         <Image
-          src="/terrasse-meer.webp"
-          alt="Blick vom Penthouse über Bar und die Adria"
+          src="/architektur-hero.png"
+          alt="Blick vom Penthouse durch den Rundbogen über Bar und die Adria"
           fill
           className="object-cover"
           priority
