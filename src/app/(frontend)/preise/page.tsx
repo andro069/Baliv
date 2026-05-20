@@ -149,11 +149,7 @@ export default function PreisePage() {
           {types.map((t) => (
             <div
               key={t.nr}
-              className={`relative rounded overflow-hidden flex flex-col ${
-                t.highlight
-                  ? 'bg-[#151E39] shadow-2xl ring-1 ring-[#B69252]/40'
-                  : 'bg-white border border-[#151E39]/10'
-              }`}
+              className="relative rounded overflow-hidden flex flex-col bg-[#151E39] shadow-2xl ring-1 ring-[#B69252]/20"
             >
               {t.highlight && (
                 <div className="bg-[#B69252] text-white text-xs tracking-widest uppercase text-center py-2 px-4">
@@ -162,7 +158,7 @@ export default function PreisePage() {
               )}
 
               {/* Grundriss */}
-              <div className={`relative aspect-[4/3] ${t.highlight ? 'bg-white/5' : 'bg-[#F0EDE8]'}`}>
+              <div className="relative aspect-[4/3] bg-white/5">
                 <Image
                   src={t.floorplan}
                   alt={`Grundriss ${t.type}`}
@@ -174,23 +170,23 @@ export default function PreisePage() {
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <span className={`text-xs tracking-widest uppercase ${t.highlight ? 'text-[#B69252]/60' : 'text-[#151E39]/40'}`}>
+                    <span className="text-xs tracking-widest uppercase text-[#B69252]/60">
                       Typ {t.nr} · {t.tag}
                     </span>
                     <h3
-                      className={`text-xl mt-1 ${t.highlight ? 'text-white' : 'text-[#151E39]'}`}
+                      className="text-xl mt-1 text-white"
                       style={{ fontFamily: 'var(--font-playfair), serif' }}
                     >
                       {t.type}
                     </h3>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded ${t.highlight ? 'bg-white/10 text-white/50' : 'bg-[#F0EDE8] text-[#151E39]/50'}`}>
+                  <span className="text-xs px-2 py-1 rounded bg-white/10 text-white/50">
                     {t.units}
                   </span>
                 </div>
 
-                <div className={`text-sm mb-1 ${t.highlight ? 'text-white/40' : 'text-[#151E39]/40'}`}>{t.size}</div>
-                <div className={`text-2xl font-light mb-5 ${t.highlight ? 'text-[#B69252]' : 'text-[#151E39]'}`} style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                <div className="text-sm mb-1 text-white/40">{t.size}</div>
+                <div className="text-2xl font-light mb-5 text-[#B69252]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                   {t.pricePerSqm}
                 </div>
 
@@ -200,31 +196,27 @@ export default function PreisePage() {
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                         <path d="M2.5 7l3 3 6-6" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
-                      <span className={`text-sm ${t.highlight ? 'text-white/60' : 'text-[#151E39]/60'}`}>{f}</span>
+                      <span className="text-sm text-white/60">{f}</span>
                     </li>
                   ))}
                 </ul>
 
                 {/* Example price */}
-                <div className={`rounded p-4 mb-5 ${t.highlight ? 'bg-white/5 border border-white/10' : 'bg-[#F0EDE8]'}`}>
-                  <div className={`text-xs tracking-widest uppercase mb-1 ${t.highlight ? 'text-white/30' : 'text-[#151E39]/30'}`}>
+                <div className="rounded p-4 mb-5 bg-white/5 border border-white/10">
+                  <div className="text-xs tracking-widest uppercase mb-1 text-white/30">
                     Beispiel · {t.exampleSize} m²
                   </div>
-                  <div className={`text-2xl font-light ${t.highlight ? 'text-white' : 'text-[#151E39]'}`} style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                  <div className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                     {t.examplePrice.toLocaleString('de-DE')} €
                   </div>
-                  <div className={`text-xs mt-1 ${t.highlight ? 'text-white/20' : 'text-[#151E39]/30'}`}>
+                  <div className="text-xs mt-1 text-white/20">
                     Frühbucher · inkl. MwSt.
                   </div>
                 </div>
 
                 <Link
                   href="#kontakt"
-                  className={`text-center text-sm tracking-widest uppercase py-3 px-4 transition-colors ${
-                    t.highlight
-                      ? 'bg-[#B69252] text-white hover:bg-[#a07d3f]'
-                      : 'border border-[#151E39]/20 text-[#151E39] hover:border-[#151E39]/50'
-                  }`}
+                  className="text-center text-sm tracking-widest uppercase py-3 px-4 transition-colors bg-[#B69252] text-white hover:bg-[#a07d3f]"
                 >
                   Exposé anfragen
                 </Link>
