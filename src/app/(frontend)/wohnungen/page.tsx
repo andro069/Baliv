@@ -290,7 +290,11 @@ export default function WohnungenPage() {
       </section>
 
       {/* ── PREISSTAFFELUNG ──────────────────────────────────────────────── */}
-      <PricingTimeline />
+      <section className="bg-[#151E39] px-8 md:px-16 lg:px-24 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <PricingTimeline />
+        </div>
+      </section>
 
       {/* ── GEBÄUDE FEATURES ─────────────────────────────────────────────── */}
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
