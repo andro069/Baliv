@@ -3,14 +3,12 @@ import config from '@payload-config'
 import { NavigationClient } from './NavigationClient'
 
 const defaultNavItems = [
-  { label: 'Projekt', href: '/projekt' },
   { label: 'Lage', href: '/lage' },
   { label: 'Architektur', href: '/architektur' },
   { label: 'Wohnungen', href: '/wohnungen' },
   { label: 'Investment', href: '/investment' },
   { label: 'Preise', href: '/preise' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Kontakt', href: '#kontakt' },
+  { label: 'Kontakt', href: '/kontakt' },
 ]
 
 export async function Navigation() {
