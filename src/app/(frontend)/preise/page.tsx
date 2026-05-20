@@ -4,6 +4,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { PageFooter } from '@/components/PageFooter'
 
 export const metadata: Metadata = {
   title: 'Preise — Baliv Residence, Bar Montenegro',
@@ -473,24 +474,7 @@ export default function PreisePage() {
         </div>
       </section>
 
-      <footer className="bg-[#151E39] border-t border-white/10 py-8">
-        <div className="max-w-7xl mx-auto px-8 md:px-16 flex flex-col md:flex-row justify-between items-center gap-4">
-          <Link href="/" className="text-white/30 hover:text-white/60 text-xs transition-colors">
-            ← Zurück zur Startseite
-          </Link>
-          <p className="text-white/20 text-xs text-center">
-            © 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro
-          </p>
-          <div className="flex gap-6">
-            <Link href="/wohnungen" className="text-white/30 hover:text-white/50 text-xs transition-colors">
-              Wohnungen
-            </Link>
-            <Link href="/investment" className="text-white/30 hover:text-white/50 text-xs transition-colors">
-              Investment
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <PageFooter />
     </main>
   )
 }
