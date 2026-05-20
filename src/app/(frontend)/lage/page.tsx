@@ -97,7 +97,7 @@ const highlights = [
   {
     title: 'Adria — 13 km Strand',
     text: 'Bar verfügt über einen der längsten Sandstrände Montenegros. Flaches, warmes Wasser, kaum Tourismenmassen außerhalb der Hochsaison — ideal für Eigenbedarf und Kurzzeitvermietung.',
-    image: '/terrasse-meerblick.webp',
+    image: '/terrasse-meerblick.png',
   },
   {
     title: 'Rumija — Natur pur',
