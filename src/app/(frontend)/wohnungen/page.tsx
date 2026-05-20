@@ -60,13 +60,56 @@ const types = [
   },
 ]
 
+const ausstattungIcons: Record<string, React.ReactNode> = {
+  Hansgrohe: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 4v8M10 8c0 0 1.5-2 4-2s4 2 4 2" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M8 12h12v2c0 4-2.5 7-6 8-3.5-1-6-4-6-8v-2z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M11 18h6" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  LG: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect x="4" y="7" width="20" height="14" rx="1.5" stroke="#B69252" strokeWidth="1.2"/>
+      <path d="M10 14h8M14 10v8" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+      <circle cx="14" cy="14" r="3" stroke="#B69252" strokeWidth="1.2"/>
+    </svg>
+  ),
+  'Eurocode 8': (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 4L5 10v4c0 5.5 3.8 10.6 9 12 5.2-1.4 9-6.5 9-12v-4L14 4z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M10 14l3 3 5-5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Naturstein: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M4 20L9 8l5 5 5-7 5 14H4z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M4 20h20" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  'Geölte Eiche': (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <path d="M14 24V14" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M14 14c-4 0-7-3-7-7 3 0 5.5 1.5 7 4 1.5-2.5 4-4 7-4 0 4-3 7-7 7z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M10 18c-2 0-4-1.5-4-4 2 0 3.5 1 4 2.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Schlüsselfertig: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="11" cy="12" r="5" stroke="#B69252" strokeWidth="1.2"/>
+      <path d="M15 16l8 8" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M19 20l2-2M21 22l2-2" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+}
+
 const ausstattung = [
-  { brand: 'Hansgrohe', label: 'Sanitärarmarturen', icon: '🚿' },
-  { brand: 'LG', label: 'Klimaanlage', icon: '❄️' },
-  { brand: 'Eurocode 8', label: 'Erdbebenstandard', icon: '🏗️' },
-  { brand: 'Naturstein', label: 'Böden & Fassade', icon: '🪨' },
-  { brand: 'Geölte Eiche', label: 'Holzoberflächen', icon: '🌿' },
-  { brand: 'Schlüsselfertig', label: 'Übergabe komplett', icon: '🔑' },
+  { brand: 'Hansgrohe', label: 'Sanitärarmaturen' },
+  { brand: 'LG', label: 'Klimaanlage' },
+  { brand: 'Eurocode 8', label: 'Erdbebenstandard' },
+  { brand: 'Naturstein', label: 'Böden & Fassade' },
+  { brand: 'Geölte Eiche', label: 'Holzoberflächen' },
+  { brand: 'Schlüsselfertig', label: 'Übergabe komplett' },
 ]
 
 const building = [
@@ -264,7 +307,7 @@ export default function WohnungenPage() {
             <div className="grid grid-cols-2 gap-4">
               {ausstattung.map((item) => (
                 <div key={item.brand} className="bg-white/5 border border-white/10 rounded p-5 hover:border-[#B69252]/40 transition-colors">
-                  <div className="text-2xl mb-3">{item.icon}</div>
+                  <div className="mb-3">{ausstattungIcons[item.brand]}</div>
                   <div className="text-white font-medium mb-1">{item.brand}</div>
                   <div className="text-white/40 text-xs tracking-wide">{item.label}</div>
                 </div>
