@@ -52,7 +52,7 @@ export default function ArchitekturPage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[80vh] min-h-[560px]">
         <Image
-          src="/architektur-hero.png"
+          src="/architektur-hero-v2.png"
           alt="Blick vom Penthouse durch den Rundbogen über Bar und die Adria"
           fill
           className="object-cover"
@@ -127,7 +127,7 @@ export default function ArchitekturPage() {
           </div>
           <div className="relative aspect-[4/3] rounded overflow-hidden">
             <Image
-              src="/architektur-fassade.png"
+              src="/architektur-fassade.png?v=2"
               alt="Fassadendetail Baliv Residence"
               fill
               className="object-cover"
@@ -252,6 +252,60 @@ export default function ArchitekturPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── GALERIE ──────────────────────────────────────────────────────── */}
+      <section className="py-24 px-8 md:px-16 lg:px-24 bg-[#F0EDE8]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Einblicke</p>
+            <h2
+              className="text-[#151E39] text-3xl md:text-5xl leading-tight"
+              style={{ fontFamily: 'var(--font-playfair), serif' }}
+            >
+              Details, die{' '}
+              <em className="not-italic text-[#B69252]">zählen.</em>
+            </h2>
+          </div>
+
+          {/* Masonry via CSS columns */}
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
+            {[
+              { src: '/detail-bogen.webp', alt: 'Rundbogen-Detail Fassade', aspect: 'tall' },
+              { src: '/detail-sanitaer.png', alt: 'Hansgrohe Badezimmer mit Marmor', aspect: 'tall' },
+              { src: '/architektur-detail.webp', alt: 'Architekturdetail Baliv Residence', aspect: 'wide' },
+              { src: '/detail-stein.png', alt: 'Naturstein-Bogenmotiv', aspect: 'square' },
+              { src: '/interieur-wohnen-01.webp', alt: 'Wohnbereich Baliv Residence', aspect: 'wide' },
+              { src: '/detail-terrassen.webp', alt: 'Terrassendetail', aspect: 'square' },
+              { src: '/detail-boden.png', alt: 'Travertin-Steinboden Nahaufnahme', aspect: 'wide' },
+              { src: '/interieur-bad-01.webp', alt: 'Badezimmer Interieur', aspect: 'tall' },
+              { src: '/detail-fassade.webp', alt: 'Fassadenstruktur Naturstein', aspect: 'square' },
+            ].map((img) => (
+              <div
+                key={img.src}
+                className="break-inside-avoid mb-4 overflow-hidden rounded group"
+              >
+                <div
+                  className={
+                    img.aspect === 'tall'
+                      ? 'relative aspect-[3/4]'
+                      : img.aspect === 'wide'
+                        ? 'relative aspect-[4/3]'
+                        : 'relative aspect-square'
+                  }
+                >
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-[#151E39]/0 group-hover:bg-[#151E39]/20 transition-colors duration-500" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
