@@ -86,7 +86,7 @@ export default function KontaktPage() {
               </a>
 
               <a
-                href="https://wa.me/38269123456"
+                href="https://wa.me/38268517873"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 group"
@@ -99,7 +99,7 @@ export default function KontaktPage() {
                 <div>
                   <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">WhatsApp</p>
                   <p className="text-[#151E39] group-hover:text-[#B69252] transition-colors text-sm">
-                    +382 69 123 456
+                    +382 68 517 873
                   </p>
                 </div>
               </a>

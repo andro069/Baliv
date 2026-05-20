@@ -53,7 +53,7 @@ export default function ImpressumPage() {
               </h2>
               <p>
                 E-Mail: info@baliv-residence.com<br />
-                Telefon: +382 69 123 456
+                Telefon: +382 68 517 873
               </p>
             </div>
 
