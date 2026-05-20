@@ -134,7 +134,7 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <a
-                href="#kontakt"
+                href="/kontakt"
                 className="px-8 py-4 bg-[#B69252] text-white text-sm tracking-widest uppercase hover:bg-[#a07e3e] transition-colors duration-300"
               >
                 Exposé anfragen
@@ -353,7 +353,7 @@ export default async function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href={`mailto:${email}`}
+              href="/kontakt"
               className="px-10 py-4 bg-[#B69252] text-white text-sm tracking-widest uppercase hover:bg-[#a07e3e] transition-colors duration-300"
             >
               Exposé anfragen

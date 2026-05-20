@@ -345,7 +345,7 @@ export default function LagePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:info@baliv-residence.com?subject=Besichtigung%20anfragen"
+              href="/kontakt"
               className="inline-flex items-center justify-center gap-2 bg-[#B69252] text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
             >
               Besichtigung anfragen

@@ -373,7 +373,7 @@ export default function ArchitekturPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:info@baliv-residence.com?subject=Architekturpl%C3%A4ne%20%26%20Expos%C3%A9"
+              href="/kontakt"
               className="inline-flex items-center justify-center gap-2 bg-[#B69252] text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
             >
               Exposé & Pläne anfordern
