@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import { FormConfigs } from './collections/FormConfigs'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -67,7 +68,7 @@ export default buildConfig({
       connectionTimeoutMillis: 10000,
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users, ContactSubmissions],
+  collections: [Pages, Posts, Media, Categories, Users, ContactSubmissions, FormConfigs],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Homepage],
   plugins,

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+function fillTemplate(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '')
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -11,7 +15,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Name und E-Mail sind pflicht.' }, { status: 400 })
     }
 
-    // Build plain-text email body
+    const payload = await getPayload({ config })
+
+    // Load form config for "kontakt"
+    const formConfigResult = await payload.find({
+      collection: 'form-configs' as any,
+      where: { formSlug: { equals: 'kontakt' } },
+      limit: 1,
+    })
+    const formConfig = formConfigResult.docs[0] as any | undefined
+
+    const TO_EMAIL =
+      formConfig?.benachrichtigungsEmail ||
+      process.env.CONTACT_EMAIL ||
+      'info@baliv-residence.com'
+
+    // Build admin notification email
     const lines = [
       `Neue Anfrage über baliv-residence.com`,
       ``,
@@ -25,16 +44,13 @@ export async function POST(req: NextRequest) {
       nachricht || '—',
     ].join('\n')
 
-    const subject = expose
-      ? `Exposé-Anfrage von ${name}`
-      : `Kontaktanfrage von ${name}`
+    const subject = expose ? `Exposé-Anfrage von ${name}` : `Kontaktanfrage von ${name}`
 
-    // Send via Resend (or fall through to console in dev)
     const RESEND_API_KEY = process.env.RESEND_API_KEY
-    const TO_EMAIL = process.env.CONTACT_EMAIL || 'info@baliv-residence.com'
 
     if (RESEND_API_KEY) {
-      const res = await fetch('https://api.resend.com/emails', {
+      // 1. Send internal notification
+      const notifyRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${RESEND_API_KEY}`,
@@ -49,22 +65,79 @@ export async function POST(req: NextRequest) {
         }),
       })
 
-      if (!res.ok) {
-        const err = await res.text()
-        console.error('Resend error:', err)
+      if (!notifyRes.ok) {
+        const err = await notifyRes.text()
+        console.error('Resend notification error:', err)
         return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden.' }, { status: 500 })
       }
+
+      // 2. Send autoresponder if configured
+      if (formConfig?.autoresponderAktiv && formConfig.autoresponderBetreff && formConfig.autoresponderNachricht) {
+        const vars: Record<string, string> = {
+          name: name || '',
+          email: email || '',
+          interesse: interesse || '',
+          nachricht: nachricht || '',
+        }
+
+        const arSubject = fillTemplate(formConfig.autoresponderBetreff, vars)
+        const arBody = fillTemplate(formConfig.autoresponderNachricht, vars)
+
+        const arPayload: Record<string, any> = {
+          from: 'Baliv Residence <noreply@baliv-residence.com>',
+          to: [email],
+          subject: arSubject,
+          text: arBody,
+        }
+
+        // Attach PDF if configured
+        const anhang = formConfig.autoresponderAnhang
+        if (anhang?.url) {
+          try {
+            const pdfRes = await fetch(anhang.url)
+            if (pdfRes.ok) {
+              const buffer = await pdfRes.arrayBuffer()
+              arPayload.attachments = [
+                {
+                  filename: anhang.filename || 'Expose-Baliv-Residence.pdf',
+                  content: Buffer.from(buffer).toString('base64'),
+                },
+              ]
+            }
+          } catch (attachErr) {
+            console.error('Attachment fetch error:', attachErr)
+          }
+        }
+
+        const arRes = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(arPayload),
+        })
+
+        if (!arRes.ok) {
+          console.error('Resend autoresponder error:', await arRes.text())
+        }
+      }
     } else {
-      // Dev fallback — log to console
       console.log('\n📬 Kontaktformular-Einsendung:\n', lines)
     }
 
     // Save to Payload DB
     try {
-      const payload = await getPayload({ config })
       await payload.create({
         collection: 'contact-submissions' as any,
-        data: { name, email, phone: phone || '', interesse: interesse || '', nachricht: nachricht || '', expose: Boolean(expose) },
+        data: {
+          name,
+          email,
+          phone: phone || '',
+          interesse: interesse || '',
+          nachricht: nachricht || '',
+          expose: Boolean(expose),
+        },
       })
     } catch (dbErr) {
       console.error('DB save error:', dbErr)
