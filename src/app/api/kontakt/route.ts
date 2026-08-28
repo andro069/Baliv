@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 
 export async function POST(req: NextRequest) {
   try {
@@ -55,6 +57,17 @@ export async function POST(req: NextRequest) {
     } else {
       // Dev fallback — log to console
       console.log('\n📬 Kontaktformular-Einsendung:\n', lines)
+    }
+
+    // Save to Payload DB
+    try {
+      const payload = await getPayload({ config })
+      await payload.create({
+        collection: 'contact-submissions' as any,
+        data: { name, email, phone: phone || '', interesse: interesse || '', nachricht: nachricht || '', expose: Boolean(expose) },
+      })
+    } catch (dbErr) {
+      console.error('DB save error:', dbErr)
     }
 
     return NextResponse.json({ ok: true })

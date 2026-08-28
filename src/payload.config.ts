@@ -5,6 +5,7 @@ import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
+import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -66,7 +67,7 @@ export default buildConfig({
       connectionTimeoutMillis: 10000,
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, ContactSubmissions],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Homepage],
   plugins,
