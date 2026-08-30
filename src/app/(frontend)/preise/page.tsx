@@ -73,11 +73,10 @@ const types = [
 ]
 
 const paymentSteps = [
-  { step: '01', date: 'Sofort', label: 'Reservierung', amount: '5.000 €', pct: null, note: 'Einheit wird reserviert und vom Markt genommen' },
-  { step: '02', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', pct: 40, note: 'Nach Erhalt der offiziellen Baugenehmigung' },
-  { step: '03', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', pct: 30, note: 'Bei Abschluss des Rohbaus' },
-  { step: '04', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', pct: 20, note: 'Bei Dachschluss und Ausbaubeginn' },
-  { step: '05', date: 'Q1 2028', label: 'Schlüsselübergabe', amount: '10 %', pct: 10, note: 'Bei vollständiger Fertigstellung' },
+  { step: '01', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', pct: 40, note: 'Nach Erhalt der offiziellen Baugenehmigung' },
+  { step: '02', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', pct: 30, note: 'Bei Abschluss des Rohbaus' },
+  { step: '03', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', pct: 20, note: 'Bei Dachschluss und Ausbaubeginn' },
+  { step: '04', date: 'Q1 2028', label: 'Schlüsselübergabe', amount: '10 %', pct: 10, note: 'Bei vollständiger Fertigstellung' },
 ]
 
 const included = [
@@ -426,10 +425,6 @@ export default function PreisePage() {
                   </div>
                 </div>
 
-                <div className="bg-[#B69252]/10 border border-[#B69252]/20 rounded p-3 text-center">
-                  <div className="text-[#B69252]/60 text-xs mb-0.5">Reservierung</div>
-                  <div className="text-white text-sm">5.000 € · sofort</div>
-                </div>
               </div>
             ))}
           </div>
@@ -450,7 +445,7 @@ export default function PreisePage() {
           </h2>
           <p className="text-[#151E39]/60 leading-relaxed mb-10 max-w-xl mx-auto">
             Nach Erteilung der Baugenehmigung im Oktober 2026 werden die Preise angepasst.
-            Sichern Sie sich jetzt Ihre Einheit zum Frühbucherpreis — mit nur 5.000 € Reservierung.
+            Sichern Sie sich jetzt Ihre Einheit zum Frühbucherpreis.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

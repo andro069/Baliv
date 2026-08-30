@@ -66,11 +66,10 @@ const taxAdvantages = [
 ]
 
 const paymentSteps = [
-  { step: '01', date: 'Sofort', label: 'Reservierung', amount: '5.000 €', note: 'Einheit wird reserviert' },
-  { step: '02', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', note: 'nach Erhalt der Baugenehmigung' },
-  { step: '03', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', note: 'bei Rohbaufertigstellung' },
-  { step: '04', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', note: 'bei Dachschluss' },
-  { step: '05', date: 'Q1 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
+  { step: '01', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', note: 'nach Erhalt der Baugenehmigung' },
+  { step: '02', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', note: 'bei Rohbaufertigstellung' },
+  { step: '03', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', note: 'bei Dachschluss' },
+  { step: '04', date: 'Q1 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
 ]
 
 const rentalExample = {
