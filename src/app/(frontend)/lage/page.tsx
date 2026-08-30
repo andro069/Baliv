@@ -284,13 +284,13 @@ export default function LagePage() {
             </h2>
             <p className="text-[#151E39]/60 leading-relaxed mb-8">
               Kotor kostet heute 4.000–6.000 €/m². Budva 3.500–5.000 €/m². Bar liegt bei
-              2.400 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge,
+              2.500 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge,
               mediterranes Klima. Der Unterschied: Bar entwickelt sich gerade erst.
             </p>
 
             <div className="space-y-4">
               {[
-                { label: 'Bar heute', price: 'ab 2.400 €/m²', color: 'text-[#B69252]', bg: 'bg-[#B69252]/10 border-[#B69252]/30' },
+                { label: 'Bar heute', price: 'ab 2.500 €/m²', color: 'text-[#B69252]', bg: 'bg-[#B69252]/10 border-[#B69252]/30' },
                 { label: 'Budva aktuell', price: '3.500–5.000 €/m²', color: 'text-[#151E39]', bg: 'bg-white border-[#151E39]/10' },
                 { label: 'Kotor aktuell', price: '4.000–6.000 €/m²', color: 'text-[#151E39]', bg: 'bg-white border-[#151E39]/10' },
               ].map((row) => (

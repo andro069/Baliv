@@ -85,8 +85,8 @@ export async function GET(req: Request) {
         slides,
         stats: [
           { value: '39', label: 'Wohneinheiten' },
-          { value: '2.400 €/m²', label: 'Ab Preis' },
-          { value: 'Dez. 2028', label: 'Fertigstellung' },
+          { value: '2.500 €/m²', label: 'Ab Preis' },
+          { value: 'Q1 2028', label: 'Fertigstellung' },
         ],
       },
       lage: {
@@ -112,7 +112,7 @@ export async function GET(req: Request) {
             size: '28–30 m²',
             description:
               'Kompakter Einstieg mit Terrasse und direktem Gartenzugang. Ideal als Pied-à-terre oder Renditeobjekt.',
-            price: 'ab 2.400 €/m²',
+            price: 'ab 2.500 €/m²',
             image: apt1?.id ?? undefined,
           },
           {
@@ -121,7 +121,7 @@ export async function GET(req: Request) {
             size: '47–52 m²',
             description:
               'Die Wahl der meisten Käufer — mit Balkon oder Terrasse, verfügbar auf allen Stockwerken.',
-            price: 'ab 2.400 €/m²',
+            price: 'ab 2.500 €/m²',
             image: apt2?.id ?? undefined,
           },
           {
@@ -137,7 +137,7 @@ export async function GET(req: Request) {
       },
       investment: {
         headline: 'Warum Bar. Warum jetzt.',
-        text: 'Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie bei Baliv Residence ab 2.400 €/m² — schlüsselfertig, hochwertig ausgestattet.',
+        text: 'Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie bei Baliv Residence ab 2.500 €/m² — schlüsselfertig, hochwertig ausgestattet.',
         stats: [
           { value: '6–8%', label: 'Bruttorendite' },
           { value: '+130%', label: 'Preis 2020–2025' },

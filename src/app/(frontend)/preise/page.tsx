@@ -9,7 +9,7 @@ import { PageFooter } from '@/components/PageFooter'
 export const metadata: Metadata = {
   title: 'Preise — Baliv Residence, Bar Montenegro',
   description:
-    'Studio ab 69.600 €, Zweizimmer ab 112.800 €, Penthouse ab 219.000 €. Frühbucherpreise ab 2.400 €/m² — direkt vom Bauträger, ohne Makler.',
+    'Studio ab 69.600 €, Zweizimmer ab 112.800 €, Penthouse ab 219.000 €. Frühbucherpreise ab 2.500 €/m² — direkt vom Bauträger, ohne Makler.',
 }
 
 const types = [
@@ -18,7 +18,7 @@ const types = [
     type: 'Studio',
     tag: 'Erdgeschoss',
     size: '28–30 m²',
-    pricePerSqm: 'ab 2.400 €/m²',
+    pricePerSqm: 'ab 2.500 €/m²',
     units: '2 Einheiten',
     exampleSize: 29,
     examplePrice: 69600,
@@ -36,7 +36,7 @@ const types = [
     type: 'Zweizimmer­wohnung',
     tag: 'Alle Etagen',
     size: '47–52 m²',
-    pricePerSqm: 'ab 2.400 €/m²',
+    pricePerSqm: 'ab 2.500 €/m²',
     units: '35 Einheiten',
     exampleSize: 50,
     examplePrice: 120000,
@@ -77,7 +77,7 @@ const paymentSteps = [
   { step: '02', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', pct: 40, note: 'Nach Erhalt der offiziellen Baugenehmigung' },
   { step: '03', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', pct: 30, note: 'Bei Abschluss des Rohbaus' },
   { step: '04', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', pct: 20, note: 'Bei Dachschluss und Ausbaubeginn' },
-  { step: '05', date: 'Dez. 2028', label: 'Schlüsselübergabe', amount: '10 %', pct: 10, note: 'Bei vollständiger Fertigstellung' },
+  { step: '05', date: 'Q1 2028', label: 'Schlüsselübergabe', amount: '10 %', pct: 10, note: 'Bei vollständiger Fertigstellung' },
 ]
 
 const included = [

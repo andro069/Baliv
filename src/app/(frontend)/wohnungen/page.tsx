@@ -10,7 +10,7 @@ import { PageFooter } from '@/components/PageFooter'
 export const metadata: Metadata = {
   title: 'Die Wohnungen — Baliv Residence, Bar Montenegro',
   description:
-    'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.400 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Dezember 2028.',
+    'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.500 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Q1 2028.',
 }
 
 const types = [
@@ -21,7 +21,7 @@ const types = [
     size: '28–30 m²',
     terrace: 'Terrasse & Gartenzugang',
     units: '2 Einheiten',
-    price: 'ab 2.400 €/m²',
+    price: 'ab 2.500 €/m²',
     layout: '1 Wohn-/Schlafraum · Küchenzeile · Bad',
     description:
       'Direkter Zugang zum begrünten Innenhof. Kompakter Einstieg als Pied-à-terre, Ferienobjekt oder renditestarkes Investment.',
@@ -36,7 +36,7 @@ const types = [
     size: '47–52 m²',
     terrace: 'Balkon oder Terrasse',
     units: '35 Einheiten',
-    price: 'ab 2.400 €/m²',
+    price: 'ab 2.500 €/m²',
     layout: '1 Schlafzimmer · Wohn-/Essbereich · Küche · Bad',
     description:
       'Der meistgewählte Typ. Mit steigender Etage wachsen die Ausblicke — von Olivenhainen im Erdgeschoss bis hin zu Meerespanoramen in den Obergeschossen.',
@@ -117,7 +117,7 @@ const building = [
   { value: '7', label: 'Geschosse' },
   { value: '39', label: 'Wohneinheiten' },
   { value: '17', label: 'Tiefgaragenplätze' },
-  { value: 'Dez. 2028', label: 'Fertigstellung' },
+  { value: 'Q1 2028', label: 'Fertigstellung' },
 ]
 
 export default function WohnungenPage() {

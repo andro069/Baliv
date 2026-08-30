@@ -41,8 +41,8 @@ export default async function HomePage() {
 
   const heroStats = cms?.hero?.stats ?? [
     { value: '39', label: 'Wohneinheiten' },
-    { value: '2.400 €/m²', label: 'Ab Preis' },
-    { value: 'Dez. 2028', label: 'Fertigstellung' },
+    { value: '2.500 €/m²', label: 'Ab Preis' },
+    { value: 'Q1 2028', label: 'Fertigstellung' },
   ]
 
   // ── Lage defaults ────────────────────────────────────────────────────
@@ -63,8 +63,8 @@ export default async function HomePage() {
   // ── Wohnungen defaults ───────────────────────────────────────────────
   const wohnungenHeadline = cms?.wohnungen?.headline ?? 'Drei Typen. Ihre Wahl.'
   const wohnungenTypes = cms?.wohnungen?.types ?? [
-    { type: 'Studio', tag: 'Erdgeschoss', size: '28–30 m²', description: 'Kompakter Einstieg mit Terrasse und direktem Gartenzugang. Ideal als Pied-à-terre oder Renditeobjekt.', price: 'ab 2.400 €/m²', image: null },
-    { type: 'Zweizimmer', tag: 'Alle Etagen', size: '47–52 m²', description: 'Die Wahl der meisten Käufer — mit Balkon oder Terrasse, verfügbar auf allen Stockwerken.', price: 'ab 2.400 €/m²', image: null },
+    { type: 'Studio', tag: 'Erdgeschoss', size: '28–30 m²', description: 'Kompakter Einstieg mit Terrasse und direktem Gartenzugang. Ideal als Pied-à-terre oder Renditeobjekt.', price: 'ab 2.500 €/m²', image: null },
+    { type: 'Zweizimmer', tag: 'Alle Etagen', size: '47–52 m²', description: 'Die Wahl der meisten Käufer — mit Balkon oder Terrasse, verfügbar auf allen Stockwerken.', price: 'ab 2.500 €/m²', image: null },
     { type: 'Penthouse', tag: 'Dachgeschoss', size: '73–81 m²', description: 'Dachterrasse 30–50 m², unverbauter Rundblick auf Meer, Berge und Stari Bar.', price: 'ab 3.000 €/m²', image: null },
   ]
   const fallbackImgs = ['/interieur-01.webp', '/interieur-wohnen-01.webp', '/interieur-wohnen-02.webp']
@@ -73,7 +73,7 @@ export default async function HomePage() {
   const investHeadline = cms?.investment?.headline ?? 'Warum Bar. Warum jetzt.'
   const investText =
     cms?.investment?.text ??
-    'Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie bei Baliv Residence ab 2.400 €/m² — schlüsselfertig, hochwertig ausgestattet.'
+    'Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie bei Baliv Residence ab 2.500 €/m² — schlüsselfertig, hochwertig ausgestattet.'
   const investStats = cms?.investment?.stats ?? [
     { value: '6–8%', label: 'Bruttorendite' },
     { value: '+130%', label: 'Preis 2020–2025' },

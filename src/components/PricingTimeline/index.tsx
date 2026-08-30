@@ -4,30 +4,23 @@ import React, { useEffect, useRef, useState } from 'react'
 
 const stages = [
   {
-    phase: 'Jetzt · Vor Baugenehmigung',
-    label: 'Frühbucher · 2026',
-    price: '2.400',
-    description: 'Reservierung in der Vorverkaufsphase, beste Auswahl, attraktivster Einstiegspreis.',
-    active: true,
-  },
-  {
-    phase: 'Ab Baugenehmigung · ca. Okt 2026',
-    label: 'Baubeginn',
+    phase: 'Jetzt · Baugenehmigung erteilt',
+    label: 'Baubeginn · 2026',
     price: '2.500',
-    description: 'Nach offizieller Genehmigung, erste Preisanpassung mit beginnendem Bau.',
-    active: false,
+    description: 'Baugenehmigung liegt vor. Beste Auswahl, attraktivster Einstiegspreis direkt vom Bauträger.',
+    active: true,
   },
   {
     phase: 'Ab Rohbauabschluss · Q2 2027',
     label: 'Bauphase fortgeschritten',
-    price: '2.600',
+    price: '2.700',
     description: 'Sichtbare Struktur, klare Visualisierung, und entsprechend höhere Marktpreise.',
     active: false,
   },
   {
-    phase: 'Ab Fertigstellung · Dez 2028',
+    phase: 'Ab Fertigstellung · Q1 2028',
     label: 'Bezugsfertig',
-    price: '2.700',
+    price: '2.900',
     description: 'Schlüsselübergabe, Marktpreis bei vollständiger Wertschöpfung.',
     active: false,
   },
@@ -112,7 +105,7 @@ export function PricingTimeline() {
       </div>
 
       {/* Stages grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-white/5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5">
         {stages.map((stage, i) => (
           <div
             key={i}

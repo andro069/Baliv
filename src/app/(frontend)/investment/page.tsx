@@ -70,13 +70,13 @@ const paymentSteps = [
   { step: '02', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', note: 'nach Erhalt der Baugenehmigung' },
   { step: '03', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', note: 'bei Rohbaufertigstellung' },
   { step: '04', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', note: 'bei Dachschluss' },
-  { step: '05', date: 'Dez. 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
+  { step: '05', date: 'Q1 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
 ]
 
 const rentalExample = {
   purchase: 120000,
   size: 50,
-  pricePerSqm: 2400,
+  pricePerSqm: 2500,
   weeklyRate: 550,
   occupancyWeeks: 20,
   annualRent: 11000,
@@ -250,7 +250,7 @@ export default function InvestmentPage() {
                   { year: '2024', event: 'Projektstart', note: '+21% Markt' },
                   { year: '2026', event: 'Baubeginn', note: 'Baugenehmigung Okt.' },
                   { year: '2027', event: 'Rohbau', note: 'Dachschluss Q4' },
-                  { year: '2028', event: 'Übergabe + EU', note: 'Dez. 2028' },
+                  { year: '2028', event: 'Übergabe + EU', note: 'Q1 2028' },
                 ].map((t, i) => (
                   <div key={t.year} className="text-center">
                     <div className={`w-3 h-3 rounded-full mx-auto mb-4 ${i === 3 ? 'bg-[#B69252]' : 'bg-white/30'}`} />
@@ -305,7 +305,7 @@ export default function InvestmentPage() {
 
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center py-3 border-b border-white/10">
-                <span className="text-white/50 text-sm">Kaufpreis (50 m² × 2.400 €)</span>
+                <span className="text-white/50 text-sm">Kaufpreis (50 m² × 2.500 €)</span>
                 <span className="text-white font-medium">120.000 €</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-white/10">
