@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     'contact-submissions': ContactSubmission;
+    'form-configs': FormConfig;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    'form-configs': FormConfigsSelect<false> | FormConfigsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -115,11 +117,21 @@ export interface Config {
     header: Header;
     footer: Footer;
     homepage: Homepage;
+    'wohnungen-page': WohnungenPage;
+    'preise-page': PreisePage;
+    'investment-page': InvestmentPage;
+    'lage-page': LagePage;
+    'kontakt-page': KontaktPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    'wohnungen-page': WohnungenPageSelect<false> | WohnungenPageSelect<true>;
+    'preise-page': PreisePageSelect<false> | PreisePageSelect<true>;
+    'investment-page': InvestmentPageSelect<false> | InvestmentPageSelect<true>;
+    'lage-page': LagePageSelect<false> | LagePageSelect<true>;
+    'kontakt-page': KontaktPageSelect<false> | KontaktPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -802,6 +814,44 @@ export interface ContactSubmission {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-configs".
+ */
+export interface FormConfig {
+  id: number;
+  /**
+   * z.B. "Kontaktformular Deutsch"
+   */
+  name: string;
+  /**
+   * Interner Bezeichner, z.B. "kontakt"
+   */
+  formSlug: string;
+  sprache?: ('de' | 'en' | 'sr' | 'ru') | null;
+  /**
+   * Leer lassen = Standard-Adresse aus Umgebungsvariable
+   */
+  benachrichtigungsEmail?: string | null;
+  /**
+   * Sendet dem Kunden nach der Formularabsendung automatisch eine Antwort
+   */
+  autoresponderAktiv?: boolean | null;
+  /**
+   * Verfügbare Variablen: {{name}}, {{email}}
+   */
+  autoresponderBetreff?: string | null;
+  /**
+   * Verfügbare Variablen: {{name}}, {{email}}, {{interesse}}, {{nachricht}}
+   */
+  autoresponderNachricht?: string | null;
+  /**
+   * PDF wird als Anhang an die Autoresponder-E-Mail angehängt
+   */
+  autoresponderAnhang?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1013,6 +1063,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contact-submissions';
         value: number | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'form-configs';
+        value: number | FormConfig;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1390,6 +1444,22 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   interesse?: T;
   nachricht?: T;
   expose?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-configs_select".
+ */
+export interface FormConfigsSelect<T extends boolean = true> {
+  name?: T;
+  formSlug?: T;
+  sprache?: T;
+  benachrichtigungsEmail?: T;
+  autoresponderAktiv?: T;
+  autoresponderBetreff?: T;
+  autoresponderNachricht?: T;
+  autoresponderAnhang?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1786,6 +1856,200 @@ export interface Homepage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wohnungen-page".
+ */
+export interface WohnungenPage {
+  id: number;
+  hero?: {
+    headline?: string | null;
+    description?: string | null;
+  };
+  types?:
+    | {
+        nr: string;
+        type: string;
+        tag?: string | null;
+        size?: string | null;
+        terrace?: string | null;
+        units?: string | null;
+        price?: string | null;
+        layout?: string | null;
+        description?: string | null;
+        exampleSize?: number | null;
+        examplePrice?: number | null;
+        floorplan?: (number | null) | Media;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  ausstattung?:
+    | {
+        brand: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  included?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "preise-page".
+ */
+export interface PreisePage {
+  id: number;
+  hero?: {
+    headline?: string | null;
+    description?: string | null;
+  };
+  types?:
+    | {
+        nr: string;
+        type: string;
+        tag?: string | null;
+        size?: string | null;
+        pricePerSqm?: string | null;
+        units?: string | null;
+        highlight?: boolean | null;
+        exampleSize?: number | null;
+        examplePrice?: number | null;
+        floorplan?: (number | null) | Media;
+        features?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  paymentSteps?:
+    | {
+        step: string;
+        date?: string | null;
+        label: string;
+        amount: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  included?:
+    | {
+        label: string;
+        included?: boolean | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "investment-page".
+ */
+export interface InvestmentPage {
+  id: number;
+  hero?: {
+    headline?: string | null;
+    description?: string | null;
+  };
+  steuerDaten?:
+    | {
+        label: string;
+        value: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  mietRendite?: {
+    headline?: string | null;
+    purchase?: number | null;
+    size?: number | null;
+    pricePerSqm?: number | null;
+    weeklyRate?: number | null;
+    occupancyWeeks?: number | null;
+    annualRent?: number | null;
+    yield?: number | null;
+    appreciationLow?: number | null;
+    appreciationHigh?: number | null;
+  };
+  paymentSteps?:
+    | {
+        step: string;
+        date?: string | null;
+        label: string;
+        amount: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lage-page".
+ */
+export interface LagePage {
+  id: number;
+  hero?: {
+    headline?: string | null;
+    subline?: string | null;
+    description?: string | null;
+  };
+  distances?:
+    | {
+        place: string;
+        distance: string;
+        detail?: string | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  highlights?:
+    | {
+        title: string;
+        text?: string | null;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  markt?: {
+    headline?: string | null;
+    description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kontakt-page".
+ */
+export interface KontaktPage {
+  id: number;
+  hero?: {
+    headline?: string | null;
+    description?: string | null;
+  };
+  info?: {
+    email?: string | null;
+    telefon?: string | null;
+    whatsapp?: string | null;
+    adresse?: string | null;
+    officeHours?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1907,6 +2171,216 @@ export interface HomepageSelect<T extends boolean = true> {
     | {
         email?: T;
         whatsapp?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wohnungen-page_select".
+ */
+export interface WohnungenPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+      };
+  types?:
+    | T
+    | {
+        nr?: T;
+        type?: T;
+        tag?: T;
+        size?: T;
+        terrace?: T;
+        units?: T;
+        price?: T;
+        layout?: T;
+        description?: T;
+        exampleSize?: T;
+        examplePrice?: T;
+        floorplan?: T;
+        image?: T;
+        id?: T;
+      };
+  ausstattung?:
+    | T
+    | {
+        brand?: T;
+        label?: T;
+        id?: T;
+      };
+  included?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "preise-page_select".
+ */
+export interface PreisePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+      };
+  types?:
+    | T
+    | {
+        nr?: T;
+        type?: T;
+        tag?: T;
+        size?: T;
+        pricePerSqm?: T;
+        units?: T;
+        highlight?: T;
+        exampleSize?: T;
+        examplePrice?: T;
+        floorplan?: T;
+        features?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  paymentSteps?:
+    | T
+    | {
+        step?: T;
+        date?: T;
+        label?: T;
+        amount?: T;
+        note?: T;
+        id?: T;
+      };
+  included?:
+    | T
+    | {
+        label?: T;
+        included?: T;
+        note?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "investment-page_select".
+ */
+export interface InvestmentPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+      };
+  steuerDaten?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        note?: T;
+        id?: T;
+      };
+  mietRendite?:
+    | T
+    | {
+        headline?: T;
+        purchase?: T;
+        size?: T;
+        pricePerSqm?: T;
+        weeklyRate?: T;
+        occupancyWeeks?: T;
+        annualRent?: T;
+        yield?: T;
+        appreciationLow?: T;
+        appreciationHigh?: T;
+      };
+  paymentSteps?:
+    | T
+    | {
+        step?: T;
+        date?: T;
+        label?: T;
+        amount?: T;
+        note?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lage-page_select".
+ */
+export interface LagePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        headline?: T;
+        subline?: T;
+        description?: T;
+      };
+  distances?:
+    | T
+    | {
+        place?: T;
+        distance?: T;
+        detail?: T;
+        note?: T;
+        id?: T;
+      };
+  highlights?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        image?: T;
+        id?: T;
+      };
+  markt?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kontakt-page_select".
+ */
+export interface KontaktPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+      };
+  info?:
+    | T
+    | {
+        email?: T;
+        telefon?: T;
+        whatsapp?: T;
+        adresse?: T;
+        officeHours?: T;
       };
   updatedAt?: T;
   createdAt?: T;
