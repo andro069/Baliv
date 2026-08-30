@@ -14,6 +14,11 @@ import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Homepage } from './globals/Homepage/config'
+import { WohnungenPage } from './globals/WohnungenPage/config'
+import { PreisePage } from './globals/PreisePage/config'
+import { InvestmentPage } from './globals/InvestmentPage/config'
+import { LagePage } from './globals/LagePage/config'
+import { KontaktPage } from './globals/KontaktPage/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -70,7 +75,7 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Media, Categories, Users, ContactSubmissions, FormConfigs],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Homepage],
+  globals: [Header, Footer, Homepage, WohnungenPage, PreisePage, InvestmentPage, LagePage, KontaktPage],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
