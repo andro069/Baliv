@@ -73,13 +73,13 @@ const paymentSteps = [
 ]
 
 const rentalExample = {
-  purchase: 120000,
+  purchase: 125000,
   size: 50,
   pricePerSqm: 2500,
   weeklyRate: 550,
   occupancyWeeks: 20,
   annualRent: 11000,
-  yield: 9.2,
+  yield: 8.8,
   appreciationLow: 30000,
   appreciationHigh: 48000,
 }
@@ -305,7 +305,7 @@ export default function InvestmentPage() {
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center py-3 border-b border-white/10">
                 <span className="text-white/50 text-sm">Kaufpreis (50 m² × 2.500 €)</span>
-                <span className="text-white font-medium">120.000 €</span>
+                <span className="text-white font-medium">125.000 €</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-white/10">
                 <span className="text-white/50 text-sm">Einnahmen Hauptsaison (10 Wo.)</span>

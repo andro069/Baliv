@@ -27,7 +27,7 @@ const types = [
       'Direkter Zugang zum begrünten Innenhof. Kompakter Einstieg als Pied-à-terre, Ferienobjekt oder renditestarkes Investment.',
     floorplan: '/grundriss-studio.webp',
     image: '/interieur-01.webp',
-    example: { size: 29, price: 69600 },
+    example: { size: 29, price: 72500 },
   },
   {
     nr: '02',
@@ -42,7 +42,7 @@ const types = [
       'Der meistgewählte Typ. Mit steigender Etage wachsen die Ausblicke — von Olivenhainen im Erdgeschoss bis hin zu Meerespanoramen in den Obergeschossen.',
     floorplan: '/grundriss-apartment.webp',
     image: '/interieur-wohnen-01.webp',
-    example: { size: 50, price: 120000 },
+    example: { size: 50, price: 125000 },
   },
   {
     nr: '03',
@@ -57,7 +57,7 @@ const types = [
       'Unverbauter 360°-Rundblick auf Adria, Rumija und Stari Bar. Großzügige Dachterrasse — das Highlight des gesamten Ensembles.',
     floorplan: '/grundriss-penthouse.webp',
     image: '/terrasse-berge.webp',
-    example: { size: 77, price: 231000 },
+    example: { size: 77, price: 192500 },
   },
 ]
 

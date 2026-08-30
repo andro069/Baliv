@@ -9,7 +9,7 @@ import { PageFooter } from '@/components/PageFooter'
 export const metadata: Metadata = {
   title: 'Preise — Baliv Residence, Bar Montenegro',
   description:
-    'Studio ab 69.600 €, Zweizimmer ab 112.800 €, Penthouse ab 219.000 €. Frühbucherpreise ab 2.500 €/m² — direkt vom Bauträger, ohne Makler.',
+    'Studio ab 72.500 €, Zweizimmer ab 125.000 €, Penthouse ab 192.500 €. Frühbucherpreise ab 2.500 €/m² — direkt vom Bauträger, ohne Makler.',
 }
 
 const types = [
@@ -21,7 +21,7 @@ const types = [
     pricePerSqm: 'ab 2.500 €/m²',
     units: '2 Einheiten',
     exampleSize: 29,
-    examplePrice: 69600,
+    examplePrice: 72500,
     features: [
       'Wohn-/Schlafbereich kombiniert',
       'Küchenzeile',
@@ -39,7 +39,7 @@ const types = [
     pricePerSqm: 'ab 2.500 €/m²',
     units: '35 Einheiten',
     exampleSize: 50,
-    examplePrice: 120000,
+    examplePrice: 125000,
     features: [
       '1 Schlafzimmer',
       'Wohn-/Essbereich',
@@ -58,7 +58,7 @@ const types = [
     pricePerSqm: 'ab 3.000 €/m²',
     units: '2 Einheiten',
     exampleSize: 77,
-    examplePrice: 231000,
+    examplePrice: 192500,
     features: [
       '2 Schlafzimmer',
       'Wohn-/Essbereich',
@@ -117,9 +117,9 @@ export default function PreisePage() {
           {/* Quick stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
             {[
-              { v: 'ab 69.600 €', l: 'Studio' },
-              { v: 'ab 112.800 €', l: 'Zweizimmer' },
-              { v: 'ab 219.000 €', l: 'Penthouse' },
+              { v: 'ab 72.500 €', l: 'Studio' },
+              { v: 'ab 125.000 €', l: 'Zweizimmer' },
+              { v: 'ab 192.500 €', l: 'Penthouse' },
               { v: '0 €', l: 'Maklergebühr' },
             ].map((s) => (
               <div key={s.l} className="border border-white/10 rounded p-5">
