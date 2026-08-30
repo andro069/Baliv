@@ -2,6 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { KontaktForm } from './KontaktForm'
@@ -13,7 +15,17 @@ export const metadata: Metadata = {
     'Exposé, Grundrisse und Preisliste kostenlos anfordern. Direktkontakt zum Bauträger Real Living d.o.o. — kein Makler, keine Provision.',
 }
 
-export default function KontaktPage() {
+export default async function KontaktPage() {
+  const payload = await getPayload({ config })
+  const cms = await payload.findGlobal({ slug: 'kontakt-page' })
+
+  const heroHeadline = (cms as any)?.hero?.headline ?? 'Sprechen wir miteinander.'
+  const heroDescription = (cms as any)?.hero?.description ?? 'Wir antworten innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.'
+  const email = (cms as any)?.info?.email ?? 'info@baliv-residence.com'
+  const whatsapp = (cms as any)?.info?.whatsapp ?? '38268517873'
+  const whatsappDisplay = (cms as any)?.info?.telefon ?? '+382 68 517 873'
+  const adresse = (cms as any)?.info?.adresse ?? 'Real Living d.o.o.\nBar, Montenegro'
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -35,12 +47,10 @@ export default function KontaktPage() {
             className="text-white text-4xl md:text-6xl leading-tight mb-4 max-w-xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Sprechen wir
-            <br />
-            <em className="not-italic text-[#B69252]">miteinander.</em>
+            {heroHeadline}
           </h1>
           <p className="text-white/60 max-w-md leading-relaxed">
-            Wir antworten innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.
+            {heroDescription}
           </p>
         </div>
       </section>
@@ -68,7 +78,7 @@ export default function KontaktPage() {
 
             <div className="space-y-6 mb-12">
               <a
-                href="mailto:info@baliv-residence.com"
+                href={`mailto:${email}`}
                 className="flex items-center gap-4 group"
               >
                 <div className="w-10 h-10 bg-[#151E39] rounded flex items-center justify-center flex-shrink-0">
@@ -80,13 +90,13 @@ export default function KontaktPage() {
                 <div>
                   <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">E-Mail</p>
                   <p className="text-[#151E39] group-hover:text-[#B69252] transition-colors text-sm">
-                    info@baliv-residence.com
+                    {email}
                   </p>
                 </div>
               </a>
 
               <a
-                href="https://wa.me/38268517873"
+                href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 group"
@@ -97,9 +107,9 @@ export default function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">WhatsApp</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">WhatsApp</p>
                   <p className="text-[#151E39] group-hover:text-[#B69252] transition-colors text-sm">
-                    +382 68 517 873
+                    {whatsappDisplay}
                   </p>
                 </div>
               </a>
@@ -112,8 +122,8 @@ export default function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">Adresse</p>
-                  <p className="text-[#151E39] text-sm">Real Living d.o.o.<br />Bar, Montenegro</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">Adresse</p>
+                  <p className="text-[#151E39] text-sm whitespace-pre-line">{adresse}</p>
                 </div>
               </div>
             </div>

@@ -2,6 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PageFooter } from '@/components/PageFooter'
@@ -10,6 +12,34 @@ export const metadata: Metadata = {
   title: 'Investment — Baliv Residence, Bar Montenegro',
   description:
     'Montenegro: 6–8% Mietrendite, 25–40% Wertsteigerung bis 2030, Einkommensteuer 9%. Investieren Sie jetzt — vor dem EU-Beitritt 2028.',
+}
+
+const defaultTaxAdvantages = [
+  { label: 'Einkommensteuer auf Mieteinnahmen', value: '9 %', note: 'einer der niedrigsten Sätze Europas' },
+  { label: 'Körperschaftsteuer', value: '9 %', note: 'bei gewerblicher Vermietung' },
+  { label: 'Grunderwerbsteuer', value: '3 %', note: 'einmalig beim Kauf' },
+  { label: 'Vermögenssteuer', value: '0 %', note: 'keine Vermögenssteuer' },
+  { label: 'Erbschaftssteuer', value: '0 %', note: 'keine Erbschaftssteuer' },
+  { label: 'Kapitalertragsteuer', value: '9 %', note: 'bei Wiederverkauf' },
+]
+
+const defaultPaymentSteps = [
+  { step: '01', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', note: 'nach Erhalt der Baugenehmigung' },
+  { step: '02', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', note: 'bei Rohbaufertigstellung' },
+  { step: '03', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', note: 'bei Dachschluss' },
+  { step: '04', date: 'Q1 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
+]
+
+const defaultRentalExample = {
+  purchase: 125000,
+  size: 50,
+  pricePerSqm: 2500,
+  weeklyRate: 550,
+  occupancyWeeks: 20,
+  annualRent: 11000,
+  yield: 8.8,
+  appreciationLow: 30000,
+  appreciationHigh: 48000,
 }
 
 const reasons = [
@@ -56,35 +86,42 @@ const reasons = [
   },
 ]
 
-const taxAdvantages = [
-  { label: 'Einkommensteuer auf Mieteinnahmen', value: '9 %', note: 'einer der niedrigsten Sätze Europas' },
-  { label: 'Körperschaftsteuer', value: '9 %', note: 'bei gewerblicher Vermietung' },
-  { label: 'Grunderwerbsteuer', value: '3 %', note: 'einmalig beim Kauf' },
-  { label: 'Vermögenssteuer', value: '0 %', note: 'keine Vermögenssteuer' },
-  { label: 'Erbschaftssteuer', value: '0 %', note: 'keine Erbschaftssteuer' },
-  { label: 'Kapitalertragsteuer', value: '9 %', note: 'bei Wiederverkauf' },
-]
+export default async function InvestmentPage() {
+  const payload = await getPayload({ config })
+  const cms = await payload.findGlobal({ slug: 'investment-page' })
 
-const paymentSteps = [
-  { step: '01', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', note: 'nach Erhalt der Baugenehmigung' },
-  { step: '02', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', note: 'bei Rohbaufertigstellung' },
-  { step: '03', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', note: 'bei Dachschluss' },
-  { step: '04', date: 'Q1 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
-]
+  const heroHeadline = (cms as any)?.hero?.headline ?? 'Investieren, wo Europa wächst.'
+  const heroDescription = (cms as any)?.hero?.description ?? 'Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas, zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.'
 
-const rentalExample = {
-  purchase: 125000,
-  size: 50,
-  pricePerSqm: 2500,
-  weeklyRate: 550,
-  occupancyWeeks: 20,
-  annualRent: 11000,
-  yield: 8.8,
-  appreciationLow: 30000,
-  appreciationHigh: 48000,
-}
+  const cmsTax: any[] = (cms as any)?.steuerDaten ?? []
+  const taxAdvantages = cmsTax.length > 0
+    ? cmsTax.map((t: any) => ({ label: t.label ?? '', value: t.value ?? '', note: t.note ?? '' }))
+    : defaultTaxAdvantages
 
-export default function InvestmentPage() {
+  const cmsSteps: any[] = (cms as any)?.paymentSteps ?? []
+  const paymentSteps = cmsSteps.length > 0
+    ? cmsSteps.map((s: any, idx: number) => ({
+        step: s.step ?? `0${idx + 1}`,
+        date: s.date ?? '',
+        label: s.label ?? '',
+        amount: s.amount ?? '',
+        note: s.note ?? '',
+      }))
+    : defaultPaymentSteps
+
+  const r = (cms as any)?.mietRendite ?? {}
+  const rentalExample = {
+    purchase: r.purchase ?? defaultRentalExample.purchase,
+    size: r.size ?? defaultRentalExample.size,
+    pricePerSqm: r.pricePerSqm ?? defaultRentalExample.pricePerSqm,
+    weeklyRate: r.weeklyRate ?? defaultRentalExample.weeklyRate,
+    occupancyWeeks: r.occupancyWeeks ?? defaultRentalExample.occupancyWeeks,
+    annualRent: r.annualRent ?? defaultRentalExample.annualRent,
+    yield: r.yield ?? defaultRentalExample.yield,
+    appreciationLow: r.appreciationLow ?? defaultRentalExample.appreciationLow,
+    appreciationHigh: r.appreciationHigh ?? defaultRentalExample.appreciationHigh,
+  }
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -106,14 +143,10 @@ export default function InvestmentPage() {
             className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 max-w-2xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Investieren,
-            <br />
-            wo Europa{' '}
-            <em className="not-italic text-[#B69252]">wächst.</em>
+            {heroHeadline}
           </h1>
           <p className="text-white/70 text-base md:text-lg max-w-lg leading-relaxed">
-            Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas,
-            zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.
+            {heroDescription}
           </p>
         </div>
 
@@ -273,9 +306,7 @@ export default function InvestmentPage() {
               className="text-[#151E39] text-3xl md:text-5xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              6–8 % Rendite.
-              <br />
-              <em className="not-italic text-[#B69252]">Brutto. Realistisch.</em>
+              {(cms as any)?.mietRendite?.headline ?? '6–8 % Rendite.\nBrutto. Realistisch.'}
             </h2>
             <p className="text-[#151E39]/60 leading-relaxed mb-8">
               Die Adriaküste verzeichnet eine wachsende Nachfrage nach Kurzzeitvermietung.
@@ -285,9 +316,9 @@ export default function InvestmentPage() {
 
             <div className="space-y-3">
               {[
-                { label: 'Hauptsaison', value: '550–700 €/Woche', icon: '▲' },
+                { label: 'Hauptsaison', value: `${rentalExample.weeklyRate}–${rentalExample.weeklyRate + 150} €/Woche`, icon: '▲' },
                 { label: 'Nebensaison', value: '300–450 €/Woche', icon: '◆' },
-                { label: 'Belegung Ø', value: '18–22 Wochen/Jahr', icon: '◆' },
+                { label: 'Belegung Ø', value: `${rentalExample.occupancyWeeks} Wochen/Jahr`, icon: '◆' },
                 { label: 'Verwaltung vor Ort', value: 'verfügbar', icon: '◆' },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between py-3 border-b border-[#151E39]/10">
@@ -300,24 +331,26 @@ export default function InvestmentPage() {
 
           {/* Rendite-Rechner */}
           <div className="bg-[#151E39] rounded p-8">
-            <p className="text-[#B69252] text-xs tracking-widest uppercase mb-6">Beispielrechnung · 50 m² Zweizimmerwohnung</p>
+            <p className="text-[#B69252] text-xs tracking-widest uppercase mb-6">
+              Beispielrechnung · {rentalExample.size} m² Zweizimmerwohnung
+            </p>
 
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center py-3 border-b border-white/10">
-                <span className="text-white/50 text-sm">Kaufpreis (50 m² × 2.500 €)</span>
-                <span className="text-white font-medium">125.000 €</span>
+                <span className="text-white/50 text-sm">Kaufpreis ({rentalExample.size} m² × {rentalExample.pricePerSqm.toLocaleString('de-DE')} €)</span>
+                <span className="text-white font-medium">{rentalExample.purchase.toLocaleString('de-DE')} €</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-white/10">
                 <span className="text-white/50 text-sm">Einnahmen Hauptsaison (10 Wo.)</span>
-                <span className="text-white font-medium">5.500 €</span>
+                <span className="text-white font-medium">{(rentalExample.weeklyRate * 10).toLocaleString('de-DE')} €</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-white/10">
                 <span className="text-white/50 text-sm">Einnahmen Nebensaison (10 Wo.)</span>
-                <span className="text-white font-medium">3.750 €</span>
+                <span className="text-white font-medium">{((rentalExample.annualRent - rentalExample.weeklyRate * 10)).toLocaleString('de-DE')} €</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-white/10">
                 <span className="text-white/50 text-sm">Steuer (9 % auf Netto)</span>
-                <span className="text-white/50 text-sm">~ 830 €</span>
+                <span className="text-white/50 text-sm">~ {Math.round(rentalExample.annualRent * 0.09).toLocaleString('de-DE')} €</span>
               </div>
             </div>
 
@@ -326,13 +359,13 @@ export default function InvestmentPage() {
                 <div>
                   <p className="text-[#B69252] text-xs tracking-widest uppercase mb-1">Netto-Jahresertrag</p>
                   <p className="text-white text-3xl font-light" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                    ~8.400 €
+                    ~{Math.round(rentalExample.annualRent * 0.91).toLocaleString('de-DE')} €
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-[#B69252] text-xs tracking-widest uppercase mb-1">Rendite</p>
                   <p className="text-[#B69252] text-3xl font-light" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                    7,0 %
+                    {rentalExample.yield.toFixed(1).replace('.', ',')} %
                   </p>
                 </div>
               </div>
@@ -343,11 +376,11 @@ export default function InvestmentPage() {
               <div className="flex justify-between">
                 <div>
                   <p className="text-white/40 text-xs mb-1">Konservativ (+25 %)</p>
-                  <p className="text-white font-medium">+30.000 €</p>
+                  <p className="text-white font-medium">+{rentalExample.appreciationLow.toLocaleString('de-DE')} €</p>
                 </div>
                 <div className="text-right">
                   <p className="text-white/40 text-xs mb-1">Optimistisch (+40 %)</p>
-                  <p className="text-[#B69252] font-medium">+48.000 €</p>
+                  <p className="text-[#B69252] font-medium">+{rentalExample.appreciationHigh.toLocaleString('de-DE')} €</p>
                 </div>
               </div>
             </div>
@@ -420,9 +453,7 @@ export default function InvestmentPage() {
         </div>
 
         <div className="relative">
-          {/* Connecting line */}
           <div className="hidden md:block absolute top-10 left-[10%] right-[10%] h-px bg-[#B69252]/20" />
-
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             {paymentSteps.map((step, idx) => (
               <div key={step.step} className="relative text-center">
@@ -433,10 +464,7 @@ export default function InvestmentPage() {
                 </div>
                 <div className="text-[#B69252] text-xs tracking-widest uppercase mb-1">{step.date}</div>
                 <div className="text-[#151E39] font-medium mb-1">{step.label}</div>
-                <div
-                  className={`text-2xl font-light mb-2 ${idx === 0 ? 'text-[#151E39]' : 'text-[#151E39]'}`}
-                  style={{ fontFamily: 'var(--font-playfair), serif' }}
-                >
+                <div className="text-[#151E39] text-2xl font-light mb-2" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                   {step.amount}
                 </div>
                 <div className="text-[#151E39]/40 text-xs leading-relaxed">{step.note}</div>

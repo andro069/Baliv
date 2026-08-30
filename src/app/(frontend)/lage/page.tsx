@@ -2,9 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PageFooter } from '@/components/PageFooter'
+import type { Media } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'Lage — Baliv Residence, Bar Montenegro',
@@ -12,84 +15,51 @@ export const metadata: Metadata = {
     'Bar liegt am Fuß der Stari-Bar-Festung — zwischen Adria, Olivenhainen und dem Rumija-Gebirge. 50 km bis Podgorica, 35 km bis Budva.',
 }
 
-const distances = [
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 4C10.7 4 8 6.7 8 10c0 5.25 6 13 6 13s6-7.75 6-13c0-3.3-2.7-6-6-6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
-        <circle cx="14" cy="10" r="2" stroke="#B69252" strokeWidth="1.2"/>
-      </svg>
-    ),
-    place: 'Stari Bar',
-    distance: '5 min',
-    detail: 'zu Fuß',
-    note: 'Mittelalterliche Festungsstadt, UNESCO-Kandidat',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M6 20c0-4 3-7 8-7s8 3 8 7" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-        <path d="M8 12c0 0 2-6 6-6s6 6 6 6" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-        <path d="M4 20h20" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-      </svg>
-    ),
-    place: 'Strand Bar',
-    distance: '8 min',
-    detail: 'mit dem Auto',
-    note: '13 km Sandstrand, flaches Wasser',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <rect x="4" y="14" width="20" height="8" rx="1" stroke="#B69252" strokeWidth="1.2"/>
-        <path d="M8 14V10a6 6 0 0112 0v4" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-        <path d="M4 18h20M10 18v4M18 18v4" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-      </svg>
-    ),
-    place: 'Budva',
-    distance: '35 km',
-    detail: '30 min',
-    note: 'Touristisches Zentrum der Riviera',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M5 20l4-10 5 5 4-7 5 12H5z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
-        <path d="M5 20h18" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-      </svg>
-    ),
-    place: 'Kotor',
-    distance: '50 km',
-    detail: '45 min',
-    note: 'UNESCO-Welterbe, Bucht von Kotor',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M6 18l3-3 2 2 3-5 2 3 3-6 3 9H6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
-        <path d="M4 21h20M14 4v4M10 5l1.5 3.5M18 5l-1.5 3.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-      </svg>
-    ),
-    place: 'Flughafen Podgorica',
-    distance: '50 km',
-    detail: '45 min',
-    note: 'Internationaler Flughafen, direkte Verbindungen',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M6 18l3-3 2 2 3-5 2 3 3-6 3 9H6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
-        <path d="M4 21h20M14 4v4M10 5l1.5 3.5M18 5l-1.5 3.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-      </svg>
-    ),
-    place: 'Flughafen Tivat',
-    distance: '65 km',
-    detail: '60 min',
-    note: 'Saisonale Direktflüge aus Europa',
-  },
+function mediaUrl(field: number | string | Media | null | undefined, fallback: string): string {
+  if (!field) return fallback
+  if (typeof field === 'string' || typeof field === 'number') return fallback
+  return field.url ?? fallback
+}
+
+const distanceIcons: React.ReactNode[] = [
+  <svg key="0" width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <path d="M14 4C10.7 4 8 6.7 8 10c0 5.25 6 13 6 13s6-7.75 6-13c0-3.3-2.7-6-6-6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+    <circle cx="14" cy="10" r="2" stroke="#B69252" strokeWidth="1.2"/>
+  </svg>,
+  <svg key="1" width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <path d="M6 20c0-4 3-7 8-7s8 3 8 7" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+    <path d="M8 12c0 0 2-6 6-6s6 6 6 6" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+    <path d="M4 20h20" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>,
+  <svg key="2" width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <rect x="4" y="14" width="20" height="8" rx="1" stroke="#B69252" strokeWidth="1.2"/>
+    <path d="M8 14V10a6 6 0 0112 0v4" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+    <path d="M4 18h20M10 18v4M18 18v4" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>,
+  <svg key="3" width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <path d="M5 20l4-10 5 5 4-7 5 12H5z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+    <path d="M5 20h18" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>,
+  <svg key="4" width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <path d="M6 18l3-3 2 2 3-5 2 3 3-6 3 9H6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+    <path d="M4 21h20M14 4v4M10 5l1.5 3.5M18 5l-1.5 3.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>,
+  <svg key="5" width="28" height="28" viewBox="0 0 28 28" fill="none">
+    <path d="M6 18l3-3 2 2 3-5 2 3 3-6 3 9H6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
+    <path d="M4 21h20M14 4v4M10 5l1.5 3.5M18 5l-1.5 3.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>,
 ]
 
-const highlights = [
+const defaultDistances = [
+  { place: 'Stari Bar', distance: '5 min', detail: 'zu Fuß', note: 'Mittelalterliche Festungsstadt, UNESCO-Kandidat' },
+  { place: 'Strand Bar', distance: '8 min', detail: 'mit dem Auto', note: '13 km Sandstrand, flaches Wasser' },
+  { place: 'Budva', distance: '35 km', detail: '30 min', note: 'Touristisches Zentrum der Riviera' },
+  { place: 'Kotor', distance: '50 km', detail: '45 min', note: 'UNESCO-Welterbe, Bucht von Kotor' },
+  { place: 'Flughafen Podgorica', distance: '50 km', detail: '45 min', note: 'Internationaler Flughafen, direkte Verbindungen' },
+  { place: 'Flughafen Tivat', distance: '65 km', detail: '60 min', note: 'Saisonale Direktflüge aus Europa' },
+]
+
+const defaultHighlights = [
   {
     title: 'Stari Bar — Geschichte zu Fuß',
     text: 'Die mittelalterliche Festungsstadt Stari Bar liegt in Sichtweite des Projekts. Über 400 historische Gebäude, Olivenhaine die über 2.000 Jahre alt sind — ein lebendiges Kulturerbe direkt vor der Haustür.',
@@ -107,7 +77,35 @@ const highlights = [
   },
 ]
 
-export default function LagePage() {
+export default async function LagePage() {
+  const payload = await getPayload({ config })
+  const cms = await payload.findGlobal({ slug: 'lage-page' })
+
+  const heroHeadline = (cms as any)?.hero?.headline ?? 'Zwischen Festung, Meer und Bergen.'
+  const heroSubline = (cms as any)?.hero?.subline ?? 'Die Lage'
+  const heroDescription = (cms as any)?.hero?.description ?? 'Bar — am südlichen Ende der montenegrinischen Riviera. Authentisch, gewachsen, und am Beginn einer Entwicklung, die Budva und Kotor bereits hinter sich haben.'
+  const marktHeadline = (cms as any)?.markt?.headline ?? 'Was Budva und Kotor vor 15 Jahren waren.'
+  const marktDescription = (cms as any)?.markt?.description ?? 'Kotor kostet heute 4.000–6.000 €/m². Budva 3.500–5.000 €/m². Bar liegt bei 2.500 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge, mediterranes Klima. Der Unterschied: Bar entwickelt sich gerade erst.'
+
+  const cmsDistances: any[] = (cms as any)?.distances ?? []
+  const distances = cmsDistances.length > 0
+    ? cmsDistances.map((d: any) => ({
+        place: d.place ?? '',
+        distance: d.distance ?? '',
+        detail: d.detail ?? '',
+        note: d.note ?? '',
+      }))
+    : defaultDistances
+
+  const cmsHighlights: any[] = (cms as any)?.highlights ?? []
+  const highlights = cmsHighlights.length > 0
+    ? cmsHighlights.map((h: any, idx: number) => ({
+        title: h.title ?? defaultHighlights[idx]?.title ?? '',
+        text: h.text ?? defaultHighlights[idx]?.text ?? '',
+        image: mediaUrl(h.image, defaultHighlights[idx]?.image ?? ''),
+      }))
+    : defaultHighlights
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -124,21 +122,15 @@ export default function LagePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#151E39]/80 via-[#151E39]/50 to-transparent" />
         <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Die Lage</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{heroSubline}</p>
           <h1
             className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 max-w-2xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Zwischen
-            <br />
-            Festung,{' '}
-            <em className="not-italic text-[#B69252]">Meer</em>
-            <br />
-            und Bergen.
+            {heroHeadline}
           </h1>
           <p className="text-white/70 text-base md:text-lg max-w-md leading-relaxed">
-            Bar — am südlichen Ende der montenegrinischen Riviera. Authentisch, gewachsen,
-            und am Beginn einer Entwicklung, die Budva und Kotor bereits hinter sich haben.
+            {heroDescription}
           </p>
         </div>
 
@@ -187,12 +179,12 @@ export default function LagePage() {
             </p>
 
             <div className="space-y-3">
-              {distances.map((d) => (
+              {distances.map((d, idx) => (
                 <div
                   key={d.place}
                   className="flex items-center gap-4 bg-white rounded p-4 hover:shadow-sm transition-shadow"
                 >
-                  <div className="flex-shrink-0">{d.icon}</div>
+                  <div className="flex-shrink-0">{distanceIcons[idx % distanceIcons.length]}</div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[#151E39] font-medium">{d.place}</div>
                     <div className="text-[#151E39]/40 text-xs mt-0.5 truncate">{d.note}</div>
@@ -216,7 +208,6 @@ export default function LagePage() {
                 height={900}
                 className="w-full"
               />
-              {/* Overlay label */}
               <div className="absolute top-4 left-4 bg-[#151E39]/80 backdrop-blur-sm rounded px-3 py-2">
                 <p className="text-[#B69252] text-xs tracking-widest uppercase">Baliv Residence</p>
                 <p className="text-white text-xs mt-0.5">Bar, Montenegro</p>
@@ -278,14 +269,10 @@ export default function LagePage() {
               className="text-[#151E39] text-3xl md:text-4xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Was Budva und Kotor
-              <br />
-              <em className="not-italic text-[#B69252]">vor 15 Jahren waren.</em>
+              {marktHeadline}
             </h2>
             <p className="text-[#151E39]/60 leading-relaxed mb-8">
-              Kotor kostet heute 4.000–6.000 €/m². Budva 3.500–5.000 €/m². Bar liegt bei
-              2.500 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge,
-              mediterranes Klima. Der Unterschied: Bar entwickelt sich gerade erst.
+              {marktDescription}
             </p>
 
             <div className="space-y-4">

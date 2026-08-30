@@ -2,10 +2,13 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PricingTimeline } from '@/components/PricingTimeline'
 import { PageFooter } from '@/components/PageFooter'
+import type { Media } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'Die Wohnungen — Baliv Residence, Bar Montenegro',
@@ -13,7 +16,13 @@ export const metadata: Metadata = {
     'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.500 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Q1 2028.',
 }
 
-const types = [
+function mediaUrl(field: number | string | Media | null | undefined, fallback: string): string {
+  if (!field) return fallback
+  if (typeof field === 'string' || typeof field === 'number') return fallback
+  return field.url ?? fallback
+}
+
+const defaultTypes = [
   {
     nr: '01',
     type: 'Studio',
@@ -61,6 +70,15 @@ const types = [
   },
 ]
 
+const defaultAusstattung = [
+  { brand: 'Hansgrohe', label: 'Sanitärarmaturen' },
+  { brand: 'LG', label: 'Klimaanlage' },
+  { brand: 'Eurocode 8', label: 'Erdbebenstandard' },
+  { brand: 'Naturstein', label: 'Böden & Fassade' },
+  { brand: 'Geölte Eiche', label: 'Holzoberflächen' },
+  { brand: 'Schlüsselfertig', label: 'Übergabe komplett' },
+]
+
 const ausstattungIcons: Record<string, React.ReactNode> = {
   Hansgrohe: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -104,15 +122,6 @@ const ausstattungIcons: Record<string, React.ReactNode> = {
   ),
 }
 
-const ausstattung = [
-  { brand: 'Hansgrohe', label: 'Sanitärarmaturen' },
-  { brand: 'LG', label: 'Klimaanlage' },
-  { brand: 'Eurocode 8', label: 'Erdbebenstandard' },
-  { brand: 'Naturstein', label: 'Böden & Fassade' },
-  { brand: 'Geölte Eiche', label: 'Holzoberflächen' },
-  { brand: 'Schlüsselfertig', label: 'Übergabe komplett' },
-]
-
 const building = [
   { value: '7', label: 'Geschosse' },
   { value: '39', label: 'Wohneinheiten' },
@@ -120,7 +129,39 @@ const building = [
   { value: 'Q1 2028', label: 'Fertigstellung' },
 ]
 
-export default function WohnungenPage() {
+export default async function WohnungenPage() {
+  const payload = await getPayload({ config })
+  const cms = await payload.findGlobal({ slug: 'wohnungen-page' })
+
+  const heroHeadline = (cms as any)?.hero?.headline ?? 'Drei Typen. Ihre Wahl.'
+  const heroDescription = (cms as any)?.hero?.description ?? '39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur großzügigen Dachgeschosswohnung mit Panoramablick.'
+
+  const cmsTypes: any[] = (cms as any)?.types ?? []
+  const types = cmsTypes.length > 0
+    ? cmsTypes.map((t: any, idx: number) => ({
+        nr: t.nr ?? defaultTypes[idx]?.nr ?? `0${idx + 1}`,
+        type: t.type ?? defaultTypes[idx]?.type ?? '',
+        tag: t.tag ?? defaultTypes[idx]?.tag ?? '',
+        size: t.size ?? defaultTypes[idx]?.size ?? '',
+        terrace: t.terrace ?? defaultTypes[idx]?.terrace ?? '',
+        units: t.units ?? defaultTypes[idx]?.units ?? '',
+        price: t.price ?? defaultTypes[idx]?.price ?? '',
+        layout: t.layout ?? defaultTypes[idx]?.layout ?? '',
+        description: t.description ?? defaultTypes[idx]?.description ?? '',
+        floorplan: mediaUrl(t.floorplan, defaultTypes[idx]?.floorplan ?? ''),
+        image: mediaUrl(t.image, defaultTypes[idx]?.image ?? ''),
+        example: {
+          size: t.exampleSize ?? defaultTypes[idx]?.example?.size ?? 0,
+          price: t.examplePrice ?? defaultTypes[idx]?.example?.price ?? 0,
+        },
+      }))
+    : defaultTypes
+
+  const cmsAusstattung: any[] = (cms as any)?.ausstattung ?? []
+  const ausstattung = cmsAusstattung.length > 0
+    ? cmsAusstattung.map((a: any) => ({ brand: a.brand ?? '', label: a.label ?? '' }))
+    : defaultAusstattung
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -144,13 +185,10 @@ export default function WohnungenPage() {
             className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 max-w-2xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Drei Typen.
-            <br />
-            <em className="not-italic text-[#B69252]">Ihre</em> Wahl.
+            {heroHeadline}
           </h1>
           <p className="text-white/70 text-base md:text-lg max-w-md">
-            39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur großzügigen
-            Dachgeschosswohnung mit Panoramablick.
+            {heroDescription}
           </p>
         </div>
 
@@ -308,7 +346,7 @@ export default function WohnungenPage() {
             <div className="grid grid-cols-2 gap-4">
               {ausstattung.map((item) => (
                 <div key={item.brand} className="bg-white/5 border border-white/10 rounded p-5 hover:border-[#B69252]/40 transition-colors">
-                  <div className="mb-3">{ausstattungIcons[item.brand]}</div>
+                  <div className="mb-3">{ausstattungIcons[item.brand] ?? null}</div>
                   <div className="text-white font-medium mb-1">{item.brand}</div>
                   <div className="text-white/40 text-xs tracking-wide">{item.label}</div>
                 </div>

@@ -2,9 +2,12 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PageFooter } from '@/components/PageFooter'
+import type { Media } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'Preise — Baliv Residence, Bar Montenegro',
@@ -12,7 +15,13 @@ export const metadata: Metadata = {
     'Studio ab 72.500 €, Zweizimmer ab 125.000 €, Penthouse ab 192.500 €. Frühbucherpreise ab 2.500 €/m² — direkt vom Bauträger, ohne Makler.',
 }
 
-const types = [
+function mediaUrl(field: number | string | Media | null | undefined, fallback: string): string {
+  if (!field) return fallback
+  if (typeof field === 'string' || typeof field === 'number') return fallback
+  return field.url ?? fallback
+}
+
+const defaultTypes = [
   {
     nr: '01',
     type: 'Studio',
@@ -72,14 +81,14 @@ const types = [
   },
 ]
 
-const paymentSteps = [
+const defaultPaymentSteps = [
   { step: '01', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', pct: 40, note: 'Nach Erhalt der offiziellen Baugenehmigung' },
   { step: '02', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', pct: 30, note: 'Bei Abschluss des Rohbaus' },
   { step: '03', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', pct: 20, note: 'Bei Dachschluss und Ausbaubeginn' },
   { step: '04', date: 'Q1 2028', label: 'Schlüsselübergabe', amount: '10 %', pct: 10, note: 'Bei vollständiger Fertigstellung' },
 ]
 
-const included = [
+const defaultIncluded = [
   { label: 'Hansgrohe Sanitärarmaturen', included: true },
   { label: 'LG Klimaanlage', included: true },
   { label: 'Naturstein-Böden', included: true },
@@ -91,7 +100,52 @@ const included = [
   { label: 'Tiefgaragenplatz', included: false, note: 'separat erwerbbar' },
 ]
 
-export default function PreisePage() {
+const PctMap: Record<string, number> = { '40 %': 40, '30 %': 30, '20 %': 20, '10 %': 10 }
+
+export default async function PreisePage() {
+  const payload = await getPayload({ config })
+  const cms = await payload.findGlobal({ slug: 'preise-page' })
+
+  const cmsTypes: any[] = (cms as any)?.types ?? []
+  const types = cmsTypes.length > 0
+    ? cmsTypes.map((t: any, idx: number) => ({
+        nr: t.nr ?? defaultTypes[idx]?.nr ?? `0${idx + 1}`,
+        type: t.type ?? defaultTypes[idx]?.type ?? '',
+        tag: t.tag ?? defaultTypes[idx]?.tag ?? '',
+        size: t.size ?? defaultTypes[idx]?.size ?? '',
+        pricePerSqm: t.pricePerSqm ?? defaultTypes[idx]?.pricePerSqm ?? '',
+        units: t.units ?? defaultTypes[idx]?.units ?? '',
+        exampleSize: t.exampleSize ?? defaultTypes[idx]?.exampleSize ?? 0,
+        examplePrice: t.examplePrice ?? defaultTypes[idx]?.examplePrice ?? 0,
+        highlight: t.highlight ?? defaultTypes[idx]?.highlight ?? false,
+        floorplan: mediaUrl(t.floorplan, defaultTypes[idx]?.floorplan ?? ''),
+        features: (t.features ?? []).length > 0
+          ? (t.features as any[]).map((f: any) => f.label ?? '')
+          : defaultTypes[idx]?.features ?? [],
+      }))
+    : defaultTypes
+
+  const cmsPaymentSteps: any[] = (cms as any)?.paymentSteps ?? []
+  const paymentSteps = cmsPaymentSteps.length > 0
+    ? cmsPaymentSteps.map((s: any, idx: number) => ({
+        step: s.step ?? `0${idx + 1}`,
+        date: s.date ?? '',
+        label: s.label ?? '',
+        amount: s.amount ?? '',
+        pct: PctMap[s.amount ?? ''] ?? null,
+        note: s.note ?? '',
+      }))
+    : defaultPaymentSteps
+
+  const cmsIncluded: any[] = (cms as any)?.included ?? []
+  const included = cmsIncluded.length > 0
+    ? cmsIncluded.map((i: any) => ({
+        label: i.label ?? '',
+        included: i.included ?? true,
+        note: i.note,
+      }))
+    : defaultIncluded
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -105,21 +159,20 @@ export default function PreisePage() {
             className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 max-w-3xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Transparent.
-            <br />
-            <em className="not-italic text-[#B69252]">Direkt vom Bauträger.</em>
+            {((cms as any)?.hero?.headline ?? 'Transparent.\nDirekt vom Bauträger.').split('\n').map((line: string, i: number) => (
+              <React.Fragment key={i}>{i > 0 && <br />}{line}</React.Fragment>
+            ))}
           </h1>
           <p className="text-white/60 text-base md:text-lg max-w-xl leading-relaxed">
-            Keine Maklergebühren, keine versteckten Kosten. MwSt. ist im Kaufpreis enthalten.
-            Frühbucherpreise gelten bis zur Baugenehmigung im Oktober 2026.
+            {(cms as any)?.hero?.description ?? 'Keine Maklergebühren, keine versteckten Kosten. MwSt. ist im Kaufpreis enthalten. Frühbucherpreise gelten bis zur Baugenehmigung im Oktober 2026.'}
           </p>
 
           {/* Quick stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
             {[
-              { v: 'ab 72.500 €', l: 'Studio' },
-              { v: 'ab 125.000 €', l: 'Zweizimmer' },
-              { v: 'ab 192.500 €', l: 'Penthouse' },
+              { v: `ab ${types[0]?.examplePrice?.toLocaleString('de-DE') ?? '72.500'} €`, l: types[0]?.type ?? 'Studio' },
+              { v: `ab ${types[1]?.examplePrice?.toLocaleString('de-DE') ?? '125.000'} €`, l: types[1]?.type ?? 'Zweizimmer' },
+              { v: `ab ${types[2]?.examplePrice?.toLocaleString('de-DE') ?? '192.500'} €`, l: types[2]?.type ?? 'Penthouse' },
               { v: '0 €', l: 'Maklergebühr' },
             ].map((s) => (
               <div key={s.l} className="border border-white/10 rounded p-5">
@@ -153,7 +206,7 @@ export default function PreisePage() {
             >
               {t.highlight && (
                 <div className="bg-[#B69252] text-white text-xs tracking-widest uppercase text-center py-2 px-4">
-                  Meistgewählt · 35 Einheiten
+                  Meistgewählt · {t.units}
                 </div>
               )}
 
@@ -309,26 +362,19 @@ export default function PreisePage() {
                 idx === 0 ? 'bg-[#B69252]/10 border border-[#B69252]/30' : 'bg-white border border-[#151E39]/10'
               }`}
             >
-              {/* Step number */}
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
                 idx === 0 ? 'bg-[#B69252] text-white' : 'bg-[#F0EDE8] text-[#151E39]/40 border border-[#151E39]/10'
               }`}>
                 {step.step}
               </div>
-
-              {/* Date */}
               <div className="hidden md:block">
                 <div className="text-[#B69252] text-xs tracking-widest uppercase">{step.date}</div>
               </div>
-
-              {/* Label + note */}
               <div>
                 <div className="text-[#151E39] font-medium">{step.label}</div>
                 <div className="text-[#151E39]/40 text-xs mt-0.5 hidden md:block">{step.note}</div>
                 <div className="text-[#B69252] text-xs mt-0.5 md:hidden">{step.date}</div>
               </div>
-
-              {/* Progress bar (md+) */}
               {step.pct !== null ? (
                 <div className="hidden md:flex items-center gap-3">
                   <div className="flex-1 bg-[#151E39]/10 rounded-full h-1.5">
@@ -341,8 +387,6 @@ export default function PreisePage() {
               ) : (
                 <div className="hidden md:block" />
               )}
-
-              {/* Amount */}
               <div className="text-right">
                 <div className="text-[#151E39] font-medium text-lg" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                   {step.amount}
@@ -395,7 +439,6 @@ export default function PreisePage() {
                   {t.type}
                 </div>
                 <div className="text-white/30 text-sm mb-6">{t.size}</div>
-
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
                     <span className="text-white/40">Wohnfläche</span>
@@ -424,7 +467,6 @@ export default function PreisePage() {
                     </span>
                   </div>
                 </div>
-
               </div>
             ))}
           </div>
