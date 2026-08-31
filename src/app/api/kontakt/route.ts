@@ -57,13 +57,24 @@ export async function POST(req: NextRequest) {
         wert: typeof v === 'boolean' ? (v ? 'Ja' : 'Nein') : optionLabel(k, String(v)),
       }))
 
-    // Load form config for "kontakt"
+    // Einstellungen zum abgeschickten Formular. Ältere Einträge ohne
+    // Verknüpfung greifen weiter über die Formular-ID.
     const formConfigResult = await payload.find({
       collection: 'form-configs' as any,
-      where: { formSlug: { equals: 'kontakt' } },
-      limit: 1,
+      where: formId
+        ? { or: [{ form: { equals: formId } }, { formSlug: { equals: 'kontakt' } }] }
+        : { formSlug: { equals: 'kontakt' } },
+      // depth: 1, damit der Anhang mit url und filename mitkommt.
+      depth: 1,
+      limit: 10,
     })
-    const formConfig = formConfigResult.docs[0] as any | undefined
+    const docs = formConfigResult.docs as any[]
+    // Ein direkt verknüpfter Eintrag hat Vorrang vor der Rückfallebene.
+    const formConfig =
+      docs.find((d) => {
+        const linked = typeof d.form === 'object' ? d.form?.id : d.form
+        return linked && String(linked) === String(formId)
+      }) ?? docs[0]
 
     const TO_EMAIL =
       formConfig?.benachrichtigungsEmail ||
@@ -133,11 +144,16 @@ export async function POST(req: NextRequest) {
           text: arBody,
         }
 
-        // Attach PDF if configured
+        // Anhang, sofern hinterlegt. Standardmässig nur, wenn der Interessent
+        // das Exposé-Häkchen gesetzt hat.
         const anhang = formConfig.autoresponderAnhang
-        if (anhang?.url) {
+        const nurMitExpose = formConfig.autoresponderNurMitExpose !== false
+        if (anhang?.url && (expose || !nurMitExpose)) {
           try {
-            const pdfRes = await fetch(anhang.url)
+            const url = anhang.url.startsWith('http')
+              ? anhang.url
+              : new URL(anhang.url, req.nextUrl.origin).toString()
+            const pdfRes = await fetch(url)
             if (pdfRes.ok) {
               const buffer = await pdfRes.arrayBuffer()
               arPayload.attachments = [

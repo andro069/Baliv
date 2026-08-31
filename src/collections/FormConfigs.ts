@@ -8,7 +8,7 @@ export const FormConfigs: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'formSlug', 'sprache', 'autoresponderAktiv'],
+    defaultColumns: ['name', 'form', 'sprache', 'autoresponderAktiv'],
     group: 'Anfragen',
   },
   access: {
@@ -32,16 +32,25 @@ export const FormConfigs: CollectionConfig = {
           },
         },
         {
-          name: 'formSlug',
-          type: 'text',
-          label: 'Formular-ID',
-          required: true,
+          name: 'form',
+          type: 'relationship',
+          relationTo: 'forms',
+          label: 'Gilt für Formular',
           admin: {
             width: '50%',
-            description: 'Interner Bezeichner, z.B. "kontakt"',
+            description: 'Das Formular unter „Forms“, für das diese Einstellungen gelten.',
           },
         },
       ],
+    },
+    {
+      name: 'formSlug',
+      type: 'text',
+      label: 'Formular-ID (veraltet)',
+      admin: {
+        hidden: true,
+        description: 'Nur noch als Rückfallebene für Formulare ohne Verknüpfung.',
+      },
     },
     {
       type: 'row',
@@ -102,10 +111,22 @@ export const FormConfigs: CollectionConfig = {
       name: 'autoresponderAnhang',
       type: 'upload',
       relationTo: 'media',
-      label: 'Anhang (z.B. Exposé PDF)',
+      label: 'Anhang (z. B. Exposé-PDF)',
       admin: {
         condition: (data) => Boolean(data?.autoresponderAktiv),
-        description: 'PDF wird als Anhang an die Autoresponder-E-Mail angehängt',
+        description:
+          'Wird an die Bestätigungsmail angehängt. Zum Austauschen einfach eine andere Datei aus der Medien-Bibliothek wählen oder eine neue hochladen. Leer lassen = keine Datei anhängen. Höchstens etwa 15 MB.',
+      },
+    },
+    {
+      name: 'autoresponderNurMitExpose',
+      type: 'checkbox',
+      label: 'Anhang nur senden, wenn das Exposé-Häkchen gesetzt ist',
+      defaultValue: true,
+      admin: {
+        condition: (data) => Boolean(data?.autoresponderAktiv),
+        description:
+          'Ist das aus, bekommt jede Anfrage den Anhang — auch ohne gesetztes Häkchen.',
       },
     },
   ],

@@ -835,9 +835,13 @@ export interface FormConfig {
    */
   name: string;
   /**
-   * Interner Bezeichner, z.B. "kontakt"
+   * Das Formular unter „Forms“, für das diese Einstellungen gelten.
    */
-  formSlug: string;
+  form?: (number | null) | Form;
+  /**
+   * Nur noch als Rückfallebene für Formulare ohne Verknüpfung.
+   */
+  formSlug?: string | null;
   sprache?: ('de' | 'en' | 'sr' | 'ru') | null;
   /**
    * Leer lassen = Standard-Adresse aus Umgebungsvariable
@@ -856,9 +860,13 @@ export interface FormConfig {
    */
   autoresponderNachricht?: string | null;
   /**
-   * PDF wird als Anhang an die Autoresponder-E-Mail angehängt
+   * Wird an die Bestätigungsmail angehängt. Zum Austauschen einfach eine andere Datei aus der Medien-Bibliothek wählen oder eine neue hochladen. Leer lassen = keine Datei anhängen. Höchstens etwa 15 MB.
    */
   autoresponderAnhang?: (number | null) | Media;
+  /**
+   * Ist das aus, bekommt jede Anfrage den Anhang — auch ohne gesetztes Häkchen.
+   */
+  autoresponderNurMitExpose?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1472,6 +1480,7 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
  */
 export interface FormConfigsSelect<T extends boolean = true> {
   name?: T;
+  form?: T;
   formSlug?: T;
   sprache?: T;
   benachrichtigungsEmail?: T;
@@ -1479,6 +1488,7 @@ export interface FormConfigsSelect<T extends boolean = true> {
   autoresponderBetreff?: T;
   autoresponderNachricht?: T;
   autoresponderAnhang?: T;
+  autoresponderNurMitExpose?: T;
   updatedAt?: T;
   createdAt?: T;
 }
