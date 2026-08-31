@@ -170,9 +170,20 @@ export async function POST(req: Request) {
     slug: 'investment-page',
     data: {
       hero: {
-        headline: 'Bar wächst. Ihr Investment auch.',
+        headline: 'Investieren, wo Europa wächst.',
         description:
-          'Montenegro auf dem Weg zur EU-Mitgliedschaft, wachsender Tourismus und ein Immobilienmarkt in früher Entwicklungsphase — die Voraussetzungen für nachhaltiges Wertsteigerungspotenzial.',
+          'Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas, zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.',
+      },
+      warumMontenegro: {
+        headline: 'Warum Montenegro?',
+        description:
+          'Montenegro kombiniert westliche Rechtssicherheit mit den Wachstumsraten eines Schwellenmarkts. Das Fenster vor dem EU-Beitritt — in dem die größten Wertsteigerungen stattfinden — schließt sich 2028.',
+        vorteile: [
+          { title: 'NATO-Mitglied', text: 'Seit 2017. Politische und militärische Stabilität nach westlichem Standard.' },
+          { title: 'Euro-Währung', text: 'Seit 2002. Kein Wechselkursrisiko für DACH-Investoren.' },
+          { title: 'EU-Beitritt 2028', text: 'Montenegro ist EU-Beitrittskandidat. Der Beitritt ist für 2028 geplant — zeitgleich mit der Fertigstellung.' },
+          { title: 'Rechtssicherheit', text: 'Ausländer dürfen Immobilien uneingeschränkt kaufen. Notariell beurkundete Eigentumsübertragung.' },
+        ],
       },
       steuerDaten: [
         { label: 'Grunderwerbsteuer', value: '3 %', note: 'Einmalig beim Kauf' },

@@ -40,6 +40,7 @@ export async function POST(req: Request) {
     zweiFloorplan, zweiImage,
     penthouseFloorplan, penthouseImage,
     hafen, autobahn, tourismus,
+    investmentHero, investmentWarum,
   ] = await Promise.all([
     uploadImage(payload, 'grundriss-studio.webp', 'Grundriss Studio'),
     uploadImage(payload, 'interieur-01.webp', 'Studio Interieur'),
@@ -50,6 +51,8 @@ export async function POST(req: Request) {
     uploadImage(payload, 'building-front.webp', 'Baliv Residence Gebäude — Hafen & Lage'),
     uploadImage(payload, 'architektur-detail.webp', 'Architekturdetail — Qualität & Bauweise'),
     uploadImage(payload, 'interieur-wohnen-02.webp', 'Wohnbereich — Tourismus & Vermietung'),
+    uploadImage(payload, 'terrasse-berge.webp', 'Investment Hero — Terrasse'),
+    uploadImage(payload, 'building-front.webp', 'Warum Montenegro — Gebäude'),
   ])
 
   // ── Wohnungen-Seite ────────────────────────────────────────────────
@@ -152,9 +155,22 @@ export async function POST(req: Request) {
     } as any,
   })
 
+  // ── Investment-Seite (Hero + Warum-Bild) ──────────────────────────
+  await payload.updateGlobal({
+    slug: 'investment-page',
+    data: {
+      hero: {
+        ...(investmentHero && { image: investmentHero }),
+      },
+      warumMontenegro: {
+        ...(investmentWarum && { image: investmentWarum }),
+      },
+    } as any,
+  })
+
   return NextResponse.json({
     success: true,
     message: 'Alle Bilder hochgeladen und Seiten aktualisiert.',
-    ids: { studioFloorplan, studioImage, zweiFloorplan, zweiImage, penthouseFloorplan, penthouseImage, hafen, autobahn, tourismus },
+    ids: { studioFloorplan, studioImage, zweiFloorplan, zweiImage, penthouseFloorplan, penthouseImage, hafen, autobahn, tourismus, investmentHero, investmentWarum },
   })
 }
