@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const ArchitekturPage: GlobalConfig = {
   slug: 'architektur-page',
@@ -331,4 +332,7 @@ export const ArchitekturPage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/architektur'])],
+  },
 }

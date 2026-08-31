@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const LagePage: GlobalConfig = {
   slug: 'lage-page',
@@ -302,4 +303,7 @@ export const LagePage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/lage'])],
+  },
 }

@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
@@ -303,4 +304,7 @@ export const Homepage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/'])],
+  },
 }

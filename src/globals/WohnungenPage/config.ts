@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const WohnungenPage: GlobalConfig = {
   slug: 'wohnungen-page',
@@ -317,4 +318,7 @@ export const WohnungenPage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/wohnungen'])],
+  },
 }

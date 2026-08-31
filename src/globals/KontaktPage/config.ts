@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const KontaktPage: GlobalConfig = {
   slug: 'kontakt-page',
@@ -287,4 +288,7 @@ export const KontaktPage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/kontakt'])],
+  },
 }

@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const InvestmentPage: GlobalConfig = {
   slug: 'investment-page',
@@ -158,4 +159,7 @@ export const InvestmentPage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/investment'])],
+  },
 }

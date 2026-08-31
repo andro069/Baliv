@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { revalidatePages } from '@/utilities/revalidatePages'
 
 export const PreisePage: GlobalConfig = {
   slug: 'preise-page',
@@ -263,4 +264,7 @@ export const PreisePage: GlobalConfig = {
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidatePages(['/preise'])],
+  },
 }
