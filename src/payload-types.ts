@@ -811,6 +811,16 @@ export interface ContactSubmission {
   interesse?: string | null;
   nachricht?: string | null;
   expose?: boolean | null;
+  /**
+   * Antworten auf Felder, die im Backend zum Formular hinzugefügt wurden.
+   */
+  weitereAngaben?:
+    | {
+        feld?: string | null;
+        wert?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1446,6 +1456,13 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   interesse?: T;
   nachricht?: T;
   expose?: T;
+  weitereAngaben?:
+    | T
+    | {
+        feld?: T;
+        wert?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2263,21 +2280,29 @@ export interface KontaktPage {
     subline?: string | null;
     exposeCheckboxTitle?: string | null;
     exposeCheckboxText?: string | null;
-    labelName?: string | null;
-    placeholderName?: string | null;
-    labelEmail?: string | null;
-    placeholderEmail?: string | null;
-    labelTelefon?: string | null;
-    placeholderTelefon?: string | null;
-    labelInteresse?: string | null;
-    interesseOptionen?:
+    /**
+     * Reihenfolge per Drag-and-drop. Felder lassen sich umbenennen, hinzufügen und entfernen. Der technische Name landet so in der E-Mail und in den Anfragen.
+     */
+    felder?:
       | {
           label: string;
+          /**
+           * Nur Kleinbuchstaben, ohne Leerzeichen — z. B. budget
+           */
+          key: string;
+          typ: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'auswahl' | 'dropdown' | 'checkbox';
+          breite?: ('voll' | 'halb') | null;
+          platzhalter?: string | null;
+          optionen?:
+            | {
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
+          pflichtfeld?: boolean | null;
           id?: string | null;
         }[]
       | null;
-    labelNachricht?: string | null;
-    placeholderNachricht?: string | null;
     datenschutzText?: string | null;
     fehlerText?: string | null;
     buttonSending?: string | null;
@@ -2988,21 +3013,23 @@ export interface KontaktPageSelect<T extends boolean = true> {
         subline?: T;
         exposeCheckboxTitle?: T;
         exposeCheckboxText?: T;
-        labelName?: T;
-        placeholderName?: T;
-        labelEmail?: T;
-        placeholderEmail?: T;
-        labelTelefon?: T;
-        placeholderTelefon?: T;
-        labelInteresse?: T;
-        interesseOptionen?:
+        felder?:
           | T
           | {
               label?: T;
+              key?: T;
+              typ?: T;
+              breite?: T;
+              platzhalter?: T;
+              optionen?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              pflichtfeld?: T;
               id?: T;
             };
-        labelNachricht?: T;
-        placeholderNachricht?: T;
         datenschutzText?: T;
         fehlerText?: T;
         buttonSending?: T;

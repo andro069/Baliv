@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
-import { KontaktForm } from './KontaktForm'
+import { KontaktForm, type KontaktFeld } from './KontaktForm'
 import { PageFooter } from '@/components/PageFooter'
 
 export const metadata: Metadata = {
@@ -45,9 +45,18 @@ export default async function KontaktPage() {
     'Grundrisse aller Wohntypen, vollständige Preisliste, Zahlungsplan, Lageplan und Baubeschreibung — auf Deutsch, direkt per E-Mail.'
 
   const f = (cms as any)?.formular ?? {}
-  const interesseOptionen: string[] = (f.interesseOptionen ?? [])
-    .map((o: any) => o?.label)
-    .filter(Boolean)
+
+  const felder: KontaktFeld[] = (f.felder ?? [])
+    .filter((feld: any) => feld?.key && feld?.label)
+    .map((feld: any) => ({
+      key: feld.key,
+      label: feld.label,
+      typ: feld.typ ?? 'text',
+      platzhalter: feld.platzhalter ?? undefined,
+      pflichtfeld: Boolean(feld.pflichtfeld),
+      breite: feld.breite ?? 'voll',
+      optionen: (feld.optionen ?? []).map((o: any) => o?.label).filter(Boolean),
+    }))
 
   const formContent = {
     headline: f.headline ?? 'Anfrage senden',
@@ -55,26 +64,7 @@ export default async function KontaktPage() {
     exposeCheckboxTitle: f.exposeCheckboxTitle ?? 'Kostenloses Exposé zusenden',
     exposeCheckboxText:
       f.exposeCheckboxText ?? 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
-    labelName: f.labelName ?? 'Name *',
-    placeholderName: f.placeholderName ?? 'Ihr vollständiger Name',
-    labelEmail: f.labelEmail ?? 'E-Mail *',
-    placeholderEmail: f.placeholderEmail ?? 'ihre@email.de',
-    labelTelefon: f.labelTelefon ?? 'Telefon / WhatsApp',
-    placeholderTelefon: f.placeholderTelefon ?? '+49 …',
-    labelInteresse: f.labelInteresse ?? 'Mich interessiert',
-    interesseOptionen:
-      interesseOptionen.length > 0
-        ? interesseOptionen
-        : [
-            'Studio (ab 25 m²)',
-            'Zweizimmerwohnung (ab 45 m²)',
-            'Penthouse (ab 85 m²)',
-            'Ich bin noch unentschlossen',
-          ],
-    labelNachricht: f.labelNachricht ?? 'Nachricht',
-    placeholderNachricht:
-      f.placeholderNachricht ??
-      'Haben Sie konkrete Fragen zu Grundrissen, Finanzierung oder dem Kaufprozess?',
+    ...(felder.length > 0 ? { felder } : {}),
     datenschutzText:
       f.datenschutzText ??
       'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',

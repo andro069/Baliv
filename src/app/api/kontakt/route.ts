@@ -9,11 +9,21 @@ function fillTemplate(template: string, vars: Record<string, string>): string {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, phone, interesse, nachricht, expose } = body
+    const { name, email, phone, interesse, nachricht, expose, _labels } = body
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Name und E-Mail sind pflicht.' }, { status: 400 })
     }
+
+    // Felder, die der Kunde im Backend ergänzt hat — alles ausser den festen Spalten.
+    const STANDARD_KEYS = ['name', 'email', 'phone', 'interesse', 'nachricht', 'expose', '_labels']
+    const labels: Record<string, string> = _labels ?? {}
+    const zusatzFelder = Object.entries(body)
+      .filter(([k, v]) => !STANDARD_KEYS.includes(k) && v !== '' && v !== null && v !== undefined)
+      .map(([k, v]) => ({
+        feld: labels[k] || k,
+        wert: typeof v === 'boolean' ? (v ? 'Ja' : 'Nein') : String(v),
+      }))
 
     const payload = await getPayload({ config })
 
@@ -34,13 +44,16 @@ export async function POST(req: NextRequest) {
     const lines = [
       `Neue Anfrage über baliv-residence.com`,
       ``,
-      `Name:      ${name}`,
-      `E-Mail:    ${email}`,
-      `Telefon:   ${phone || '—'}`,
-      `Interesse: ${interesse || '—'}`,
-      `Exposé:    ${expose ? 'Ja, gewünscht' : 'Nein'}`,
+      `${(labels.name || 'Name').padEnd(10)} ${name}`,
+      `${(labels.email || 'E-Mail').padEnd(10)} ${email}`,
+      `${(labels.phone || 'Telefon').padEnd(10)} ${phone || '—'}`,
+      `${(labels.interesse || 'Interesse').padEnd(10)} ${interesse || '—'}`,
+      `${'Exposé'.padEnd(10)} ${expose ? 'Ja, gewünscht' : 'Nein'}`,
+      ...(zusatzFelder.length
+        ? ['', ...zusatzFelder.map((z) => `${z.feld}: ${z.wert}`)]
+        : []),
       ``,
-      `Nachricht:`,
+      `${labels.nachricht || 'Nachricht'}:`,
       nachricht || '—',
     ].join('\n')
 
@@ -137,6 +150,7 @@ export async function POST(req: NextRequest) {
           interesse: interesse || '',
           nachricht: nachricht || '',
           expose: Boolean(expose),
+          ...(zusatzFelder.length ? { weitereAngaben: zusatzFelder } : {}),
         },
       })
     } catch (dbErr) {

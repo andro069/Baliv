@@ -3,21 +3,22 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 
+export type KontaktFeld = {
+  key: string
+  label: string
+  typ: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'auswahl' | 'dropdown' | 'checkbox'
+  platzhalter?: string
+  optionen?: string[]
+  pflichtfeld?: boolean
+  breite?: 'voll' | 'halb'
+}
+
 export type KontaktFormContent = {
   headline: string
   subline: string
   exposeCheckboxTitle: string
   exposeCheckboxText: string
-  labelName: string
-  placeholderName: string
-  labelEmail: string
-  placeholderEmail: string
-  labelTelefon: string
-  placeholderTelefon: string
-  labelInteresse: string
-  interesseOptionen: string[]
-  labelNachricht: string
-  placeholderNachricht: string
+  felder: KontaktFeld[]
   datenschutzText: string
   fehlerText: string
   buttonSending: string
@@ -28,26 +29,37 @@ export type KontaktFormContent = {
   erfolgLinkLabel: string
 }
 
+const defaultFelder: KontaktFeld[] = [
+  { key: 'name', label: 'Name', typ: 'text', platzhalter: 'Ihr vollständiger Name', pflichtfeld: true, breite: 'halb' },
+  { key: 'email', label: 'E-Mail', typ: 'email', platzhalter: 'ihre@email.de', pflichtfeld: true, breite: 'halb' },
+  { key: 'phone', label: 'Telefon / WhatsApp', typ: 'tel', platzhalter: '+49 …', breite: 'voll' },
+  {
+    key: 'interesse',
+    label: 'Mich interessiert',
+    typ: 'auswahl',
+    breite: 'voll',
+    optionen: [
+      'Studio (ab 25 m²)',
+      'Zweizimmerwohnung (ab 45 m²)',
+      'Penthouse (ab 85 m²)',
+      'Ich bin noch unentschlossen',
+    ],
+  },
+  {
+    key: 'nachricht',
+    label: 'Nachricht',
+    typ: 'textarea',
+    platzhalter: 'Haben Sie konkrete Fragen zu Grundrissen, Finanzierung oder dem Kaufprozess?',
+    breite: 'voll',
+  },
+]
+
 const defaultContent: KontaktFormContent = {
   headline: 'Anfrage senden',
   subline: 'Alle Felder mit * sind Pflichtfelder.',
   exposeCheckboxTitle: 'Kostenloses Exposé zusenden',
   exposeCheckboxText: 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
-  labelName: 'Name *',
-  placeholderName: 'Ihr vollständiger Name',
-  labelEmail: 'E-Mail *',
-  placeholderEmail: 'ihre@email.de',
-  labelTelefon: 'Telefon / WhatsApp',
-  placeholderTelefon: '+49 …',
-  labelInteresse: 'Mich interessiert',
-  interesseOptionen: [
-    'Studio (ab 25 m²)',
-    'Zweizimmerwohnung (ab 45 m²)',
-    'Penthouse (ab 85 m²)',
-    'Ich bin noch unentschlossen',
-  ],
-  labelNachricht: 'Nachricht',
-  placeholderNachricht: 'Haben Sie konkrete Fragen zu Grundrissen, Finanzierung oder dem Kaufprozess?',
+  felder: defaultFelder,
   datenschutzText:
     'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',
   fehlerText:
@@ -61,20 +73,21 @@ const defaultContent: KontaktFormContent = {
   erfolgLinkLabel: 'Zurück zur Startseite',
 }
 
+const inputClass =
+  'w-full bg-[#F0EDE8] border border-[#151E39]/10 rounded-lg px-4 py-3 text-sm text-[#151E39] placeholder:text-[#151E39]/30 focus:outline-none focus:border-[#B69252] transition-colors'
+const labelClass = 'block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2'
+
 export function KontaktForm({ content }: { content?: Partial<KontaktFormContent> }) {
   const c: KontaktFormContent = { ...defaultContent, ...(content ?? {}) }
-  const interesseOptions = c.interesseOptionen ?? defaultContent.interesseOptionen
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    interesse: '',
-    nachricht: '',
-    expose: true,
-  })
+  const felder = c.felder?.length ? c.felder : defaultFelder
+
+  const [values, setValues] = useState<Record<string, string | boolean>>(() =>
+    Object.fromEntries(felder.map((f) => [f.key, f.typ === 'checkbox' ? false : ''])),
+  )
+  const [expose, setExpose] = useState(true)
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
-  const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }))
+  const set = (k: string, v: string | boolean) => setValues((prev) => ({ ...prev, [k]: v }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -83,7 +96,12 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
       const res = await fetch('/api/kontakt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...values,
+          expose,
+          // Damit die E-Mail die Beschriftungen aus dem Backend verwenden kann.
+          _labels: Object.fromEntries(felder.map((f) => [f.key, f.label])),
+        }),
       })
       setStatus(res.ok ? 'success' : 'error')
     } catch {
@@ -116,6 +134,100 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
     )
   }
 
+  const renderFeld = (f: KontaktFeld) => {
+    const label = `${f.label}${f.pflichtfeld ? ' *' : ''}`
+    const value = values[f.key]
+
+    if (f.typ === 'checkbox') {
+      return (
+        <label key={f.key} className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={Boolean(value)}
+            required={f.pflichtfeld}
+            onChange={(e) => set(f.key, e.target.checked)}
+            className="w-4 h-4 accent-[#B69252]"
+          />
+          <span className="text-[#151E39]/60 text-sm">{label}</span>
+        </label>
+      )
+    }
+
+    return (
+      <div key={f.key}>
+        <label className={labelClass}>{label}</label>
+
+        {f.typ === 'textarea' && (
+          <textarea
+            rows={4}
+            required={f.pflichtfeld}
+            value={String(value ?? '')}
+            onChange={(e) => set(f.key, e.target.value)}
+            placeholder={f.platzhalter}
+            className={`${inputClass} resize-none`}
+          />
+        )}
+
+        {f.typ === 'auswahl' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {(f.optionen ?? []).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => set(f.key, opt)}
+                className={`text-left px-4 py-3 rounded-lg border text-sm transition-colors ${
+                  value === opt
+                    ? 'bg-[#151E39] text-white border-[#151E39]'
+                    : 'bg-[#F0EDE8] text-[#151E39]/60 border-[#151E39]/10 hover:border-[#151E39]/30'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {f.typ === 'dropdown' && (
+          <select
+            required={f.pflichtfeld}
+            value={String(value ?? '')}
+            onChange={(e) => set(f.key, e.target.value)}
+            className={inputClass}
+          >
+            <option value="">{f.platzhalter || 'Bitte wählen …'}</option>
+            {(f.optionen ?? []).map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {['text', 'email', 'tel', 'number'].includes(f.typ) && (
+          <input
+            type={f.typ}
+            required={f.pflichtfeld}
+            value={String(value ?? '')}
+            onChange={(e) => set(f.key, e.target.value)}
+            placeholder={f.platzhalter}
+            className={inputClass}
+          />
+        )}
+      </div>
+    )
+  }
+
+  // Aufeinanderfolgende Halbe-Breite-Felder werden zu einer Zeile zusammengefasst.
+  const reihen: KontaktFeld[][] = []
+  for (const f of felder) {
+    const letzte = reihen[reihen.length - 1]
+    if (f.breite === 'halb' && letzte?.length === 1 && letzte[0].breite === 'halb') {
+      letzte.push(f)
+    } else {
+      reihen.push([f])
+    }
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -131,15 +243,15 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
         <p className="text-[#151E39]/40 text-sm">{c.subline}</p>
       </div>
 
-      {/* Exposé checkbox — prominent at top */}
+      {/* Exposé-Häkchen — bewusst prominent oben */}
       <label className="flex items-start gap-4 cursor-pointer p-4 rounded-xl border-2 border-[#B69252]/30 hover:border-[#B69252]/60 transition-colors bg-[#F0EDE8]/50">
         <div className="flex-shrink-0 mt-0.5">
           <div
             className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-              form.expose ? 'bg-[#B69252] border-[#B69252]' : 'bg-white border-[#151E39]/20'
+              expose ? 'bg-[#B69252] border-[#B69252]' : 'bg-white border-[#151E39]/20'
             }`}
           >
-            {form.expose && (
+            {expose && (
               <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                 <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -148,8 +260,8 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
           <input
             type="checkbox"
             className="sr-only"
-            checked={form.expose}
-            onChange={(e) => set('expose', e.target.checked)}
+            checked={expose}
+            onChange={(e) => setExpose(e.target.checked)}
           />
         </div>
         <div>
@@ -158,87 +270,19 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
         </div>
       </label>
 
-      {/* Name + Email */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2">{c.labelName}</label>
-          <input
-            type="text"
-            required
-            value={form.name}
-            onChange={(e) => set('name', e.target.value)}
-            placeholder={c.placeholderName}
-            className="w-full bg-[#F0EDE8] border border-[#151E39]/10 rounded-lg px-4 py-3 text-sm text-[#151E39] placeholder:text-[#151E39]/30 focus:outline-none focus:border-[#B69252] transition-colors"
-          />
-        </div>
-        <div>
-          <label className="block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2">{c.labelEmail}</label>
-          <input
-            type="email"
-            required
-            value={form.email}
-            onChange={(e) => set('email', e.target.value)}
-            placeholder={c.placeholderEmail}
-            className="w-full bg-[#F0EDE8] border border-[#151E39]/10 rounded-lg px-4 py-3 text-sm text-[#151E39] placeholder:text-[#151E39]/30 focus:outline-none focus:border-[#B69252] transition-colors"
-          />
-        </div>
-      </div>
+      {reihen.map((reihe, i) =>
+        reihe.length === 2 ? (
+          <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {reihe.map(renderFeld)}
+          </div>
+        ) : (
+          renderFeld(reihe[0])
+        ),
+      )}
 
-      {/* Phone */}
-      <div>
-        <label className="block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2">
-          {c.labelTelefon}
-        </label>
-        <input
-          type="tel"
-          value={form.phone}
-          onChange={(e) => set('phone', e.target.value)}
-          placeholder={c.placeholderTelefon}
-          className="w-full bg-[#F0EDE8] border border-[#151E39]/10 rounded-lg px-4 py-3 text-sm text-[#151E39] placeholder:text-[#151E39]/30 focus:outline-none focus:border-[#B69252] transition-colors"
-        />
-      </div>
-
-      {/* Interesse */}
-      <div>
-        <label className="block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2">
-          {c.labelInteresse}
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {interesseOptions.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => set('interesse', opt)}
-              className={`text-left px-4 py-3 rounded-lg border text-sm transition-colors ${
-                form.interesse === opt
-                  ? 'bg-[#151E39] text-white border-[#151E39]'
-                  : 'bg-[#F0EDE8] text-[#151E39]/60 border-[#151E39]/10 hover:border-[#151E39]/30'
-              }`}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Nachricht */}
-      <div>
-        <label className="block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2">{c.labelNachricht}</label>
-        <textarea
-          rows={4}
-          value={form.nachricht}
-          onChange={(e) => set('nachricht', e.target.value)}
-          placeholder={c.placeholderNachricht}
-          className="w-full bg-[#F0EDE8] border border-[#151E39]/10 rounded-lg px-4 py-3 text-sm text-[#151E39] placeholder:text-[#151E39]/30 focus:outline-none focus:border-[#B69252] transition-colors resize-none"
-        />
-      </div>
-
-      {/* Datenschutz */}
       <p className="text-[#151E39]/30 text-xs leading-relaxed">{c.datenschutzText}</p>
 
-      {status === 'error' && (
-        <p className="text-red-500 text-sm">{c.fehlerText}</p>
-      )}
+      {status === 'error' && <p className="text-red-500 text-sm">{c.fehlerText}</p>}
 
       <button
         type="submit"
@@ -253,8 +297,10 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
             </svg>
             {c.buttonSending}
           </>
+        ) : expose ? (
+          c.buttonMitExpose
         ) : (
-          form.expose ? c.buttonMitExpose : c.buttonOhneExpose
+          c.buttonOhneExpose
         )}
       </button>
     </form>

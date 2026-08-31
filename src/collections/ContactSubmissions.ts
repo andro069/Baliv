@@ -69,6 +69,21 @@ export const ContactSubmissions: CollectionConfig = {
       label: 'Exposé angefordert',
       defaultValue: false,
     },
+    {
+      name: 'weitereAngaben',
+      type: 'array',
+      label: 'Weitere Angaben',
+      admin: {
+        readOnly: true,
+        description:
+          'Antworten auf Felder, die im Backend zum Formular hinzugefügt wurden.',
+        condition: (data) => Boolean(data?.weitereAngaben?.length),
+      },
+      fields: [
+        { name: 'feld', type: 'text', label: 'Feld' },
+        { name: 'wert', type: 'text', label: 'Antwort' },
+      ],
+    },
   ],
   timestamps: true,
 }
