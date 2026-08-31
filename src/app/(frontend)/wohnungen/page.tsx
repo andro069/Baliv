@@ -10,10 +10,21 @@ import { PricingTimeline } from '@/components/PricingTimeline'
 import { PageFooter } from '@/components/PageFooter'
 import type { Media } from '@/payload-types'
 
-export const metadata: Metadata = {
-  title: 'Die Wohnungen — Baliv Residence, Bar Montenegro',
-  description:
-    'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.500 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Q1 2028.',
+const DEFAULT_META_TITLE = 'Die Wohnungen — Baliv Residence, Bar Montenegro'
+const DEFAULT_META_DESCRIPTION =
+  'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.500 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Q1 2028.'
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const payload = await getPayload({ config })
+    const cms = await payload.findGlobal({ slug: 'wohnungen-page' })
+    return {
+      title: (cms as any)?.meta?.title ?? DEFAULT_META_TITLE,
+      description: (cms as any)?.meta?.description ?? DEFAULT_META_DESCRIPTION,
+    }
+  } catch {
+    return { title: DEFAULT_META_TITLE, description: DEFAULT_META_DESCRIPTION }
+  }
 }
 
 function mediaUrl(field: number | string | Media | null | undefined, fallback: string): string {
@@ -122,19 +133,94 @@ const ausstattungIcons: Record<string, React.ReactNode> = {
   ),
 }
 
-const building = [
+const defaultBuilding = [
   { value: '7', label: 'Geschosse' },
   { value: '39', label: 'Wohneinheiten' },
   { value: '17', label: 'Tiefgaragenplätze' },
   { value: 'Q1 2028', label: 'Fertigstellung' },
 ]
 
+const defaultPremiumPaket = [
+  'Gehobene Badgestaltung mit Großformat-Fliesen',
+  'Smarte Lichtsteuerung',
+  'Schlüsselfertige Einbauküche',
+]
+
+const defaultInteriorImages = [
+  { src: '/interieur-wohnen-02.webp', alt: 'Wohnbereich' },
+  { src: '/interieur-bad-01.webp', alt: 'Badezimmer' },
+  { src: '/interieur-schlafen-01.webp', alt: 'Schlafzimmer' },
+]
+
+const defaultGebaeudeFeatures = [
+  { title: '17 Tiefgaragenplätze', text: 'Separat erwerbbar; direkter Zugang ins Gebäude.' },
+  { title: 'Bepflanzte Terrassen', text: 'Lavendel, Rosmarin und mediterrane Begrünung auf mehreren Ebenen.' },
+  { title: 'Fahrradabstellraum', text: 'Im Erdgeschoss, wettergeschützt und abschließbar.' },
+  { title: 'Naturstein-Fassade', text: 'Bögen, Pergolen und variierende Fassadengestaltung — von allen Seiten hochwertig.' },
+  { title: 'Eurocode 8', text: 'Erbaut nach europäischem Erdbebenstandard — maximale Sicherheit.' },
+]
+
 export default async function WohnungenPage() {
   const payload = await getPayload({ config })
   const cms = await payload.findGlobal({ slug: 'wohnungen-page' })
 
+  const heroEyebrow = (cms as any)?.hero?.eyebrow ?? 'Die Wohnungen'
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Drei Typen. Ihre Wahl.'
   const heroDescription = (cms as any)?.hero?.description ?? '39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur großzügigen Dachgeschosswohnung mit Panoramablick.'
+  const heroImage = mediaUrl((cms as any)?.hero?.image, '/building-front.webp')
+
+  const cmsBuilding: any[] = (cms as any)?.buildingStats ?? []
+  const building = cmsBuilding.length > 0
+    ? cmsBuilding.map((s: any) => ({ value: s.value ?? '', label: s.label ?? '' }))
+    : defaultBuilding
+
+  const typesSection = (cms as any)?.typesSection ?? {}
+  const typesEyebrow = typesSection.eyebrow ?? 'Grundrisse & Details'
+  const typesHeadline = typesSection.headline ?? 'Drei Wohnungstypen.'
+  const typesHeadlineLine2 = typesSection.headlineLine2 ?? 'Sieben Geschosse.'
+  const typesUnitsLabel = typesSection.unitsLabel ?? 'Einheiten'
+  const typesPriceLabel = typesSection.priceLabel ?? 'Preis'
+  const typesExampleNote = typesSection.exampleNote ?? 'Frühbucher · inkl. MwSt. · ohne Makler'
+  const typesCtaLabel = typesSection.ctaLabel ?? 'Exposé anfragen'
+
+  const ausstattungSection = (cms as any)?.ausstattungSection ?? {}
+  const ausstattungEyebrow = ausstattungSection.eyebrow ?? 'Ausstattung'
+  const ausstattungHeadline = ausstattungSection.headline ?? 'Schlüsselfertig übergeben.'
+  const ausstattungHeadlineAccent = ausstattungSection.headlineAccent ?? 'Hochwertig ausgestattet.'
+  const ausstattungDescription = ausstattungSection.description ?? 'Jede Wohnung wird vollständig fertiggestellt übergeben — mit geprüften Markenprodukten, die dem mitteleuropäischen Qualitätsstandard entsprechen.'
+  const premiumTitle = ausstattungSection.premiumTitle ?? 'Premium-Paket optional'
+
+  const cmsPremium: any[] = (cms as any)?.premiumPaket ?? []
+  const premiumPaket = cmsPremium.length > 0
+    ? cmsPremium.map((p: any) => p.label ?? '')
+    : defaultPremiumPaket
+
+  const cmsInterior: any[] = (cms as any)?.interiorImages ?? []
+  const interiorImages = cmsInterior.length > 0
+    ? cmsInterior.map((img: any, idx: number) => ({
+        src: mediaUrl(img.image, defaultInteriorImages[idx]?.src ?? ''),
+        alt: img.alt ?? defaultInteriorImages[idx]?.alt ?? '',
+      }))
+    : defaultInteriorImages
+
+  const gebaeudeEyebrow = (cms as any)?.gebaeude?.eyebrow ?? 'Das Gebäude'
+  const gebaeudeHeadline = (cms as any)?.gebaeude?.headline ?? 'Mehr als vier Wände.'
+  const gebaeudeImage = mediaUrl((cms as any)?.gebaeude?.image, '/detail-terrassen.webp')
+
+  const cmsGebaeudeFeatures: any[] = (cms as any)?.gebaeudeFeatures ?? []
+  const gebaeudeFeatures = cmsGebaeudeFeatures.length > 0
+    ? cmsGebaeudeFeatures.map((f: any) => ({ title: f.title ?? '', text: f.text ?? '' }))
+    : defaultGebaeudeFeatures
+
+  const cta = (cms as any)?.cta ?? {}
+  const ctaEyebrow = cta.eyebrow ?? 'Jetzt anfragen'
+  const ctaHeadline = cta.headline ?? 'Interesse an einer Einheit?'
+  const ctaDescription = cta.description ?? 'Vollständiges Exposé mit allen Grundrissen, Preisliste und aktueller Verfügbarkeit — direkt vom Bauträger, deutschsprachig, ohne Makler.'
+  const ctaButtonLabel = cta.buttonLabel ?? 'Exposé anfordern'
+  const ctaButtonLink = cta.buttonLink ?? '/kontakt'
+  const ctaWhatsappLabel = cta.whatsappLabel ?? 'WhatsApp'
+  const ctaWhatsappUrl = cta.whatsappUrl ?? 'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Wohnung%20bei%20Baliv%20Residence.'
+  const ctaNote = cta.note ?? 'Antwort in < 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger'
 
   const cmsTypes: any[] = (cms as any)?.types ?? []
   const types = cmsTypes.length > 0
@@ -170,7 +256,7 @@ export default async function WohnungenPage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[70vh] min-h-[500px]">
         <Image
-          src="/building-front.webp"
+          src={heroImage}
           alt="Baliv Residence Gebäude"
           fill
           className="object-cover"
@@ -179,7 +265,7 @@ export default async function WohnungenPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#151E39]/80 via-[#151E39]/50 to-transparent" />
         <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4 font-raleway">
-            Die Wohnungen
+            {heroEyebrow}
           </p>
           <h1
             className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 max-w-2xl"
@@ -210,14 +296,14 @@ export default async function WohnungenPage() {
       {/* ── APARTMENT TYPES ──────────────────────────────────────────────── */}
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="mb-16">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">Grundrisse & Details</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">{typesEyebrow}</p>
           <h2
             className="text-[#151E39] text-3xl md:text-5xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Drei Wohnungstypen.
+            {typesHeadline}
             <br />
-            Sieben Geschosse.
+            {typesHeadlineLine2}
           </h2>
         </div>
 
@@ -275,11 +361,11 @@ export default async function WohnungenPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="bg-white rounded p-4">
-                    <div className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-1">Einheiten</div>
+                    <div className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-1">{typesUnitsLabel}</div>
                     <div className="text-[#151E39] text-lg font-light">{apt.units}</div>
                   </div>
                   <div className="bg-white rounded p-4">
-                    <div className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-1">Preis</div>
+                    <div className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-1">{typesPriceLabel}</div>
                     <div className="text-[#151E39] text-lg font-light">{apt.price}</div>
                   </div>
                   <div className="bg-[#151E39] rounded p-4 col-span-2">
@@ -287,7 +373,7 @@ export default async function WohnungenPage() {
                     <div className="text-white text-xl font-light">
                       {apt.example.price.toLocaleString('de-DE')} €
                     </div>
-                    <div className="text-white/40 text-xs mt-1">Frühbucher · inkl. MwSt. · ohne Makler</div>
+                    <div className="text-white/40 text-xs mt-1">{typesExampleNote}</div>
                   </div>
                 </div>
 
@@ -295,7 +381,7 @@ export default async function WohnungenPage() {
                   href="/kontakt"
                   className="inline-flex items-center gap-2 bg-[#B69252] text-white px-6 py-3 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
                 >
-                  Exposé anfragen
+                  {typesCtaLabel}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -311,34 +397,25 @@ export default async function WohnungenPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Ausstattung</p>
+              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{ausstattungEyebrow}</p>
               <h2
                 className="text-white text-3xl md:text-5xl mb-6 leading-tight"
                 style={{ fontFamily: 'var(--font-playfair), serif' }}
               >
-                Schlüsselfertig übergeben.{' '}
-                <em className="not-italic text-[#B69252]">Hochwertig ausgestattet.</em>
+                {ausstattungHeadline}{' '}
+                <em className="not-italic text-[#B69252]">{ausstattungHeadlineAccent}</em>
               </h2>
-              <p className="text-white/60 leading-relaxed mb-8">
-                Jede Wohnung wird vollständig fertiggestellt übergeben — mit geprüften
-                Markenprodukten, die dem mitteleuropäischen Qualitätsstandard entsprechen.
-              </p>
+              <p className="text-white/60 leading-relaxed mb-8">{ausstattungDescription}</p>
 
               <div className="border border-[#B69252]/30 rounded p-6 bg-[#B69252]/5">
-                <p className="text-[#B69252] text-xs tracking-widest uppercase mb-3">Premium-Paket optional</p>
+                <p className="text-[#B69252] text-xs tracking-widest uppercase mb-3">{premiumTitle}</p>
                 <ul className="text-white/70 text-sm space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 bg-[#B69252] rounded-full flex-shrink-0" />
-                    Gehobene Badgestaltung mit Großformat-Fliesen
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 bg-[#B69252] rounded-full flex-shrink-0" />
-                    Smarte Lichtsteuerung
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1 h-1 bg-[#B69252] rounded-full flex-shrink-0" />
-                    Schlüsselfertige Einbauküche
-                  </li>
+                  {premiumPaket.map((item) => (
+                    <li key={item} className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-[#B69252] rounded-full flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -356,11 +433,7 @@ export default async function WohnungenPage() {
 
           {/* Interior images */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-16">
-            {[
-              { src: '/interieur-wohnen-02.webp', alt: 'Wohnbereich' },
-              { src: '/interieur-bad-01.webp', alt: 'Badezimmer' },
-              { src: '/interieur-schlafen-01.webp', alt: 'Schlafzimmer' },
-            ].map((img) => (
+            {interiorImages.map((img) => (
               <div key={img.src} className="relative aspect-[4/3] rounded overflow-hidden">
                 <Image src={img.src} alt={img.alt} fill className="object-cover" />
                 <div className="absolute inset-0 bg-[#151E39]/20" />
@@ -382,24 +455,18 @@ export default async function WohnungenPage() {
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="relative aspect-[4/3] rounded overflow-hidden">
-            <Image src="/detail-terrassen.webp" alt="Terrassen und Architektur" fill className="object-cover" />
+            <Image src={gebaeudeImage} alt="Terrassen und Architektur" fill className="object-cover" />
           </div>
           <div>
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Das Gebäude</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{gebaeudeEyebrow}</p>
             <h2
               className="text-[#151E39] text-3xl md:text-4xl mb-8 leading-tight"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Mehr als vier Wände.
+              {gebaeudeHeadline}
             </h2>
             <div className="space-y-5">
-              {[
-                { title: '17 Tiefgaragenplätze', text: 'Separat erwerbbar; direkter Zugang ins Gebäude.' },
-                { title: 'Bepflanzte Terrassen', text: 'Lavendel, Rosmarin und mediterrane Begrünung auf mehreren Ebenen.' },
-                { title: 'Fahrradabstellraum', text: 'Im Erdgeschoss, wettergeschützt und abschließbar.' },
-                { title: 'Naturstein-Fassade', text: 'Bögen, Pergolen und variierende Fassadengestaltung — von allen Seiten hochwertig.' },
-                { title: 'Eurocode 8', text: 'Erbaut nach europäischem Erdbebenstandard — maximale Sicherheit.' },
-              ].map((item) => (
+              {gebaeudeFeatures.map((item) => (
                 <div key={item.title} className="flex gap-4">
                   <div className="w-1 bg-[#B69252] flex-shrink-0 mt-1" />
                   <div>
@@ -416,36 +483,31 @@ export default async function WohnungenPage() {
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section id="kontakt" className="bg-[#151E39] py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Jetzt anfragen</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{ctaEyebrow}</p>
           <h2
             className="text-white text-3xl md:text-5xl mb-6 leading-tight"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Interesse an einer Einheit?
+            {ctaHeadline}
           </h2>
-          <p className="text-white/60 leading-relaxed mb-10 max-w-xl mx-auto">
-            Vollständiges Exposé mit allen Grundrissen, Preisliste und aktueller Verfügbarkeit —
-            direkt vom Bauträger, deutschsprachig, ohne Makler.
-          </p>
+          <p className="text-white/60 leading-relaxed mb-10 max-w-xl mx-auto">{ctaDescription}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/kontakt"
+              href={ctaButtonLink}
               className="inline-flex items-center justify-center gap-2 bg-[#B69252] text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
             >
-              Exposé anfordern
+              {ctaButtonLabel}
             </a>
             <a
-              href="https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Wohnung%20bei%20Baliv%20Residence."
+              href={ctaWhatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 text-sm tracking-widest uppercase hover:border-white/50 transition-colors"
             >
-              WhatsApp
+              {ctaWhatsappLabel}
             </a>
           </div>
-          <p className="text-white/30 text-xs mt-6">
-            Antwort in &lt; 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger
-          </p>
+          <p className="text-white/30 text-xs mt-6">{ctaNote}</p>
         </div>
       </section>
 

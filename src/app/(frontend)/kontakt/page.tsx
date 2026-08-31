@@ -25,6 +25,71 @@ export default async function KontaktPage() {
   const whatsapp = (cms as any)?.info?.whatsapp ?? '38268517873'
   const whatsappDisplay = (cms as any)?.info?.telefon ?? '+382 68 517 873'
   const adresse = (cms as any)?.info?.adresse ?? 'Real Living d.o.o.\nBar, Montenegro'
+  const heroEyebrow = (cms as any)?.hero?.eyebrow ?? 'Kontakt & Exposé'
+
+  const dk = (cms as any)?.direktkontakt ?? {}
+  const dkEyebrow = dk.eyebrow ?? 'Direktkontakt'
+  const dkHeadline = dk.headline ?? 'Ihr direkter Draht'
+  const dkHeadline2 = dk.headlineZweiteZeile ?? 'zum Bauträger.'
+  const dkDescription =
+    dk.description ??
+    'Kein Makler, keine Provision — Sie sprechen direkt mit Real Living d.o.o., dem Bauträger von Baliv Residence. Alle Informationen, Grundrisse und Preislisten erhalten Sie auf Anfrage kostenlos.'
+  const dkLabelEmail = dk.labelEmail ?? 'E-Mail'
+  const dkLabelWhatsapp = dk.labelWhatsapp ?? 'WhatsApp'
+  const dkLabelAdresse = dk.labelAdresse ?? 'Adresse'
+
+  const teaser = (cms as any)?.exposeTeaser ?? {}
+  const teaserEyebrow = teaser.eyebrow ?? 'Kostenloses Exposé'
+  const teaserText =
+    teaser.text ??
+    'Grundrisse aller Wohntypen, vollständige Preisliste, Zahlungsplan, Lageplan und Baubeschreibung — auf Deutsch, direkt per E-Mail.'
+
+  const f = (cms as any)?.formular ?? {}
+  const interesseOptionen: string[] = (f.interesseOptionen ?? [])
+    .map((o: any) => o?.label)
+    .filter(Boolean)
+
+  const formContent = {
+    headline: f.headline ?? 'Anfrage senden',
+    subline: f.subline ?? 'Alle Felder mit * sind Pflichtfelder.',
+    exposeCheckboxTitle: f.exposeCheckboxTitle ?? 'Kostenloses Exposé zusenden',
+    exposeCheckboxText:
+      f.exposeCheckboxText ?? 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
+    labelName: f.labelName ?? 'Name *',
+    placeholderName: f.placeholderName ?? 'Ihr vollständiger Name',
+    labelEmail: f.labelEmail ?? 'E-Mail *',
+    placeholderEmail: f.placeholderEmail ?? 'ihre@email.de',
+    labelTelefon: f.labelTelefon ?? 'Telefon / WhatsApp',
+    placeholderTelefon: f.placeholderTelefon ?? '+49 …',
+    labelInteresse: f.labelInteresse ?? 'Mich interessiert',
+    interesseOptionen:
+      interesseOptionen.length > 0
+        ? interesseOptionen
+        : [
+            'Studio (ab 25 m²)',
+            'Zweizimmerwohnung (ab 45 m²)',
+            'Penthouse (ab 85 m²)',
+            'Ich bin noch unentschlossen',
+          ],
+    labelNachricht: f.labelNachricht ?? 'Nachricht',
+    placeholderNachricht:
+      f.placeholderNachricht ??
+      'Haben Sie konkrete Fragen zu Grundrissen, Finanzierung oder dem Kaufprozess?',
+    datenschutzText:
+      f.datenschutzText ??
+      'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',
+    fehlerText:
+      f.fehlerText ??
+      'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt per E-Mail.',
+    buttonSending: f.buttonSending ?? 'Wird gesendet …',
+    buttonMitExpose: f.buttonMitExpose ?? 'Exposé & Anfrage senden',
+    buttonOhneExpose: f.buttonOhneExpose ?? 'Anfrage senden',
+    erfolgHeadline: f.erfolgHeadline ?? 'Vielen Dank!',
+    erfolgText:
+      f.erfolgText ??
+      'Ihre Anfrage ist bei uns eingegangen. Wir melden uns innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
+    erfolgLinkLabel: f.erfolgLinkLabel ?? 'Zurück zur Startseite',
+  }
 
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
@@ -42,7 +107,7 @@ export default async function KontaktPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#151E39]/85 via-[#151E39]/60 to-transparent" />
         <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Kontakt & Exposé</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{heroEyebrow}</p>
           <h1
             className="text-white text-4xl md:text-6xl leading-tight mb-4 max-w-xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
@@ -61,20 +126,16 @@ export default async function KontaktPage() {
 
           {/* Left — info */}
           <div className="lg:sticky lg:top-32">
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Direktkontakt</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{dkEyebrow}</p>
             <h2
               className="text-[#151E39] text-3xl md:text-4xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Ihr direkter Draht
+              {dkHeadline}
               <br />
-              zum Bauträger.
+              {dkHeadline2}
             </h2>
-            <p className="text-[#151E39]/60 leading-relaxed mb-10">
-              Kein Makler, keine Provision — Sie sprechen direkt mit Real Living d.o.o.,
-              dem Bauträger von Baliv Residence. Alle Informationen, Grundrisse und
-              Preislisten erhalten Sie auf Anfrage kostenlos.
-            </p>
+            <p className="text-[#151E39]/60 leading-relaxed mb-10">{dkDescription}</p>
 
             <div className="space-y-6 mb-12">
               <a
@@ -88,7 +149,7 @@ export default async function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">E-Mail</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">{dkLabelEmail}</p>
                   <p className="text-[#151E39] group-hover:text-[#B69252] transition-colors text-sm">
                     {email}
                   </p>
@@ -107,7 +168,7 @@ export default async function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">WhatsApp</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">{dkLabelWhatsapp}</p>
                   <p className="text-[#151E39] group-hover:text-[#B69252] transition-colors text-sm">
                     {whatsappDisplay}
                   </p>
@@ -122,7 +183,7 @@ export default async function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">Adresse</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">{dkLabelAdresse}</p>
                   <p className="text-[#151E39] text-sm whitespace-pre-line">{adresse}</p>
                 </div>
               </div>
@@ -130,16 +191,13 @@ export default async function KontaktPage() {
 
             {/* Exposé teaser */}
             <div className="bg-[#151E39] rounded p-6">
-              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">Kostenloses Exposé</p>
-              <p className="text-white text-sm leading-relaxed">
-                Grundrisse aller Wohntypen, vollständige Preisliste, Zahlungsplan,
-                Lageplan und Baubeschreibung — auf Deutsch, direkt per E-Mail.
-              </p>
+              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">{teaserEyebrow}</p>
+              <p className="text-white text-sm leading-relaxed">{teaserText}</p>
             </div>
           </div>
 
           {/* Right — client form */}
-          <KontaktForm />
+          <KontaktForm content={formContent} />
         </div>
       </section>
 

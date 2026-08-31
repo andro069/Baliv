@@ -19,6 +19,7 @@ import { PreisePage } from './globals/PreisePage/config'
 import { InvestmentPage } from './globals/InvestmentPage/config'
 import { LagePage } from './globals/LagePage/config'
 import { KontaktPage } from './globals/KontaktPage/config'
+import { ArchitekturPage } from './globals/ArchitekturPage/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -75,7 +76,7 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Media, Categories, Users, ContactSubmissions, FormConfigs],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Homepage, WohnungenPage, PreisePage, InvestmentPage, LagePage, KontaktPage],
+  globals: [Header, Footer, Homepage, WohnungenPage, PreisePage, InvestmentPage, LagePage, KontaktPage, ArchitekturPage],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

@@ -122,6 +122,7 @@ export interface Config {
     'investment-page': InvestmentPage;
     'lage-page': LagePage;
     'kontakt-page': KontaktPage;
+    'architektur-page': ArchitekturPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -132,6 +133,7 @@ export interface Config {
     'investment-page': InvestmentPageSelect<false> | InvestmentPageSelect<true>;
     'lage-page': LagePageSelect<false> | LagePageSelect<true>;
     'kontakt-page': KontaktPageSelect<false> | KontaktPageSelect<true>;
+    'architektur-page': ArchitekturPageSelect<false> | ArchitekturPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1860,9 +1862,31 @@ export interface Homepage {
  */
 export interface WohnungenPage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero?: {
+    eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
+    image?: (number | null) | Media;
+  };
+  buildingStats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  typesSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineLine2?: string | null;
+    unitsLabel?: string | null;
+    priceLabel?: string | null;
+    exampleNote?: string | null;
+    ctaLabel?: string | null;
   };
   types?:
     | {
@@ -1882,6 +1906,48 @@ export interface WohnungenPage {
         id?: string | null;
       }[]
     | null;
+  ausstattungSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    premiumTitle?: string | null;
+  };
+  premiumPaket?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  interiorImages?:
+    | {
+        image?: (number | null) | Media;
+        alt: string;
+        id?: string | null;
+      }[]
+    | null;
+  gebaeude?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    image?: (number | null) | Media;
+  };
+  gebaeudeFeatures?:
+    | {
+        title: string;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  cta?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonLink?: string | null;
+    whatsappLabel?: string | null;
+    whatsappUrl?: string | null;
+    note?: string | null;
+  };
   ausstattung?:
     | {
         brand: string;
@@ -1905,8 +1971,65 @@ export interface WohnungenPage {
 export interface PreisePage {
   id: number;
   hero?: {
+    eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
+    statPrefix?: string | null;
+    extraStatValue?: string | null;
+    extraStatLabel?: string | null;
+  };
+  typesSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    highlightLabel?: string | null;
+    typeLabelPrefix?: string | null;
+    exampleLabel?: string | null;
+    exampleNote?: string | null;
+    buttonLabel?: string | null;
+    buttonLink?: string | null;
+  };
+  includedSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    includedLabel?: string | null;
+  };
+  paymentSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    amountNote?: string | null;
+  };
+  nebenkosten?:
+    | {
+        label: string;
+        value: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  beispielSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    rowArea?: string | null;
+    rowPricePerSqm?: string | null;
+    rowPurchase?: string | null;
+    rowExtraCosts?: string | null;
+    rowTotal?: string | null;
+    extraCostsRate?: number | null;
+  };
+  cta?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonLink?: string | null;
+    whatsappLabel?: string | null;
+    whatsappUrl?: string | null;
+    note?: string | null;
   };
   types?:
     | {
@@ -2029,6 +2152,24 @@ export interface LagePage {
     headline?: string | null;
     subline?: string | null;
     description?: string | null;
+    image?: (number | null) | Media;
+    imageAlt?: string | null;
+    address?: string | null;
+    mapsLabel?: string | null;
+    mapsUrl?: string | null;
+  };
+  erreichbarkeit?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+  };
+  karte?: {
+    image?: (number | null) | Media;
+    imageAlt?: string | null;
+    badgeTitle?: string | null;
+    badgeSubline?: string | null;
+    caption?: string | null;
   };
   distances?:
     | {
@@ -2039,6 +2180,11 @@ export interface LagePage {
         id?: string | null;
       }[]
     | null;
+  highlightsSection?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+  };
   highlights?:
     | {
         title: string;
@@ -2048,8 +2194,35 @@ export interface LagePage {
       }[]
     | null;
   markt?: {
+    eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
+    note?: string | null;
+  };
+  marktPreise?:
+    | {
+        label: string;
+        price: string;
+        highlight?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  cta?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonUrl?: string | null;
+    whatsappLabel?: string | null;
+    whatsappUrl?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2061,6 +2234,7 @@ export interface LagePage {
 export interface KontaktPage {
   id: number;
   hero?: {
+    eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
   };
@@ -2070,6 +2244,158 @@ export interface KontaktPage {
     whatsapp?: string | null;
     adresse?: string | null;
     officeHours?: string | null;
+  };
+  direktkontakt?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineZweiteZeile?: string | null;
+    description?: string | null;
+    labelEmail?: string | null;
+    labelWhatsapp?: string | null;
+    labelAdresse?: string | null;
+  };
+  exposeTeaser?: {
+    eyebrow?: string | null;
+    text?: string | null;
+  };
+  formular?: {
+    headline?: string | null;
+    subline?: string | null;
+    exposeCheckboxTitle?: string | null;
+    exposeCheckboxText?: string | null;
+    labelName?: string | null;
+    placeholderName?: string | null;
+    labelEmail?: string | null;
+    placeholderEmail?: string | null;
+    labelTelefon?: string | null;
+    placeholderTelefon?: string | null;
+    labelInteresse?: string | null;
+    interesseOptionen?:
+      | {
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    labelNachricht?: string | null;
+    placeholderNachricht?: string | null;
+    datenschutzText?: string | null;
+    fehlerText?: string | null;
+    buttonSending?: string | null;
+    buttonMitExpose?: string | null;
+    buttonOhneExpose?: string | null;
+    erfolgHeadline?: string | null;
+    erfolgText?: string | null;
+    erfolgLinkLabel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "architektur-page".
+ */
+export interface ArchitekturPage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineZweiteZeile?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    architektLabel?: string | null;
+    architektName?: string | null;
+    architektStudio?: string | null;
+  };
+  zitat?: {
+    text?: string | null;
+    textAccent?: string | null;
+    autor?: string | null;
+  };
+  prinzipien?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    items?:
+      | {
+          nr: string;
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  fassade?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    items?:
+      | {
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  materialien?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    items?:
+      | {
+          name: string;
+          use?: string | null;
+          detail?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  galerie?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    images?:
+      | {
+          image?: (number | null) | Media;
+          alt?: string | null;
+          aspect?: ('tall' | 'wide' | 'square') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  gebaeude?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    stats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    features?:
+      | {
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  cta?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonLink?: string | null;
+    buttonSecondaryLabel?: string | null;
+    buttonSecondaryLink?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2207,11 +2533,37 @@ export interface HomepageSelect<T extends boolean = true> {
  * via the `definition` "wohnungen-page_select".
  */
 export interface WohnungenPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         description?: T;
+        image?: T;
+      };
+  buildingStats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  typesSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineLine2?: T;
+        unitsLabel?: T;
+        priceLabel?: T;
+        exampleNote?: T;
+        ctaLabel?: T;
       };
   types?:
     | T
@@ -2230,6 +2582,54 @@ export interface WohnungenPageSelect<T extends boolean = true> {
         floorplan?: T;
         image?: T;
         id?: T;
+      };
+  ausstattungSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        premiumTitle?: T;
+      };
+  premiumPaket?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  interiorImages?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        id?: T;
+      };
+  gebaeude?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        image?: T;
+      };
+  gebaeudeFeatures?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonLink?: T;
+        whatsappLabel?: T;
+        whatsappUrl?: T;
+        note?: T;
       };
   ausstattung?:
     | T
@@ -2256,8 +2656,75 @@ export interface PreisePageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         description?: T;
+        statPrefix?: T;
+        extraStatValue?: T;
+        extraStatLabel?: T;
+      };
+  typesSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        highlightLabel?: T;
+        typeLabelPrefix?: T;
+        exampleLabel?: T;
+        exampleNote?: T;
+        buttonLabel?: T;
+        buttonLink?: T;
+      };
+  includedSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        includedLabel?: T;
+      };
+  paymentSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        amountNote?: T;
+      };
+  nebenkosten?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        note?: T;
+        id?: T;
+      };
+  beispielSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        rowArea?: T;
+        rowPricePerSqm?: T;
+        rowPurchase?: T;
+        rowExtraCosts?: T;
+        rowTotal?: T;
+        extraCostsRate?: T;
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonLink?: T;
+        whatsappLabel?: T;
+        whatsappUrl?: T;
+        note?: T;
       };
   types?:
     | T
@@ -2390,6 +2857,28 @@ export interface LagePageSelect<T extends boolean = true> {
         headline?: T;
         subline?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
+        address?: T;
+        mapsLabel?: T;
+        mapsUrl?: T;
+      };
+  erreichbarkeit?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+      };
+  karte?:
+    | T
+    | {
+        image?: T;
+        imageAlt?: T;
+        badgeTitle?: T;
+        badgeSubline?: T;
+        caption?: T;
       };
   distances?:
     | T
@@ -2399,6 +2888,13 @@ export interface LagePageSelect<T extends boolean = true> {
         detail?: T;
         note?: T;
         id?: T;
+      };
+  highlightsSection?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
       };
   highlights?:
     | T
@@ -2411,8 +2907,37 @@ export interface LagePageSelect<T extends boolean = true> {
   markt?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         description?: T;
+        note?: T;
+      };
+  marktPreise?:
+    | T
+    | {
+        label?: T;
+        price?: T;
+        highlight?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonUrl?: T;
+        whatsappLabel?: T;
+        whatsappUrl?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -2426,6 +2951,7 @@ export interface KontaktPageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         description?: T;
       };
@@ -2437,6 +2963,180 @@ export interface KontaktPageSelect<T extends boolean = true> {
         whatsapp?: T;
         adresse?: T;
         officeHours?: T;
+      };
+  direktkontakt?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineZweiteZeile?: T;
+        description?: T;
+        labelEmail?: T;
+        labelWhatsapp?: T;
+        labelAdresse?: T;
+      };
+  exposeTeaser?:
+    | T
+    | {
+        eyebrow?: T;
+        text?: T;
+      };
+  formular?:
+    | T
+    | {
+        headline?: T;
+        subline?: T;
+        exposeCheckboxTitle?: T;
+        exposeCheckboxText?: T;
+        labelName?: T;
+        placeholderName?: T;
+        labelEmail?: T;
+        placeholderEmail?: T;
+        labelTelefon?: T;
+        placeholderTelefon?: T;
+        labelInteresse?: T;
+        interesseOptionen?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        labelNachricht?: T;
+        placeholderNachricht?: T;
+        datenschutzText?: T;
+        fehlerText?: T;
+        buttonSending?: T;
+        buttonMitExpose?: T;
+        buttonOhneExpose?: T;
+        erfolgHeadline?: T;
+        erfolgText?: T;
+        erfolgLinkLabel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "architektur-page_select".
+ */
+export interface ArchitekturPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineZweiteZeile?: T;
+        headlineAccent?: T;
+        description?: T;
+        image?: T;
+        architektLabel?: T;
+        architektName?: T;
+        architektStudio?: T;
+      };
+  zitat?:
+    | T
+    | {
+        text?: T;
+        textAccent?: T;
+        autor?: T;
+      };
+  prinzipien?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        image?: T;
+        items?:
+          | T
+          | {
+              nr?: T;
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  fassade?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        image?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  materialien?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        image?: T;
+        items?:
+          | T
+          | {
+              name?: T;
+              use?: T;
+              detail?: T;
+              id?: T;
+            };
+      };
+  galerie?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        images?:
+          | T
+          | {
+              image?: T;
+              alt?: T;
+              aspect?: T;
+              id?: T;
+            };
+      };
+  gebaeude?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+        features?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonLink?: T;
+        buttonSecondaryLabel?: T;
+        buttonSecondaryLink?: T;
       };
   updatedAt?: T;
   createdAt?: T;

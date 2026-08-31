@@ -77,6 +77,19 @@ const defaultHighlights = [
   },
 ]
 
+const defaultMarktPreise = [
+  { label: 'Bar heute', price: 'ab 2.500 €/m²', highlight: true },
+  { label: 'Budva aktuell', price: '3.500–5.000 €/m²', highlight: false },
+  { label: 'Kotor aktuell', price: '4.000–6.000 €/m²', highlight: false },
+]
+
+const defaultStats = [
+  { v: '300+', l: 'Sonnentage/Jahr' },
+  { v: '26 °C', l: 'Ø Wassertemp. Juli' },
+  { v: '2.000+', l: 'Jahre Olivenhaine' },
+  { v: '13 km', l: 'Sandstrand' },
+]
+
 export default async function LagePage() {
   const payload = await getPayload({ config })
   const cms = await payload.findGlobal({ slug: 'lage-page' })
@@ -84,8 +97,56 @@ export default async function LagePage() {
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Zwischen Festung, Meer und Bergen.'
   const heroSubline = (cms as any)?.hero?.subline ?? 'Die Lage'
   const heroDescription = (cms as any)?.hero?.description ?? 'Bar — am südlichen Ende der montenegrinischen Riviera. Authentisch, gewachsen, und am Beginn einer Entwicklung, die Budva und Kotor bereits hinter sich haben.'
+  const heroImage = mediaUrl((cms as any)?.hero?.image, '/lage-hero.png')
+  const heroImageAlt = (cms as any)?.hero?.imageAlt ?? 'Bar, Montenegro — Luftaufnahme'
+  const heroAddress = (cms as any)?.hero?.address ?? 'Bjeliši BB, 85000 Bar, Montenegro'
+  const heroMapsLabel = (cms as any)?.hero?.mapsLabel ?? 'Google Maps öffnen'
+  const heroMapsUrl = (cms as any)?.hero?.mapsUrl ?? 'https://maps.google.com/?q=Bjeli%C5%A1i+BB,+Bar,+Montenegro'
+
+  const erreichbarkeitEyebrow = (cms as any)?.erreichbarkeit?.eyebrow ?? 'Erreichbarkeit'
+  const erreichbarkeitHeadline = (cms as any)?.erreichbarkeit?.headline ?? 'Alles nah.'
+  const erreichbarkeitHeadlineAccent = (cms as any)?.erreichbarkeit?.headlineAccent ?? 'Nichts zu weit.'
+  const erreichbarkeitDescription = (cms as any)?.erreichbarkeit?.description ?? 'Bar verbindet das Beste zweier Welten: südliche Ruhe mit guter Infrastruktur. Zwei internationale Flughäfen, Fährverbindung nach Italien, direkte Bahnlinie nach Belgrad — und trotzdem kein Massentourismus.'
+
+  const karteImage = mediaUrl((cms as any)?.karte?.image, '/map-montenegro.png')
+  const karteImageAlt = (cms as any)?.karte?.imageAlt ?? 'Karte Montenegro — Lage Bar'
+  const karteBadgeTitle = (cms as any)?.karte?.badgeTitle ?? 'Baliv Residence'
+  const karteBadgeSubline = (cms as any)?.karte?.badgeSubline ?? 'Bar, Montenegro'
+  const karteCaption = (cms as any)?.karte?.caption ?? 'Schematische Darstellung · nicht maßstabsgetreu'
+
+  const highlightsEyebrow = (cms as any)?.highlightsSection?.eyebrow ?? 'Umgebung'
+  const highlightsHeadline = (cms as any)?.highlightsSection?.headline ?? 'Was Bar'
+  const highlightsHeadlineAccent = (cms as any)?.highlightsSection?.headlineAccent ?? 'einzigartig macht.'
+
+  const marktEyebrow = (cms as any)?.markt?.eyebrow ?? 'Warum Bar'
   const marktHeadline = (cms as any)?.markt?.headline ?? 'Was Budva und Kotor vor 15 Jahren waren.'
   const marktDescription = (cms as any)?.markt?.description ?? 'Kotor kostet heute 4.000–6.000 €/m². Budva 3.500–5.000 €/m². Bar liegt bei 2.500 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge, mediterranes Klima. Der Unterschied: Bar entwickelt sich gerade erst.'
+  const marktNote = (cms as any)?.markt?.note ?? 'Vergleichspreise basieren auf öffentlich verfügbaren Marktdaten, Stand 2024/2025.'
+
+  const cmsMarktPreise: any[] = (cms as any)?.marktPreise ?? []
+  const marktPreise = cmsMarktPreise.length > 0
+    ? cmsMarktPreise.map((r: any) => ({
+        label: r.label ?? '',
+        price: r.price ?? '',
+        highlight: Boolean(r.highlight),
+      }))
+    : defaultMarktPreise
+
+  const cmsStats: any[] = (cms as any)?.stats ?? []
+  const stats = cmsStats.length > 0
+    ? cmsStats.map((s: any) => ({ v: s.value ?? '', l: s.label ?? '' }))
+    : defaultStats
+
+  const cta = {
+    eyebrow: (cms as any)?.cta?.eyebrow ?? 'Vor Ort überzeugen',
+    headline: (cms as any)?.cta?.headline ?? 'Besichtigung',
+    headlineAccent: (cms as any)?.cta?.headlineAccent ?? 'jederzeit möglich.',
+    description: (cms as any)?.cta?.description ?? 'Wir organisieren Besichtigungen vor Ort — inklusive Abholung vom Flughafen Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.',
+    buttonLabel: (cms as any)?.cta?.buttonLabel ?? 'Besichtigung anfragen',
+    buttonUrl: (cms as any)?.cta?.buttonUrl ?? '/kontakt',
+    whatsappLabel: (cms as any)?.cta?.whatsappLabel ?? 'WhatsApp',
+    whatsappUrl: (cms as any)?.cta?.whatsappUrl ?? 'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20eine%20Besichtigung%20bei%20Baliv%20Residence%20anfragen.',
+  }
 
   const cmsDistances: any[] = (cms as any)?.distances ?? []
   const distances = cmsDistances.length > 0
@@ -114,8 +175,8 @@ export default async function LagePage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[75vh] min-h-[540px]">
         <Image
-          src="/lage-hero.png"
-          alt="Bar, Montenegro — Luftaufnahme"
+          src={heroImage}
+          alt={heroImageAlt}
           fill
           className="object-cover"
           priority
@@ -142,15 +203,15 @@ export default async function LagePage() {
                 <path d="M8 2C5.8 2 4 3.8 4 6c0 3.5 4 8 4 8s4-4.5 4-8c0-2.2-1.8-4-4-4z" stroke="#B69252" strokeWidth="1" strokeLinejoin="round"/>
                 <circle cx="8" cy="6" r="1.2" stroke="#B69252" strokeWidth="1"/>
               </svg>
-              <span className="text-white/70 text-sm">Bjeliši BB, 85000 Bar, Montenegro</span>
+              <span className="text-white/70 text-sm">{heroAddress}</span>
             </div>
             <a
-              href="https://maps.google.com/?q=Bjeli%C5%A1i+BB,+Bar,+Montenegro"
+              href={heroMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#B69252] text-xs tracking-widest uppercase hover:text-[#c9a96e] transition-colors flex items-center gap-1.5"
             >
-              Google Maps öffnen
+              {heroMapsLabel}
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M2 10L10 2M10 2H5M10 2v5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
               </svg>
@@ -163,19 +224,17 @@ export default async function LagePage() {
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Erreichbarkeit</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{erreichbarkeitEyebrow}</p>
             <h2
               className="text-[#151E39] text-3xl md:text-5xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Alles nah.
+              {erreichbarkeitHeadline}
               <br />
-              <em className="not-italic text-[#B69252]">Nichts zu weit.</em>
+              <em className="not-italic text-[#B69252]">{erreichbarkeitHeadlineAccent}</em>
             </h2>
             <p className="text-[#151E39]/60 leading-relaxed mb-10">
-              Bar verbindet das Beste zweier Welten: südliche Ruhe mit guter Infrastruktur.
-              Zwei internationale Flughäfen, Fährverbindung nach Italien, direkte Bahnlinie
-              nach Belgrad — und trotzdem kein Massentourismus.
+              {erreichbarkeitDescription}
             </p>
 
             <div className="space-y-3">
@@ -202,19 +261,19 @@ export default async function LagePage() {
           <div className="sticky top-8">
             <div className="relative rounded overflow-hidden shadow-2xl">
               <Image
-                src="/map-montenegro.png"
-                alt="Karte Montenegro — Lage Bar"
+                src={karteImage}
+                alt={karteImageAlt}
                 width={1200}
                 height={900}
                 className="w-full"
               />
               <div className="absolute top-4 left-4 bg-[#151E39]/80 backdrop-blur-sm rounded px-3 py-2">
-                <p className="text-[#B69252] text-xs tracking-widest uppercase">Baliv Residence</p>
-                <p className="text-white text-xs mt-0.5">Bar, Montenegro</p>
+                <p className="text-[#B69252] text-xs tracking-widest uppercase">{karteBadgeTitle}</p>
+                <p className="text-white text-xs mt-0.5">{karteBadgeSubline}</p>
               </div>
             </div>
             <p className="text-[#151E39]/30 text-xs mt-3 text-center">
-              Schematische Darstellung · nicht maßstabsgetreu
+              {karteCaption}
             </p>
           </div>
         </div>
@@ -224,14 +283,14 @@ export default async function LagePage() {
       <section className="bg-[#151E39] py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Umgebung</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{highlightsEyebrow}</p>
             <h2
               className="text-white text-3xl md:text-5xl leading-tight"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Was Bar
+              {highlightsHeadline}
               <br />
-              <em className="not-italic text-[#B69252]">einzigartig macht.</em>
+              <em className="not-italic text-[#B69252]">{highlightsHeadlineAccent}</em>
             </h2>
           </div>
 
@@ -264,7 +323,7 @@ export default async function LagePage() {
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Warum Bar</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{marktEyebrow}</p>
             <h2
               className="text-[#151E39] text-3xl md:text-4xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
@@ -276,30 +335,27 @@ export default async function LagePage() {
             </p>
 
             <div className="space-y-4">
-              {[
-                { label: 'Bar heute', price: 'ab 2.500 €/m²', color: 'text-[#B69252]', bg: 'bg-[#B69252]/10 border-[#B69252]/30' },
-                { label: 'Budva aktuell', price: '3.500–5.000 €/m²', color: 'text-[#151E39]', bg: 'bg-white border-[#151E39]/10' },
-                { label: 'Kotor aktuell', price: '4.000–6.000 €/m²', color: 'text-[#151E39]', bg: 'bg-white border-[#151E39]/10' },
-              ].map((row) => (
-                <div key={row.label} className={`flex justify-between items-center border rounded px-5 py-4 ${row.bg}`}>
-                  <span className={`text-sm font-medium ${row.color}`}>{row.label}</span>
-                  <span className={`text-sm font-medium ${row.color}`}>{row.price}</span>
-                </div>
-              ))}
+              {marktPreise.map((row) => {
+                const color = row.highlight ? 'text-[#B69252]' : 'text-[#151E39]'
+                const bg = row.highlight
+                  ? 'bg-[#B69252]/10 border-[#B69252]/30'
+                  : 'bg-white border-[#151E39]/10'
+                return (
+                  <div key={row.label} className={`flex justify-between items-center border rounded px-5 py-4 ${bg}`}>
+                    <span className={`text-sm font-medium ${color}`}>{row.label}</span>
+                    <span className={`text-sm font-medium ${color}`}>{row.price}</span>
+                  </div>
+                )
+              })}
             </div>
 
             <p className="text-[#151E39]/40 text-xs mt-4 leading-relaxed">
-              Vergleichspreise basieren auf öffentlich verfügbaren Marktdaten, Stand 2024/2025.
+              {marktNote}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {[
-              { v: '300+', l: 'Sonnentage/Jahr' },
-              { v: '26 °C', l: 'Ø Wassertemp. Juli' },
-              { v: '2.000+', l: 'Jahre Olivenhaine' },
-              { v: '13 km', l: 'Sandstrand' },
-            ].map((stat) => (
+            {stats.map((stat) => (
               <div key={stat.l} className="bg-[#151E39] rounded p-6 text-center">
                 <div
                   className="text-[#B69252] text-3xl font-light mb-2"
@@ -317,33 +373,32 @@ export default async function LagePage() {
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section id="kontakt" className="bg-[#151E39] py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Vor Ort überzeugen</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{cta.eyebrow}</p>
           <h2
             className="text-white text-3xl md:text-5xl mb-6 leading-tight"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Besichtigung
+            {cta.headline}
             <br />
-            <em className="not-italic text-[#B69252]">jederzeit möglich.</em>
+            <em className="not-italic text-[#B69252]">{cta.headlineAccent}</em>
           </h2>
           <p className="text-white/60 leading-relaxed mb-10 max-w-xl mx-auto">
-            Wir organisieren Besichtigungen vor Ort — inklusive Abholung vom Flughafen
-            Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.
+            {cta.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/kontakt"
+              href={cta.buttonUrl}
               className="inline-flex items-center justify-center gap-2 bg-[#B69252] text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
             >
-              Besichtigung anfragen
+              {cta.buttonLabel}
             </a>
             <a
-              href="https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20eine%20Besichtigung%20bei%20Baliv%20Residence%20anfragen."
+              href={cta.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 text-sm tracking-widest uppercase hover:border-white/50 transition-colors"
             >
-              WhatsApp
+              {cta.whatsappLabel}
             </a>
           </div>
         </div>

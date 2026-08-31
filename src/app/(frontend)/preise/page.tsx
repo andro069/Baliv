@@ -100,7 +100,13 @@ const defaultIncluded = [
   { label: 'Tiefgaragenplatz', included: false, note: 'separat erwerbbar' },
 ]
 
-const PctMap: Record<string, number> = { '40 %': 40, '30 %': 30, '20 %': 20, '10 %': 10 }
+const defaultNebenkosten = [
+  { label: 'Nebenkosten gesamt', value: '1,5–2,5 %', note: 'Notar, Anwalt, Übersetzung, Grundbuch' },
+  { label: 'MwSt.', value: 'inklusive', note: 'Im Kaufpreis enthalten' },
+  { label: 'Maklergebühr', value: '0 €', note: 'Direktkauf vom Bauträger' },
+]
+
+const PctMap: Record<string, number> ={ '40 %': 40, '30 %': 30, '20 %': 20, '10 %': 10 }
 
 export default async function PreisePage() {
   const payload = await getPayload({ config })
@@ -146,6 +152,25 @@ export default async function PreisePage() {
       }))
     : defaultIncluded
 
+  const cmsNebenkosten: any[] = (cms as any)?.nebenkosten ?? []
+  const nebenkosten = cmsNebenkosten.length > 0
+    ? cmsNebenkosten.map((n: any) => ({
+        label: n.label ?? '',
+        value: n.value ?? '',
+        note: n.note ?? '',
+      }))
+    : defaultNebenkosten
+
+  const hero = (cms as any)?.hero ?? {}
+  const typesSection = (cms as any)?.typesSection ?? {}
+  const includedSection = (cms as any)?.includedSection ?? {}
+  const paymentSection = (cms as any)?.paymentSection ?? {}
+  const beispielSection = (cms as any)?.beispielSection ?? {}
+  const cta = (cms as any)?.cta ?? {}
+
+  const statPrefix = hero.statPrefix ?? 'ab'
+  const extraCostsRate = (beispielSection.extraCostsRate ?? 2) / 100
+
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
       <Navigation />
@@ -154,26 +179,26 @@ export default async function PreisePage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="bg-[#151E39] pt-32 pb-20 px-8 md:px-16 lg:px-24">
         <div className="max-w-7xl mx-auto">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Preisübersicht</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{hero.eyebrow ?? 'Preisübersicht'}</p>
           <h1
             className="text-white text-4xl md:text-6xl lg:text-7xl leading-tight mb-6 max-w-3xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            {((cms as any)?.hero?.headline ?? 'Transparent.\nDirekt vom Bauträger.').split('\n').map((line: string, i: number) => (
+            {(hero.headline ?? 'Transparent.\nDirekt vom Bauträger.').split('\n').map((line: string, i: number) => (
               <React.Fragment key={i}>{i > 0 && <br />}{line}</React.Fragment>
             ))}
           </h1>
           <p className="text-white/60 text-base md:text-lg max-w-xl leading-relaxed">
-            {(cms as any)?.hero?.description ?? 'Keine Maklergebühren, keine versteckten Kosten. MwSt. ist im Kaufpreis enthalten. Frühbucherpreise gelten bis zur Baugenehmigung im Oktober 2026.'}
+            {hero.description ?? 'Keine Maklergebühren, keine versteckten Kosten. MwSt. ist im Kaufpreis enthalten. Frühbucherpreise gelten bis zur Baugenehmigung im Oktober 2026.'}
           </p>
 
           {/* Quick stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
             {[
-              { v: `ab ${types[0]?.examplePrice?.toLocaleString('de-DE') ?? '72.500'} €`, l: types[0]?.type ?? 'Studio' },
-              { v: `ab ${types[1]?.examplePrice?.toLocaleString('de-DE') ?? '125.000'} €`, l: types[1]?.type ?? 'Zweizimmer' },
-              { v: `ab ${types[2]?.examplePrice?.toLocaleString('de-DE') ?? '192.500'} €`, l: types[2]?.type ?? 'Penthouse' },
-              { v: '0 €', l: 'Maklergebühr' },
+              { v: `${statPrefix} ${types[0]?.examplePrice?.toLocaleString('de-DE') ?? '72.500'} €`, l: types[0]?.type ?? 'Studio' },
+              { v: `${statPrefix} ${types[1]?.examplePrice?.toLocaleString('de-DE') ?? '125.000'} €`, l: types[1]?.type ?? 'Zweizimmer' },
+              { v: `${statPrefix} ${types[2]?.examplePrice?.toLocaleString('de-DE') ?? '192.500'} €`, l: types[2]?.type ?? 'Penthouse' },
+              { v: hero.extraStatValue ?? '0 €', l: hero.extraStatLabel ?? 'Maklergebühr' },
             ].map((s) => (
               <div key={s.l} className="border border-white/10 rounded p-5">
                 <div className="text-[#B69252] text-xl md:text-2xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>
@@ -189,12 +214,12 @@ export default async function PreisePage() {
       {/* ── PREISKARTEN ──────────────────────────────────────────────────── */}
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="mb-12">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">Wohnungstypen</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">{typesSection.eyebrow ?? 'Wohnungstypen'}</p>
           <h2
             className="text-[#151E39] text-3xl md:text-5xl"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Drei Typen, ein Preisniveau.
+            {typesSection.headline ?? 'Drei Typen, ein Preisniveau.'}
           </h2>
         </div>
 
@@ -206,7 +231,7 @@ export default async function PreisePage() {
             >
               {t.highlight && (
                 <div className="bg-[#B69252] text-white text-xs tracking-widest uppercase text-center py-2 px-4">
-                  Meistgewählt · {t.units}
+                  {typesSection.highlightLabel ?? 'Meistgewählt'} · {t.units}
                 </div>
               )}
 
@@ -224,7 +249,7 @@ export default async function PreisePage() {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <span className="text-xs tracking-widest uppercase text-[#B69252]/60">
-                      Typ {t.nr} · {t.tag}
+                      {typesSection.typeLabelPrefix ?? 'Typ'} {t.nr} · {t.tag}
                     </span>
                     <h3
                       className="text-xl mt-1 text-white"
@@ -257,21 +282,21 @@ export default async function PreisePage() {
                 {/* Example price */}
                 <div className="rounded p-4 mb-5 bg-white/5 border border-white/10">
                   <div className="text-xs tracking-widest uppercase mb-1 text-white/30">
-                    Beispiel · {t.exampleSize} m²
+                    {typesSection.exampleLabel ?? 'Beispiel'} · {t.exampleSize} m²
                   </div>
                   <div className="text-2xl font-light text-white" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                     {t.examplePrice.toLocaleString('de-DE')} €
                   </div>
                   <div className="text-xs mt-1 text-white/20">
-                    Frühbucher · inkl. MwSt.
+                    {typesSection.exampleNote ?? 'Frühbucher · inkl. MwSt.'}
                   </div>
                 </div>
 
                 <Link
-                  href="/kontakt"
+                  href={typesSection.buttonLink ?? '/kontakt'}
                   className="text-center text-sm tracking-widest uppercase py-3 px-4 transition-colors bg-[#B69252] text-white hover:bg-[#a07d3f]"
                 >
-                  Exposé anfragen
+                  {typesSection.buttonLabel ?? 'Exposé anfragen'}
                 </Link>
               </div>
             </div>
@@ -284,18 +309,18 @@ export default async function PreisePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Im Kaufpreis</p>
+              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{includedSection.eyebrow ?? 'Im Kaufpreis'}</p>
               <h2
                 className="text-white text-3xl md:text-5xl leading-tight mb-6"
                 style={{ fontFamily: 'var(--font-playfair), serif' }}
               >
-                Was der Preis
+                {includedSection.headline ?? 'Was der Preis'}
                 <br />
-                <em className="not-italic text-[#B69252]">beinhaltet.</em>
+                <em className="not-italic text-[#B69252]">{includedSection.headlineAccent ?? 'beinhaltet.'}</em>
               </h2>
               <p className="text-white/50 leading-relaxed">
-                Alle Wohnungen werden schlüsselfertig übergeben. Was im Kaufpreis
-                enthalten ist — und was optional hinzugebucht werden kann.
+                {includedSection.description ??
+                  'Alle Wohnungen werden schlüsselfertig übergeben. Was im Kaufpreis enthalten ist — und was optional hinzugebucht werden kann.'}
               </p>
             </div>
 
@@ -331,7 +356,7 @@ export default async function PreisePage() {
                     <span className="text-white/25 text-xs ml-4 flex-shrink-0">{item.note}</span>
                   )}
                   {item.included && (
-                    <span className="text-[#B69252] text-xs ml-4 flex-shrink-0">inklusive</span>
+                    <span className="text-[#B69252] text-xs ml-4 flex-shrink-0">{includedSection.includedLabel ?? 'inklusive'}</span>
                   )}
                 </div>
               ))}
@@ -343,14 +368,14 @@ export default async function PreisePage() {
       {/* ── ZAHLUNGSPLAN ─────────────────────────────────────────────────── */}
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="mb-14">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">Zahlungsplan</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-3">{paymentSection.eyebrow ?? 'Zahlungsplan'}</p>
           <h2
             className="text-[#151E39] text-3xl md:text-5xl leading-tight"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Kapital schützen.
+            {paymentSection.headline ?? 'Kapital schützen.'}
             <br />
-            <em className="not-italic text-[#B69252]">Schrittweise investieren.</em>
+            <em className="not-italic text-[#B69252]">{paymentSection.headlineAccent ?? 'Schrittweise investieren.'}</em>
           </h2>
         </div>
 
@@ -392,7 +417,7 @@ export default async function PreisePage() {
                   {step.amount}
                 </div>
                 {step.pct !== null && (
-                  <div className="text-[#151E39]/30 text-xs">des Kaufpreises</div>
+                  <div className="text-[#151E39]/30 text-xs">{paymentSection.amountNote ?? 'des Kaufpreises'}</div>
                 )}
               </div>
             </div>
@@ -401,11 +426,7 @@ export default async function PreisePage() {
 
         {/* Nebenkosten */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { label: 'Nebenkosten gesamt', value: '1,5–2,5 %', note: 'Notar, Anwalt, Übersetzung, Grundbuch' },
-            { label: 'MwSt.', value: 'inklusive', note: 'Im Kaufpreis enthalten' },
-            { label: 'Maklergebühr', value: '0 €', note: 'Direktkauf vom Bauträger' },
-          ].map((item) => (
+          {nebenkosten.map((item) => (
             <div key={item.label} className="bg-white border border-[#151E39]/10 rounded p-5">
               <div className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-1">{item.label}</div>
               <div className="text-[#151E39] text-xl font-light mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>
@@ -421,49 +442,51 @@ export default async function PreisePage() {
       <section className="bg-[#151E39] py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Beispielrechnung</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{beispielSection.eyebrow ?? 'Beispielrechnung'}</p>
             <h2
               className="text-white text-3xl md:text-5xl leading-tight"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Was kostet eine{' '}
-              <em className="not-italic text-[#B69252]">konkret?</em>
+              {beispielSection.headline ?? 'Was kostet eine'}{' '}
+              <em className="not-italic text-[#B69252]">{beispielSection.headlineAccent ?? 'konkret?'}</em>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {types.map((t) => (
               <div key={t.nr} className="bg-white/5 border border-white/10 rounded p-7">
-                <div className="text-white/30 text-xs tracking-widest uppercase mb-1">Typ {t.nr}</div>
+                <div className="text-white/30 text-xs tracking-widest uppercase mb-1">
+                  {typesSection.typeLabelPrefix ?? 'Typ'} {t.nr}
+                </div>
                 <div className="text-white text-lg mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                   {t.type}
                 </div>
                 <div className="text-white/30 text-sm mb-6">{t.size}</div>
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/40">Wohnfläche</span>
+                    <span className="text-white/40">{beispielSection.rowArea ?? 'Wohnfläche'}</span>
                     <span className="text-white">{t.exampleSize} m²</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/40">Preis/m²</span>
-                    <span className="text-white">{t.pricePerSqm.replace('ab ', '')}</span>
+                    <span className="text-white/40">{beispielSection.rowPricePerSqm ?? 'Preis/m²'}</span>
+                    <span className="text-white">{t.pricePerSqm.replace(`${statPrefix} `, '')}</span>
                   </div>
                   <div className="border-t border-white/10 pt-3 flex justify-between">
-                    <span className="text-white/60 text-sm">Kaufpreis</span>
+                    <span className="text-white/60 text-sm">{beispielSection.rowPurchase ?? 'Kaufpreis'}</span>
                     <span className="text-[#B69252] font-medium">
                       {t.examplePrice.toLocaleString('de-DE')} €
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/40">Nebenkosten (~2 %)</span>
+                    <span className="text-white/40">{beispielSection.rowExtraCosts ?? 'Nebenkosten (~2 %)'}</span>
                     <span className="text-white/60">
-                      ~{Math.round(t.examplePrice * 0.02).toLocaleString('de-DE')} €
+                      ~{Math.round(t.examplePrice * extraCostsRate).toLocaleString('de-DE')} €
                     </span>
                   </div>
                   <div className="border-t border-white/10 pt-3 flex justify-between">
-                    <span className="text-white text-sm font-medium">Gesamt</span>
+                    <span className="text-white text-sm font-medium">{beispielSection.rowTotal ?? 'Gesamt'}</span>
                     <span className="text-white font-medium">
-                      ~{Math.round(t.examplePrice * 1.02).toLocaleString('de-DE')} €
+                      ~{Math.round(t.examplePrice * (1 + extraCostsRate)).toLocaleString('de-DE')} €
                     </span>
                   </div>
                 </div>
@@ -476,37 +499,40 @@ export default async function PreisePage() {
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section id="kontakt" className="py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Jetzt reservieren</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{cta.eyebrow ?? 'Jetzt reservieren'}</p>
           <h2
             className="text-[#151E39] text-3xl md:text-5xl mb-6 leading-tight"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Frühbucherpreise
+            {cta.headline ?? 'Frühbucherpreise'}
             <br />
-            <em className="not-italic text-[#B69252]">bis Oktober 2026.</em>
+            <em className="not-italic text-[#B69252]">{cta.headlineAccent ?? 'bis Oktober 2026.'}</em>
           </h2>
           <p className="text-[#151E39]/60 leading-relaxed mb-10 max-w-xl mx-auto">
-            Nach Erteilung der Baugenehmigung im Oktober 2026 werden die Preise angepasst.
-            Sichern Sie sich jetzt Ihre Einheit zum Frühbucherpreis.
+            {cta.description ??
+              'Nach Erteilung der Baugenehmigung im Oktober 2026 werden die Preise angepasst. Sichern Sie sich jetzt Ihre Einheit zum Frühbucherpreis.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/kontakt"
+              href={cta.buttonLink ?? '/kontakt'}
               className="inline-flex items-center justify-center gap-2 bg-[#B69252] text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
             >
-              Aktuelle Preisliste anfordern
+              {cta.buttonLabel ?? 'Aktuelle Preisliste anfordern'}
             </a>
             <a
-              href="https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20die%20aktuelle%20Preisliste%20und%20Verf%C3%BCgbarkeit%20von%20Baliv%20Residence%20anfragen."
+              href={
+                cta.whatsappUrl ??
+                'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20die%20aktuelle%20Preisliste%20und%20Verf%C3%BCgbarkeit%20von%20Baliv%20Residence%20anfragen.'
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-[#151E39]/20 text-[#151E39] px-8 py-4 text-sm tracking-widest uppercase hover:border-[#151E39]/50 transition-colors"
             >
-              WhatsApp
+              {cta.whatsappLabel ?? 'WhatsApp'}
             </a>
           </div>
           <p className="text-[#151E39]/30 text-xs mt-6">
-            Antwort in &lt; 24 Stunden · Deutschsprachig · Direkt vom Bauträger · Kein Makler
+            {cta.note ?? 'Antwort in < 24 Stunden · Deutschsprachig · Direkt vom Bauträger · Kein Makler'}
           </p>
         </div>
       </section>
