@@ -3,22 +3,29 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 
-export type KontaktFeld = {
-  key: string
-  label: string
-  typ: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'auswahl' | 'dropdown' | 'checkbox'
-  platzhalter?: string
-  optionen?: string[]
-  pflichtfeld?: boolean
-  breite?: 'voll' | 'halb'
+/**
+ * Ein Feld, wie es der Form-Builder unter „Forms" liefert. Die Blocktypen
+ * entsprechen denen des Plugins (@payloadcms/plugin-form-builder).
+ */
+export type FormFeld = {
+  blockType: 'text' | 'email' | 'number' | 'textarea' | 'select' | 'checkbox' | 'country' | 'state' | 'message'
+  name?: string
+  label?: string
+  width?: number
+  required?: boolean
+  defaultValue?: string | boolean
+  options?: { label: string; value: string }[]
+  message?: unknown
 }
 
 export type KontaktFormContent = {
+  formId?: string | number
+  felder: FormFeld[]
+  submitLabel?: string
   headline: string
   subline: string
   exposeCheckboxTitle: string
   exposeCheckboxText: string
-  felder: KontaktFeld[]
   datenschutzText: string
   fehlerText: string
   buttonSending: string
@@ -29,37 +36,30 @@ export type KontaktFormContent = {
   erfolgLinkLabel: string
 }
 
-const defaultFelder: KontaktFeld[] = [
-  { key: 'name', label: 'Name', typ: 'text', platzhalter: 'Ihr vollständiger Name', pflichtfeld: true, breite: 'halb' },
-  { key: 'email', label: 'E-Mail', typ: 'email', platzhalter: 'ihre@email.de', pflichtfeld: true, breite: 'halb' },
-  { key: 'phone', label: 'Telefon / WhatsApp', typ: 'tel', platzhalter: '+49 …', breite: 'voll' },
+/** Fallback, falls unter „Forms" (noch) kein Formular ausgewählt ist. */
+const defaultFelder: FormFeld[] = [
+  { blockType: 'checkbox', name: 'expose', label: 'Kostenloses Exposé zusenden', width: 100, defaultValue: true },
+  { blockType: 'text', name: 'name', label: 'Name', width: 50, required: true },
+  { blockType: 'email', name: 'email', label: 'E-Mail', width: 50, required: true },
+  { blockType: 'text', name: 'phone', label: 'Telefon / WhatsApp', width: 100 },
   {
-    key: 'interesse',
-    label: 'Mich interessiert',
-    typ: 'auswahl',
-    breite: 'voll',
-    optionen: [
-      'Studio (ab 25 m²)',
-      'Zweizimmerwohnung (ab 45 m²)',
-      'Penthouse (ab 85 m²)',
-      'Ich bin noch unentschlossen',
+    blockType: 'select', name: 'interesse', label: 'Mich interessiert', width: 100,
+    options: [
+      { label: 'Studio (ab 25 m²)', value: 'studio' },
+      { label: 'Zweizimmerwohnung (ab 45 m²)', value: 'zweizimmer' },
+      { label: 'Penthouse (ab 85 m²)', value: 'penthouse' },
+      { label: 'Ich bin noch unentschlossen', value: 'unentschlossen' },
     ],
   },
-  {
-    key: 'nachricht',
-    label: 'Nachricht',
-    typ: 'textarea',
-    platzhalter: 'Haben Sie konkrete Fragen zu Grundrissen, Finanzierung oder dem Kaufprozess?',
-    breite: 'voll',
-  },
+  { blockType: 'textarea', name: 'nachricht', label: 'Nachricht', width: 100 },
 ]
 
 const defaultContent: KontaktFormContent = {
+  felder: defaultFelder,
   headline: 'Anfrage senden',
   subline: 'Alle Felder mit * sind Pflichtfelder.',
   exposeCheckboxTitle: 'Kostenloses Exposé zusenden',
   exposeCheckboxText: 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
-  felder: defaultFelder,
   datenschutzText:
     'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',
   fehlerText:
@@ -77,17 +77,32 @@ const inputClass =
   'w-full bg-[#F0EDE8] border border-[#151E39]/10 rounded-lg px-4 py-3 text-sm text-[#151E39] placeholder:text-[#151E39]/30 focus:outline-none focus:border-[#B69252] transition-colors'
 const labelClass = 'block text-[#151E39]/60 text-xs tracking-widest uppercase mb-2'
 
+/** Das Feld, das den PDF-Versand steuert — bleibt optisch hervorgehoben. */
+const EXPOSE_KEY = 'expose'
+
 export function KontaktForm({ content }: { content?: Partial<KontaktFormContent> }) {
   const c: KontaktFormContent = { ...defaultContent, ...(content ?? {}) }
-  const felder = c.felder?.length ? c.felder : defaultFelder
+  const alleFelder = c.felder?.length ? c.felder : defaultFelder
+
+  const exposeFeld = alleFelder.find(
+    (f) => f.blockType === 'checkbox' && f.name === EXPOSE_KEY,
+  )
+  const felder = alleFelder.filter((f) => f !== exposeFeld)
 
   const [values, setValues] = useState<Record<string, string | boolean>>(() =>
-    Object.fromEntries(felder.map((f) => [f.key, f.typ === 'checkbox' ? false : ''])),
+    Object.fromEntries(
+      alleFelder
+        .filter((f) => f.name)
+        .map((f) => [
+          f.name as string,
+          f.blockType === 'checkbox' ? Boolean(f.defaultValue) : String(f.defaultValue ?? ''),
+        ]),
+    ),
   )
-  const [expose, setExpose] = useState(true)
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
   const set = (k: string, v: string | boolean) => setValues((prev) => ({ ...prev, [k]: v }))
+  const expose = exposeFeld ? Boolean(values[EXPOSE_KEY]) : false
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -97,10 +112,12 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...values,
-          expose,
-          // Damit die E-Mail die Beschriftungen aus dem Backend verwenden kann.
-          _labels: Object.fromEntries(felder.map((f) => [f.key, f.label])),
+          formId: c.formId,
+          data: values,
+          // Beschriftungen mitschicken, damit die E-Mail sie verwenden kann.
+          labels: Object.fromEntries(
+            alleFelder.filter((f) => f.name).map((f) => [f.name as string, f.label ?? f.name]),
+          ),
         }),
       })
       setStatus(res.ok ? 'success' : 'error')
@@ -134,18 +151,24 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
     )
   }
 
-  const renderFeld = (f: KontaktFeld) => {
-    const label = `${f.label}${f.pflichtfeld ? ' *' : ''}`
-    const value = values[f.key]
+  const renderFeld = (f: FormFeld, i: number) => {
+    if (f.blockType === 'message') {
+      return null
+    }
+    if (!f.name) return null
 
-    if (f.typ === 'checkbox') {
+    const key = f.name
+    const label = `${f.label ?? key}${f.required ? ' *' : ''}`
+    const value = values[key]
+
+    if (f.blockType === 'checkbox') {
       return (
-        <label key={f.key} className="flex items-center gap-3 cursor-pointer">
+        <label key={key} className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
             checked={Boolean(value)}
-            required={f.pflichtfeld}
-            onChange={(e) => set(f.key, e.target.checked)}
+            required={f.required}
+            onChange={(e) => set(key, e.target.checked)}
             className="w-4 h-4 accent-[#B69252]"
           />
           <span className="text-[#151E39]/60 text-sm">{label}</span>
@@ -154,62 +177,61 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
     }
 
     return (
-      <div key={f.key}>
+      <div key={key}>
         <label className={labelClass}>{label}</label>
 
-        {f.typ === 'textarea' && (
+        {f.blockType === 'textarea' && (
           <textarea
             rows={4}
-            required={f.pflichtfeld}
+            required={f.required}
             value={String(value ?? '')}
-            onChange={(e) => set(f.key, e.target.value)}
-            placeholder={f.platzhalter}
+            onChange={(e) => set(key, e.target.value)}
             className={`${inputClass} resize-none`}
           />
         )}
 
-        {f.typ === 'auswahl' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {(f.optionen ?? []).map((opt) => (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => set(f.key, opt)}
-                className={`text-left px-4 py-3 rounded-lg border text-sm transition-colors ${
-                  value === opt
-                    ? 'bg-[#151E39] text-white border-[#151E39]'
-                    : 'bg-[#F0EDE8] text-[#151E39]/60 border-[#151E39]/10 hover:border-[#151E39]/30'
-                }`}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
+        {f.blockType === 'select' && (
+          // Bis zu vier Optionen als Schaltflächen, darüber als Aufklappliste.
+          (f.options ?? []).length > 0 && (f.options ?? []).length <= 4 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {(f.options ?? []).map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => set(key, opt.value)}
+                  className={`text-left px-4 py-3 rounded-lg border text-sm transition-colors ${
+                    value === opt.value
+                      ? 'bg-[#151E39] text-white border-[#151E39]'
+                      : 'bg-[#F0EDE8] text-[#151E39]/60 border-[#151E39]/10 hover:border-[#151E39]/30'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <select
+              required={f.required}
+              value={String(value ?? '')}
+              onChange={(e) => set(key, e.target.value)}
+              className={inputClass}
+            >
+              <option value="">Bitte wählen …</option>
+              {(f.options ?? []).map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          )
         )}
 
-        {f.typ === 'dropdown' && (
-          <select
-            required={f.pflichtfeld}
-            value={String(value ?? '')}
-            onChange={(e) => set(f.key, e.target.value)}
-            className={inputClass}
-          >
-            <option value="">{f.platzhalter || 'Bitte wählen …'}</option>
-            {(f.optionen ?? []).map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-        )}
-
-        {['text', 'email', 'tel', 'number'].includes(f.typ) && (
+        {['text', 'email', 'number', 'country', 'state'].includes(f.blockType) && (
           <input
-            type={f.typ}
-            required={f.pflichtfeld}
+            type={f.blockType === 'number' ? 'number' : f.blockType === 'email' ? 'email' : 'text'}
+            required={f.required}
             value={String(value ?? '')}
-            onChange={(e) => set(f.key, e.target.value)}
-            placeholder={f.platzhalter}
+            onChange={(e) => set(key, e.target.value)}
             className={inputClass}
           />
         )}
@@ -217,11 +239,12 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
     )
   }
 
-  // Aufeinanderfolgende Halbe-Breite-Felder werden zu einer Zeile zusammengefasst.
-  const reihen: KontaktFeld[][] = []
+  // Felder mit halber Breite paarweise in eine Zeile legen.
+  const reihen: FormFeld[][] = []
   for (const f of felder) {
     const letzte = reihen[reihen.length - 1]
-    if (f.breite === 'halb' && letzte?.length === 1 && letzte[0].breite === 'halb') {
+    const halb = (f.width ?? 100) <= 50
+    if (halb && letzte?.length === 1 && (letzte[0].width ?? 100) <= 50) {
       letzte.push(f)
     } else {
       reihen.push([f])
@@ -243,32 +266,36 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
         <p className="text-[#151E39]/40 text-sm">{c.subline}</p>
       </div>
 
-      {/* Exposé-Häkchen — bewusst prominent oben */}
-      <label className="flex items-start gap-4 cursor-pointer p-4 rounded-xl border-2 border-[#B69252]/30 hover:border-[#B69252]/60 transition-colors bg-[#F0EDE8]/50">
-        <div className="flex-shrink-0 mt-0.5">
-          <div
-            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-              expose ? 'bg-[#B69252] border-[#B69252]' : 'bg-white border-[#151E39]/20'
-            }`}
-          >
-            {expose && (
-              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
+      {/* Exposé-Häkchen — bewusst prominent oben, steuert den PDF-Versand */}
+      {exposeFeld && (
+        <label className="flex items-start gap-4 cursor-pointer p-4 rounded-xl border-2 border-[#B69252]/30 hover:border-[#B69252]/60 transition-colors bg-[#F0EDE8]/50">
+          <div className="flex-shrink-0 mt-0.5">
+            <div
+              className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                expose ? 'bg-[#B69252] border-[#B69252]' : 'bg-white border-[#151E39]/20'
+              }`}
+            >
+              {expose && (
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
+            <input
+              type="checkbox"
+              className="sr-only"
+              checked={expose}
+              onChange={(e) => set(EXPOSE_KEY, e.target.checked)}
+            />
           </div>
-          <input
-            type="checkbox"
-            className="sr-only"
-            checked={expose}
-            onChange={(e) => setExpose(e.target.checked)}
-          />
-        </div>
-        <div>
-          <p className="text-[#151E39] font-medium text-sm">{c.exposeCheckboxTitle}</p>
-          <p className="text-[#151E39]/50 text-xs mt-0.5">{c.exposeCheckboxText}</p>
-        </div>
-      </label>
+          <div>
+            <p className="text-[#151E39] font-medium text-sm">
+              {c.exposeCheckboxTitle || exposeFeld.label}
+            </p>
+            <p className="text-[#151E39]/50 text-xs mt-0.5">{c.exposeCheckboxText}</p>
+          </div>
+        </label>
+      )}
 
       {reihen.map((reihe, i) =>
         reihe.length === 2 ? (
@@ -276,7 +303,7 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
             {reihe.map(renderFeld)}
           </div>
         ) : (
-          renderFeld(reihe[0])
+          renderFeld(reihe[0], i)
         ),
       )}
 
@@ -297,10 +324,10 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
             </svg>
             {c.buttonSending}
           </>
-        ) : expose ? (
-          c.buttonMitExpose
+        ) : exposeFeld ? (
+          expose ? c.buttonMitExpose : c.buttonOhneExpose
         ) : (
-          c.buttonOhneExpose
+          c.submitLabel || c.buttonOhneExpose
         )}
       </button>
     </form>

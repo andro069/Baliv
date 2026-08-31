@@ -150,6 +150,16 @@ export const KontaktPage: GlobalConfig = {
       type: 'group',
       fields: [
         {
+          name: 'form',
+          label: 'Welches Formular?',
+          type: 'relationship',
+          relationTo: 'forms',
+          admin: {
+            description:
+              'Die Felder selbst werden unter „Forms“ gepflegt. Dort lassen sich beliebig viele Formulare anlegen und hier auswählen.',
+          },
+        },
+        {
           name: 'headline',
           label: 'Überschrift',
           type: 'text',
@@ -172,106 +182,6 @@ export const KontaktPage: GlobalConfig = {
           label: 'Exposé-Checkbox — Text',
           type: 'text',
           defaultValue: 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
-        },
-        {
-          name: 'felder',
-          label: 'Formularfelder',
-          labels: { singular: 'Feld', plural: 'Felder' },
-          type: 'array',
-          admin: {
-            initCollapsed: true,
-            description:
-              'Reihenfolge per Drag-and-drop. Felder lassen sich umbenennen, hinzufügen und entfernen. Der technische Name landet so in der E-Mail und in den Anfragen.',
-            components: {
-              RowLabel: '@/globals/KontaktPage/FeldRowLabel#FeldRowLabel',
-            },
-          },
-          fields: [
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'label',
-                  label: 'Beschriftung',
-                  type: 'text',
-                  required: true,
-                  admin: { width: '50%' },
-                },
-                {
-                  name: 'key',
-                  label: 'Technischer Name',
-                  type: 'text',
-                  required: true,
-                  admin: {
-                    width: '50%',
-                    description: 'Nur Kleinbuchstaben, ohne Leerzeichen — z. B. budget',
-                  },
-                  validate: (value: unknown) =>
-                    typeof value === 'string' && /^[a-z][a-z0-9_]*$/.test(value)
-                      ? true
-                      : 'Nur Kleinbuchstaben, Ziffern und Unterstriche; muss mit einem Buchstaben beginnen.',
-                },
-              ],
-            },
-            {
-              type: 'row',
-              fields: [
-                {
-                  name: 'typ',
-                  label: 'Feldtyp',
-                  type: 'select',
-                  required: true,
-                  defaultValue: 'text',
-                  admin: { width: '50%' },
-                  options: [
-                    { label: 'Text (einzeilig)', value: 'text' },
-                    { label: 'E-Mail', value: 'email' },
-                    { label: 'Telefonnummer', value: 'tel' },
-                    { label: 'Zahl', value: 'number' },
-                    { label: 'Text (mehrzeilig)', value: 'textarea' },
-                    { label: 'Auswahl (Schaltflächen)', value: 'auswahl' },
-                    { label: 'Auswahl (Aufklappliste)', value: 'dropdown' },
-                    { label: 'Ja/Nein-Häkchen', value: 'checkbox' },
-                  ],
-                },
-                {
-                  name: 'breite',
-                  label: 'Breite',
-                  type: 'select',
-                  defaultValue: 'voll',
-                  admin: { width: '50%' },
-                  options: [
-                    { label: 'Volle Breite', value: 'voll' },
-                    { label: 'Halbe Breite', value: 'halb' },
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'platzhalter',
-              label: 'Platzhalter',
-              type: 'text',
-              admin: {
-                condition: (_, sibling) =>
-                  !['auswahl', 'dropdown', 'checkbox'].includes(sibling?.typ),
-              },
-            },
-            {
-              name: 'optionen',
-              label: 'Auswahlmöglichkeiten',
-              type: 'array',
-              admin: {
-                condition: (_, sibling) => ['auswahl', 'dropdown'].includes(sibling?.typ),
-              },
-              fields: [{ name: 'label', label: 'Text', type: 'text', required: true }],
-            },
-            {
-              name: 'pflichtfeld',
-              label: 'Pflichtfeld',
-              type: 'checkbox',
-              defaultValue: false,
-            },
-          ],
         },
         {
           name: 'datenschutzText',

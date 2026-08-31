@@ -2276,33 +2276,14 @@ export interface KontaktPage {
     text?: string | null;
   };
   formular?: {
+    /**
+     * Die Felder selbst werden unter „Forms“ gepflegt. Dort lassen sich beliebig viele Formulare anlegen und hier auswählen.
+     */
+    form?: (number | null) | Form;
     headline?: string | null;
     subline?: string | null;
     exposeCheckboxTitle?: string | null;
     exposeCheckboxText?: string | null;
-    /**
-     * Reihenfolge per Drag-and-drop. Felder lassen sich umbenennen, hinzufügen und entfernen. Der technische Name landet so in der E-Mail und in den Anfragen.
-     */
-    felder?:
-      | {
-          label: string;
-          /**
-           * Nur Kleinbuchstaben, ohne Leerzeichen — z. B. budget
-           */
-          key: string;
-          typ: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'auswahl' | 'dropdown' | 'checkbox';
-          breite?: ('voll' | 'halb') | null;
-          platzhalter?: string | null;
-          optionen?:
-            | {
-                label: string;
-                id?: string | null;
-              }[]
-            | null;
-          pflichtfeld?: boolean | null;
-          id?: string | null;
-        }[]
-      | null;
     datenschutzText?: string | null;
     fehlerText?: string | null;
     buttonSending?: string | null;
@@ -3009,27 +2990,11 @@ export interface KontaktPageSelect<T extends boolean = true> {
   formular?:
     | T
     | {
+        form?: T;
         headline?: T;
         subline?: T;
         exposeCheckboxTitle?: T;
         exposeCheckboxText?: T;
-        felder?:
-          | T
-          | {
-              label?: T;
-              key?: T;
-              typ?: T;
-              breite?: T;
-              platzhalter?: T;
-              optionen?:
-                | T
-                | {
-                    label?: T;
-                    id?: T;
-                  };
-              pflichtfeld?: T;
-              id?: T;
-            };
         datenschutzText?: T;
         fehlerText?: T;
         buttonSending?: T;

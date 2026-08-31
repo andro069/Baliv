@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
-import { KontaktForm, type KontaktFeld } from './KontaktForm'
+import { KontaktForm, type FormFeld } from './KontaktForm'
 import { PageFooter } from '@/components/PageFooter'
 
 export const metadata: Metadata = {
@@ -17,7 +17,8 @@ export const metadata: Metadata = {
 
 export default async function KontaktPage() {
   const payload = await getPayload({ config })
-  const cms = await payload.findGlobal({ slug: 'kontakt-page' })
+  // depth: 2, damit das verknüpfte Formular samt seiner Felder mitgeladen wird.
+  const cms = await payload.findGlobal({ slug: 'kontakt-page', depth: 2 })
 
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Sprechen wir miteinander.'
   const heroDescription = (cms as any)?.hero?.description ?? 'Wir antworten innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.'
@@ -46,25 +47,19 @@ export default async function KontaktPage() {
 
   const f = (cms as any)?.formular ?? {}
 
-  const felder: KontaktFeld[] = (f.felder ?? [])
-    .filter((feld: any) => feld?.key && feld?.label)
-    .map((feld: any) => ({
-      key: feld.key,
-      label: feld.label,
-      typ: feld.typ ?? 'text',
-      platzhalter: feld.platzhalter ?? undefined,
-      pflichtfeld: Boolean(feld.pflichtfeld),
-      breite: feld.breite ?? 'voll',
-      optionen: (feld.optionen ?? []).map((o: any) => o?.label).filter(Boolean),
-    }))
+  // Das unter „Forms" gepflegte Formular. Ist keins gewählt, greift der
+  // Fallback in der Komponente.
+  const form = typeof f.form === 'object' && f.form !== null ? f.form : null
+  const felder: FormFeld[] = (form?.fields ?? []).filter((feld: any) => feld?.blockType)
 
   const formContent = {
+    ...(form ? { formId: form.id, submitLabel: form.submitButtonLabel } : {}),
+    ...(felder.length > 0 ? { felder } : {}),
     headline: f.headline ?? 'Anfrage senden',
     subline: f.subline ?? 'Alle Felder mit * sind Pflichtfelder.',
     exposeCheckboxTitle: f.exposeCheckboxTitle ?? 'Kostenloses Exposé zusenden',
     exposeCheckboxText:
       f.exposeCheckboxText ?? 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
-    ...(felder.length > 0 ? { felder } : {}),
     datenschutzText:
       f.datenschutzText ??
       'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',

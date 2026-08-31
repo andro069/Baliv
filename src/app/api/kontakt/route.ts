@@ -9,23 +9,53 @@ function fillTemplate(template: string, vars: Record<string, string>): string {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, phone, interesse, nachricht, expose, _labels } = body
+
+    // Neues Format vom Form-Builder: { formId, data, labels }.
+    // Das alte Flach-Format bleibt als Rückfallebene erhalten.
+    const data: Record<string, unknown> = body.data ?? body
+    const labels: Record<string, string> = body.labels ?? body._labels ?? {}
+    const formId = body.formId
+
+    const str = (v: unknown) => (v === undefined || v === null ? '' : String(v))
+    const name = str(data.name)
+    const email = str(data.email)
+    const phone = str(data.phone)
+    const nachricht = str(data.nachricht)
+    const expose = Boolean(data.expose)
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Name und E-Mail sind pflicht.' }, { status: 400 })
     }
 
-    // Felder, die der Kunde im Backend ergänzt hat — alles ausser den festen Spalten.
-    const STANDARD_KEYS = ['name', 'email', 'phone', 'interesse', 'nachricht', 'expose', '_labels']
-    const labels: Record<string, string> = _labels ?? {}
-    const zusatzFelder = Object.entries(body)
+    const payload = await getPayload({ config })
+
+    // Auswahlfelder speichern einen Wert (z. B. "penthouse"); für Mail und
+    // Anfragenliste soll aber die Beschriftung stehen ("Penthouse (ab 85 m²)").
+    let form: any = null
+    if (formId) {
+      try {
+        form = await payload.findByID({ collection: 'forms', id: formId, depth: 0 })
+      } catch {
+        /* Formular gelöscht — dann bleibt es beim Rohwert. */
+      }
+    }
+    const optionLabel = (feldName: string, wert: string): string => {
+      const feld = (form?.fields ?? []).find((x: any) => x?.name === feldName)
+      const opt = (feld?.options ?? []).find((o: any) => o?.value === wert)
+      return opt?.label ?? wert
+    }
+
+    const interesse = data.interesse ? optionLabel('interesse', str(data.interesse)) : ''
+
+    // Alles ausser den festen Spalten — damit ein im Backend ergänztes Feld
+    // ohne Code-Änderung in Mail und Anfrage landet.
+    const STANDARD_KEYS = ['name', 'email', 'phone', 'interesse', 'nachricht', 'expose']
+    const zusatzFelder = Object.entries(data)
       .filter(([k, v]) => !STANDARD_KEYS.includes(k) && v !== '' && v !== null && v !== undefined)
       .map(([k, v]) => ({
         feld: labels[k] || k,
-        wert: typeof v === 'boolean' ? (v ? 'Ja' : 'Nein') : String(v),
+        wert: typeof v === 'boolean' ? (v ? 'Ja' : 'Nein') : optionLabel(k, String(v)),
       }))
-
-    const payload = await getPayload({ config })
 
     // Load form config for "kontakt"
     const formConfigResult = await payload.find({
@@ -155,6 +185,27 @@ export async function POST(req: NextRequest) {
       })
     } catch (dbErr) {
       console.error('DB save error:', dbErr)
+    }
+
+    // Zusätzlich in die Einsendungen des Form-Builders, damit jedes unter
+    // „Forms" angelegte Formular seine Einsendungen dort gesammelt hat.
+    if (formId) {
+      try {
+        await payload.create({
+          collection: 'form-submissions',
+          data: {
+            form: formId,
+            submissionData: Object.entries(data).map(([field, value]) => ({
+              field,
+              value: typeof value === 'boolean' ? (value ? 'Ja' : 'Nein') : String(value ?? ''),
+            })),
+          },
+          // Die Mails verschickt diese Route bereits selbst.
+          context: { disableEmails: true },
+        })
+      } catch (subErr) {
+        console.error('Form submission save error:', subErr)
+      }
     }
 
     return NextResponse.json({ ok: true })
