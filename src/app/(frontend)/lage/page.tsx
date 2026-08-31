@@ -68,7 +68,7 @@ const defaultHighlights = [
   {
     title: 'Adria — 13 km Strand',
     text: 'Bar verfügt über einen der längsten Sandstrände Montenegros. Flaches, warmes Wasser, kaum Tourismenmassen außerhalb der Hochsaison — ideal für Eigenbedarf und Kurzzeitvermietung.',
-    image: '/terrasse-meerblick.png',
+    image: '/terrasse-meerblick.webp',
   },
   {
     title: 'Rumija — Natur pur',
@@ -97,7 +97,7 @@ export default async function LagePage() {
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Zwischen Festung, Meer und Bergen.'
   const heroSubline = (cms as any)?.hero?.subline ?? 'Die Lage'
   const heroDescription = (cms as any)?.hero?.description ?? 'Bar — am südlichen Ende der montenegrinischen Riviera. Authentisch, gewachsen, und am Beginn einer Entwicklung, die Budva und Kotor bereits hinter sich haben.'
-  const heroImage = mediaUrl((cms as any)?.hero?.image, '/lage-hero.png')
+  const heroImage = mediaUrl((cms as any)?.hero?.image, '/lage-hero.webp')
   const heroImageAlt = (cms as any)?.hero?.imageAlt ?? 'Bar, Montenegro — Luftaufnahme'
   const heroAddress = (cms as any)?.hero?.address ?? 'Bjeliši BB, 85000 Bar, Montenegro'
   const heroMapsLabel = (cms as any)?.hero?.mapsLabel ?? 'Google Maps öffnen'
@@ -108,7 +108,7 @@ export default async function LagePage() {
   const erreichbarkeitHeadlineAccent = (cms as any)?.erreichbarkeit?.headlineAccent ?? 'Nichts zu weit.'
   const erreichbarkeitDescription = (cms as any)?.erreichbarkeit?.description ?? 'Bar verbindet das Beste zweier Welten: südliche Ruhe mit guter Infrastruktur. Zwei internationale Flughäfen, Fährverbindung nach Italien, direkte Bahnlinie nach Belgrad — und trotzdem kein Massentourismus.'
 
-  const karteImage = mediaUrl((cms as any)?.karte?.image, '/map-montenegro.png')
+  const karteImage = mediaUrl((cms as any)?.karte?.image, '/map-montenegro.webp')
   const karteImageAlt = (cms as any)?.karte?.imageAlt ?? 'Karte Montenegro — Lage Bar'
   const karteBadgeTitle = (cms as any)?.karte?.badgeTitle ?? 'Baliv Residence'
   const karteBadgeSubline = (cms as any)?.karte?.badgeSubline ?? 'Bar, Montenegro'

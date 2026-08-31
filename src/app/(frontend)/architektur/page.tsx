@@ -55,12 +55,12 @@ const defaultFassadeItems = [
 
 const defaultGallery = [
   { src: '/detail-bogen.webp', alt: 'Rundbogen-Detail Fassade', aspect: 'tall' },
-  { src: '/detail-sanitaer.png', alt: 'Hansgrohe Badezimmer mit Marmor', aspect: 'tall' },
+  { src: '/detail-sanitaer.webp', alt: 'Hansgrohe Badezimmer mit Marmor', aspect: 'tall' },
   { src: '/architektur-detail.webp', alt: 'Architekturdetail Baliv Residence', aspect: 'wide' },
-  { src: '/detail-stein.png', alt: 'Naturstein-Bogenmotiv', aspect: 'square' },
+  { src: '/detail-stein.webp', alt: 'Naturstein-Bogenmotiv', aspect: 'square' },
   { src: '/interieur-wohnen-01.webp', alt: 'Wohnbereich Baliv Residence', aspect: 'wide' },
   { src: '/detail-terrassen.webp', alt: 'Terrassendetail', aspect: 'square' },
-  { src: '/detail-boden.png', alt: 'Travertin-Steinboden Nahaufnahme', aspect: 'wide' },
+  { src: '/detail-boden.webp', alt: 'Travertin-Steinboden Nahaufnahme', aspect: 'wide' },
   { src: '/interieur-bad-01.webp', alt: 'Badezimmer Interieur', aspect: 'tall' },
   { src: '/detail-fassade.webp', alt: 'Fassadenstruktur Naturstein', aspect: 'square' },
 ]
@@ -96,7 +96,7 @@ export default async function ArchitekturPage() {
   const heroDescription =
     hero.description ??
     'Entworfen von Ahmed Divanović, ArchDesign Studio Bar. Ein Gebäude, das seinen Ort nicht dominiert — sondern fortsetzt.'
-  const heroImage = mediaUrl(hero.image, '/architektur-hero-v2.png')
+  const heroImage = mediaUrl(hero.image, '/architektur-hero-v2.webp')
   const architektLabel = hero.architektLabel ?? 'Entwurf'
   const architektName = hero.architektName ?? 'Ahmed Divanović'
   const architektStudio = hero.architektStudio ?? 'ArchDesign Studio, Bar'
@@ -114,7 +114,7 @@ export default async function ArchitekturPage() {
   const prinzipienDescription =
     prinzipien.description ??
     'Jede Entscheidung bei Baliv Residence lässt sich auf einen von vier Grundsätzen zurückführen — die gemeinsam ein Gebäude ergeben, das sich seiner Umgebung bewusst ist.'
-  const prinzipienImage = mediaUrl(prinzipien.image, '/architektur-fassade.png?v=2')
+  const prinzipienImage = mediaUrl(prinzipien.image, '/architektur-fassade.webp?v=2')
   const cmsPrinzipien: any[] = prinzipien.items ?? []
   const designPrinciples =
     cmsPrinzipien.length > 0
@@ -149,7 +149,7 @@ export default async function ArchitekturPage() {
   const materialienDescription =
     materialienGroup.description ??
     'Keine Verbundwerkstoffe, keine Imitate. Jedes Material wurde nach Herkunft, Langlebigkeit und handwerklichem Verarbeitungsstandard ausgewählt.'
-  const materialienImage = mediaUrl(materialienGroup.image, '/architektur-materialien.png')
+  const materialienImage = mediaUrl(materialienGroup.image, '/architektur-materialien.webp')
   const cmsMaterials: any[] = materialienGroup.items ?? []
   const materials =
     cmsMaterials.length > 0
