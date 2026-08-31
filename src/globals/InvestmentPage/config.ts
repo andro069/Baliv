@@ -112,5 +112,50 @@ export const InvestmentPage: GlobalConfig = {
         { name: 'note', label: 'Hinweis', type: 'text' },
       ],
     },
+    {
+      name: 'cta',
+      label: 'CTA-Sektion (unten)',
+      type: 'group',
+      fields: [
+        {
+          name: 'eyebrow',
+          label: 'Kleine Überschrift',
+          type: 'text',
+          defaultValue: 'Jetzt sichern',
+        },
+        {
+          name: 'headline',
+          label: 'Überschrift (erste Zeile)',
+          type: 'text',
+          defaultValue: 'Das Fenster schließt sich',
+        },
+        {
+          name: 'headlineAccent',
+          label: 'Überschrift (zweite Zeile, goldene Farbe)',
+          type: 'text',
+          defaultValue: 'mit dem EU-Beitritt.',
+        },
+        {
+          name: 'description',
+          label: 'Beschreibung',
+          type: 'textarea',
+          defaultValue:
+            'Vollständiges Investment-Exposé mit Renditeberechnungen, Marktanalyse und aktueller Verfügbarkeit — kostenlos, deutschsprachig, direkt vom Bauträger.',
+        },
+        {
+          name: 'buttonLabel',
+          label: 'Button-Text',
+          type: 'text',
+          defaultValue: 'Investment-Exposé anfordern',
+        },
+        {
+          name: 'tags',
+          label: 'Vertrauens-Punkte (unter den Buttons)',
+          type: 'array',
+          maxRows: 6,
+          fields: [{ name: 'label', label: 'Text', type: 'text', required: true }],
+        },
+      ],
+    },
   ],
 }

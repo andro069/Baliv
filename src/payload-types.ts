@@ -2003,6 +2003,19 @@ export interface InvestmentPage {
         id?: string | null;
       }[]
     | null;
+  cta?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    tags?:
+      | {
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2346,6 +2359,21 @@ export interface InvestmentPageSelect<T extends boolean = true> {
         amount?: T;
         note?: T;
         id?: T;
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        buttonLabel?: T;
+        tags?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

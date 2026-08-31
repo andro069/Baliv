@@ -129,6 +129,21 @@ export default async function InvestmentPage() {
       }))
     : defaultPaymentSteps
 
+  const c = (cms as any)?.cta ?? {}
+  const cta = {
+    eyebrow: c.eyebrow ?? 'Jetzt sichern',
+    headline: c.headline ?? 'Das Fenster schließt sich',
+    headlineAccent: c.headlineAccent ?? 'mit dem EU-Beitritt.',
+    description:
+      c.description ??
+      'Vollständiges Investment-Exposé mit Renditeberechnungen, Marktanalyse und aktueller Verfügbarkeit — kostenlos, deutschsprachig, direkt vom Bauträger.',
+    buttonLabel: c.buttonLabel ?? 'Investment-Exposé anfordern',
+    tags:
+      (c.tags ?? []).length > 0
+        ? (c.tags as any[]).map((t: any) => t.label ?? '')
+        : ['Antwort < 24 Stunden', 'Deutschsprachig', 'Kein Makler', 'Direkt vom Bauträger'],
+  }
+
   const r = (cms as any)?.mietRendite ?? {}
   const rentalExample = {
     purchase: r.purchase ?? defaultRentalExample.purchase,
@@ -507,25 +522,24 @@ export default async function InvestmentPage() {
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section id="kontakt" className="bg-[#151E39] py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Jetzt sichern</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{cta.eyebrow}</p>
           <h2
             className="text-white text-3xl md:text-5xl mb-6 leading-tight"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Das Fenster schließt sich
+            {cta.headline}
             <br />
-            <em className="not-italic text-[#B69252]">mit dem EU-Beitritt.</em>
+            <em className="not-italic text-[#B69252]">{cta.headlineAccent}</em>
           </h2>
           <p className="text-white/60 leading-relaxed mb-10 max-w-xl mx-auto">
-            Vollständiges Investment-Exposé mit Renditeberechnungen, Marktanalyse und
-            aktueller Verfügbarkeit — kostenlos, deutschsprachig, direkt vom Bauträger.
+            {cta.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/kontakt"
               className="inline-flex items-center justify-center gap-2 bg-[#B69252] text-white px-8 py-4 text-sm tracking-widest uppercase hover:bg-[#a07d3f] transition-colors"
             >
-              Investment-Exposé anfordern
+              {cta.buttonLabel}
             </a>
             <a
               href="https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20das%20Investment-Expos%C3%A9%20bei%20Baliv%20Residence."
@@ -537,7 +551,7 @@ export default async function InvestmentPage() {
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-6 mt-8">
-            {['Antwort < 24 Stunden', 'Deutschsprachig', 'Kein Makler', 'Direkt vom Bauträger'].map((tag) => (
+            {cta.tags.map((tag) => (
               <span key={tag} className="text-white/30 text-xs tracking-wide">✓ {tag}</span>
             ))}
           </div>
