@@ -1959,6 +1959,19 @@ export interface InvestmentPage {
   hero?: {
     headline?: string | null;
     description?: string | null;
+    image?: (number | null) | Media;
+  };
+  warumMontenegro?: {
+    headline?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    vorteile?:
+      | {
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   steuerDaten?:
     | {
@@ -2286,6 +2299,21 @@ export interface InvestmentPageSelect<T extends boolean = true> {
     | {
         headline?: T;
         description?: T;
+        image?: T;
+      };
+  warumMontenegro?:
+    | T
+    | {
+        headline?: T;
+        description?: T;
+        image?: T;
+        vorteile?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
       };
   steuerDaten?:
     | T

@@ -29,6 +29,48 @@ export const InvestmentPage: GlobalConfig = {
           defaultValue:
             'Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas, zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.',
         },
+        {
+          name: 'image',
+          label: 'Hintergrundbild',
+          type: 'upload',
+          relationTo: 'media',
+        },
+      ],
+    },
+    {
+      name: 'warumMontenegro',
+      label: 'Warum Montenegro? (Sektion)',
+      type: 'group',
+      fields: [
+        {
+          name: 'headline',
+          label: 'Überschrift',
+          type: 'text',
+          defaultValue: 'Warum Montenegro?',
+        },
+        {
+          name: 'description',
+          label: 'Beschreibung',
+          type: 'textarea',
+          defaultValue:
+            'Montenegro kombiniert westliche Rechtssicherheit mit den Wachstumsraten eines Schwellenmarkts. Das Fenster vor dem EU-Beitritt — in dem die größten Wertsteigerungen stattfinden — schließt sich 2028.',
+        },
+        {
+          name: 'image',
+          label: 'Sektionsbild',
+          type: 'upload',
+          relationTo: 'media',
+        },
+        {
+          name: 'vorteile',
+          label: 'Vorteile (4 Punkte)',
+          type: 'array',
+          maxRows: 4,
+          fields: [
+            { name: 'title', label: 'Titel', type: 'text', required: true },
+            { name: 'text', label: 'Text', type: 'textarea' },
+          ],
+        },
       ],
     },
     {

@@ -86,12 +86,32 @@ const reasons = [
   },
 ]
 
+function mediaUrl(field: any, fallback: string): string {
+  if (!field) return fallback
+  if (typeof field === 'string' || typeof field === 'number') return fallback
+  return field.url ?? fallback
+}
+
 export default async function InvestmentPage() {
   const payload = await getPayload({ config })
   const cms = await payload.findGlobal({ slug: 'investment-page' })
 
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Investieren, wo Europa wächst.'
   const heroDescription = (cms as any)?.hero?.description ?? 'Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas, zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.'
+  const heroImage = mediaUrl((cms as any)?.hero?.image, '/terrasse-berge.webp')
+
+  const warum = (cms as any)?.warumMontenegro ?? {}
+  const warumHeadline = warum.headline ?? 'Warum Montenegro?'
+  const warumDescription = warum.description ?? 'Montenegro kombiniert westliche Rechtssicherheit mit den Wachstumsraten eines Schwellenmarkts. Das Fenster vor dem EU-Beitritt — in dem die größten Wertsteigerungen stattfinden — schließt sich 2028.'
+  const warumImage = mediaUrl(warum.image, '/building-front.webp')
+  const cmsVorteile: any[] = warum.vorteile ?? []
+  const vorteile = cmsVorteile.length > 0
+    ? cmsVorteile.map((v: any, idx: number) => ({
+        icon: reasons[idx]?.icon ?? reasons[0].icon,
+        title: v.title ?? reasons[idx]?.title ?? '',
+        text: v.text ?? reasons[idx]?.text ?? '',
+      }))
+    : reasons
 
   const cmsTax: any[] = (cms as any)?.steuerDaten ?? []
   const taxAdvantages = cmsTax.length > 0
@@ -130,7 +150,7 @@ export default async function InvestmentPage() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[75vh] min-h-[540px]">
         <Image
-          src="/terrasse-berge.webp"
+          src={heroImage}
           alt="Baliv Residence Aussicht"
           fill
           className="object-cover"
@@ -177,16 +197,14 @@ export default async function InvestmentPage() {
               className="text-[#151E39] text-3xl md:text-5xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Warum Montenegro?
+              {warumHeadline}
             </h2>
             <p className="text-[#151E39]/60 leading-relaxed mb-10">
-              Montenegro kombiniert westliche Rechtssicherheit mit den Wachstumsraten eines
-              Schwellenmarkts. Das Fenster vor dem EU-Beitritt — in dem die größten
-              Wertsteigerungen stattfinden — schließt sich 2028.
+              {warumDescription}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {reasons.map((r) => (
+              {vorteile.map((r) => (
                 <div key={r.title} className="flex gap-4">
                   <div className="flex-shrink-0 mt-0.5">{r.icon}</div>
                   <div>
@@ -200,7 +218,7 @@ export default async function InvestmentPage() {
 
           <div className="relative aspect-[4/3] rounded overflow-hidden">
             <Image
-              src="/building-front.webp"
+              src={warumImage}
               alt="Baliv Residence"
               fill
               className="object-cover"
