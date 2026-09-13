@@ -4,7 +4,9 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const langs = ['DE', 'EN', 'ME']
+// EN und ME sind ausgeblendet, bis Übersetzungen vorliegen. Der Umschalter
+// erscheint automatisch wieder, sobald hier mehr als eine Sprache steht.
+const langs: string[] = ['DE']
 
 type NavItem = { label: string; href: string }
 
@@ -15,9 +17,14 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll)
+    // Sofort prüfen: Lädt die Seite bereits gescrollt (Zurück-Taste, Anker, Neuladen),
+    // gäbe es sonst kein Scroll-Ereignis und der Kopf bliebe durchsichtig über dem Inhalt.
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const zeigeSprachen = langs.length > 1
 
   return (
     <>
@@ -34,34 +41,36 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
               width={160}
               height={66}
               priority
-              className="w-28 md:w-40"
+              className="w-28 md:w-40 h-auto"
             />
           </Link>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-1">
-              {langs.map((l, i) => (
-                <React.Fragment key={l}>
-                  <button
-                    onClick={() => setLang(l)}
-                    className={`text-xs tracking-widest transition-colors font-raleway ${
-                      lang === l
-                        ? 'text-[#B69252]'
-                        : scrolled
-                          ? 'text-[#151E39]/60 hover:text-[#151E39]'
-                          : 'text-white/60 hover:text-white'
-                    }`}
-                  >
-                    {l}
-                  </button>
-                  {i < langs.length - 1 && (
-                    <span className={`text-xs ${scrolled ? 'text-[#151E39]/20' : 'text-white/20'}`}>
-                      /
-                    </span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
+            {zeigeSprachen && (
+              <div className="flex items-center gap-1">
+                {langs.map((l, i) => (
+                  <React.Fragment key={l}>
+                    <button
+                      onClick={() => setLang(l)}
+                      className={`text-xs tracking-widest transition-colors font-raleway ${
+                        lang === l
+                          ? 'text-[#B69252]'
+                          : scrolled
+                            ? 'text-[#151E39]/60 hover:text-[#151E39]'
+                            : 'text-white/60 hover:text-white'
+                      }`}
+                    >
+                      {l}
+                    </button>
+                    {i < langs.length - 1 && (
+                      <span className={`text-xs ${scrolled ? 'text-[#151E39]/20' : 'text-white/20'}`}>
+                        /
+                      </span>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
 
             <button
               onClick={() => setOpen(true)}
@@ -112,22 +121,24 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
               {item.label}
             </Link>
           ))}
-          <div className="mt-8 flex items-center gap-4">
-            {langs.map((l) => (
-              <button
-                key={l}
-                onClick={() => {
-                  setLang(l)
-                  setOpen(false)
-                }}
-                className={`text-sm tracking-widest font-raleway transition-colors ${
-                  lang === l ? 'text-[#B69252]' : 'text-white/40 hover:text-white'
-                }`}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
+          {zeigeSprachen && (
+            <div className="mt-8 flex items-center gap-4">
+              {langs.map((l) => (
+                <button
+                  key={l}
+                  onClick={() => {
+                    setLang(l)
+                    setOpen(false)
+                  }}
+                  className={`text-sm tracking-widest font-raleway transition-colors ${
+                    lang === l ? 'text-[#B69252]' : 'text-white/40 hover:text-white'
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+          )}
         </nav>
       </div>
     </>

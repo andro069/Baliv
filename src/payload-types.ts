@@ -123,6 +123,7 @@ export interface Config {
     'investment-page': InvestmentPage;
     'lage-page': LagePage;
     'kontakt-page': KontaktPage;
+    'ueber-uns-page': UeberUnsPage;
     'architektur-page': ArchitekturPage;
   };
   globalsSelect: {
@@ -135,6 +136,7 @@ export interface Config {
     'investment-page': InvestmentPageSelect<false> | InvestmentPageSelect<true>;
     'lage-page': LagePageSelect<false> | LagePageSelect<true>;
     'kontakt-page': KontaktPageSelect<false> | KontaktPageSelect<true>;
+    'ueber-uns-page': UeberUnsPageSelect<false> | UeberUnsPageSelect<true>;
     'architektur-page': ArchitekturPageSelect<false> | ArchitekturPageSelect<true>;
   };
   locale: null;
@@ -1969,6 +1971,7 @@ export interface WohnungenPage {
     unitsLabel?: string | null;
     priceLabel?: string | null;
     exampleNote?: string | null;
+    hinweis?: string | null;
     ctaLabel?: string | null;
   };
   types?:
@@ -1994,6 +1997,7 @@ export interface WohnungenPage {
     headline?: string | null;
     headlineAccent?: string | null;
     description?: string | null;
+    hinweis?: string | null;
     premiumTitle?: string | null;
   };
   premiumPaket?:
@@ -2031,6 +2035,9 @@ export interface WohnungenPage {
     whatsappUrl?: string | null;
     note?: string | null;
   };
+  /**
+   * Keine Markennamen als Zusage verwenden. Das Symbol richtet sich nach Stichworten im Titel (Armatur/Bad, Klima, Eurocode/Erdbeben, Stein, Holz, Schlüssel).
+   */
   ausstattung?:
     | {
         brand: string;
@@ -2070,6 +2077,7 @@ export interface PreisePage {
     exampleNote?: string | null;
     buttonLabel?: string | null;
     buttonLink?: string | null;
+    areaNote?: string | null;
   };
   includedSection?: {
     eyebrow?: string | null;
@@ -2077,6 +2085,7 @@ export interface PreisePage {
     headlineAccent?: string | null;
     description?: string | null;
     includedLabel?: string | null;
+    footnote?: string | null;
   };
   paymentSection?: {
     eyebrow?: string | null;
@@ -2101,6 +2110,9 @@ export interface PreisePage {
     rowPurchase?: string | null;
     rowExtraCosts?: string | null;
     rowTotal?: string | null;
+    /**
+     * Nebenkosten = Kaufpreis × Satz, auf volle 10 € gerundet. Gesamt = Kaufpreis + Nebenkosten.
+     */
     extraCostsRate?: number | null;
   };
   cta?: {
@@ -2124,7 +2136,12 @@ export interface PreisePage {
         units?: string | null;
         highlight?: boolean | null;
         exampleSize?: number | null;
+        examplePricePerSqm?: number | null;
+        /**
+         * Weicht der Wert von Fläche × Preis/m² ab, wird er automatisch mit „≈" angezeigt. Wird auch als „ab"-Preis im Hero verwendet.
+         */
         examplePrice?: number | null;
+        exampleExtraNote?: string | null;
         floorplan?: (number | null) | Media;
         features?:
           | {
@@ -2166,6 +2183,13 @@ export interface InvestmentPage {
     headline?: string | null;
     description?: string | null;
     image?: (number | null) | Media;
+    kennzahlen?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   warumMontenegro?: {
     headline?: string | null;
@@ -2178,6 +2202,44 @@ export interface InvestmentPage {
           id?: string | null;
         }[]
       | null;
+    bildKennzahlen?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  marktdaten?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    /**
+     * Höchstens eine Zahl — nur mit belegter Quelle und Jahr (z. B. MONSTAT oder Zentralbank von Montenegro). Leer lassen, dann wird keine Zahl angezeigt.
+     */
+    kennzahlWert?: string | null;
+    kennzahlLabel?: string | null;
+    kennzahlText?: string | null;
+    /**
+     * z. B. „Quelle: MONSTAT, Statistik der Wohnungspreise, 2025". Wird nur zusammen mit einer Kennzahl angezeigt.
+     */
+    quelle?: string | null;
+    zeitleisteTitel?: string | null;
+    zeitleiste?:
+      | {
+          year: string;
+          event: string;
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  steuerSektion?: {
+    headline?: string | null;
+    headlineAccent?: string | null;
+    description?: string | null;
+    fussnote?: string | null;
   };
   steuerDaten?:
     | {
@@ -2187,22 +2249,31 @@ export interface InvestmentPage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Alle Beträge der Beispielrechnung werden aus diesen Feldern berechnet: Kaufpreis = Größe × Preis/m²; Brutto = Wochen × Wochenpreis je Saison; Ertrag vor Steuer = Brutto − Verwaltungsquote − Betriebskosten; Nettoertrag = Ertrag vor Steuer − Steuersatz; Rendite = Nettoertrag ÷ Kaufpreis.
+   */
   mietRendite?: {
     headline?: string | null;
-    purchase?: number | null;
+    description?: string | null;
     size?: number | null;
     pricePerSqm?: number | null;
-    weeklyRate?: number | null;
-    occupancyWeeks?: number | null;
-    annualRent?: number | null;
-    yield?: number | null;
-    appreciationLow?: number | null;
-    appreciationHigh?: number | null;
+    hauptsaisonWochen?: number | null;
+    hauptsaisonWochenpreis?: number | null;
+    nebensaisonWochen?: number | null;
+    nebensaisonWochenpreis?: number | null;
+    verwaltungQuote?: number | null;
+    betriebskosten?: number | null;
+    steuersatz?: number | null;
+    fussnote?: string | null;
+  };
+  zahlungsplan?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    nebenkosten?: string | null;
   };
   paymentSteps?:
     | {
         step: string;
-        date?: string | null;
         label: string;
         amount: string;
         note?: string | null;
@@ -2256,6 +2327,7 @@ export interface LagePage {
   };
   distances?:
     | {
+        icon?: ('ort' | 'kueste' | 'altstadt' | 'berge' | 'natur') | null;
         place: string;
         distance: string;
         detail?: string | null;
@@ -2280,6 +2352,7 @@ export interface LagePage {
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
+    standText?: string | null;
     note?: string | null;
   };
   marktPreise?:
@@ -2350,6 +2423,9 @@ export interface KontaktPage {
     subline?: string | null;
     exposeCheckboxTitle?: string | null;
     exposeCheckboxText?: string | null;
+    /**
+     * Wird nur angezeigt, wenn das gewählte Formular keine Checkbox mit dem Namen „datenschutz“ enthält. Das Wort „Datenschutzerklärung“ wird automatisch verlinkt.
+     */
     datenschutzText?: string | null;
     fehlerText?: string | null;
     buttonSending?: string | null;
@@ -2358,6 +2434,82 @@ export interface KontaktPage {
     erfolgHeadline?: string | null;
     erfolgText?: string | null;
     erfolgLinkLabel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Keine Personennamen verwenden — Absender ist die Gesellschaft.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ueber-uns-page".
+ */
+export interface UeberUnsPage {
+  id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  hero?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  werWirSind?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    text?: string | null;
+    punkte?:
+      | {
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  warumBar?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    text?: string | null;
+    linkLabel?: string | null;
+    linkHref?: string | null;
+    image?: (number | null) | Media;
+  };
+  wieWirBauen?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    text?: string | null;
+    punkte?:
+      | {
+          title: string;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  kauf?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    text?: string | null;
+    schritte?:
+      | {
+          step?: string | null;
+          title: string;
+          amount?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    nebenkosten?: string | null;
+  };
+  cta?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    description?: string | null;
+    buttonLabel?: string | null;
+    buttonLink?: string | null;
+    note?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2427,6 +2579,7 @@ export interface ArchitekturPage {
           id?: string | null;
         }[]
       | null;
+    hinweis?: string | null;
   };
   galerie?: {
     eyebrow?: string | null;
@@ -2681,6 +2834,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
         unitsLabel?: T;
         priceLabel?: T;
         exampleNote?: T;
+        hinweis?: T;
         ctaLabel?: T;
       };
   types?:
@@ -2708,6 +2862,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
         headline?: T;
         headlineAccent?: T;
         description?: T;
+        hinweis?: T;
         premiumTitle?: T;
       };
   premiumPaket?:
@@ -2792,6 +2947,7 @@ export interface PreisePageSelect<T extends boolean = true> {
         exampleNote?: T;
         buttonLabel?: T;
         buttonLink?: T;
+        areaNote?: T;
       };
   includedSection?:
     | T
@@ -2801,6 +2957,7 @@ export interface PreisePageSelect<T extends boolean = true> {
         headlineAccent?: T;
         description?: T;
         includedLabel?: T;
+        footnote?: T;
       };
   paymentSection?:
     | T
@@ -2855,7 +3012,9 @@ export interface PreisePageSelect<T extends boolean = true> {
         units?: T;
         highlight?: T;
         exampleSize?: T;
+        examplePricePerSqm?: T;
         examplePrice?: T;
+        exampleExtraNote?: T;
         floorplan?: T;
         features?:
           | T
@@ -2898,6 +3057,13 @@ export interface InvestmentPageSelect<T extends boolean = true> {
         headline?: T;
         description?: T;
         image?: T;
+        kennzahlen?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
       };
   warumMontenegro?:
     | T
@@ -2912,6 +3078,42 @@ export interface InvestmentPageSelect<T extends boolean = true> {
               text?: T;
               id?: T;
             };
+        bildKennzahlen?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+      };
+  marktdaten?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        kennzahlWert?: T;
+        kennzahlLabel?: T;
+        kennzahlText?: T;
+        quelle?: T;
+        zeitleisteTitel?: T;
+        zeitleiste?:
+          | T
+          | {
+              year?: T;
+              event?: T;
+              note?: T;
+              id?: T;
+            };
+      };
+  steuerSektion?:
+    | T
+    | {
+        headline?: T;
+        headlineAccent?: T;
+        description?: T;
+        fussnote?: T;
       };
   steuerDaten?:
     | T
@@ -2925,21 +3127,29 @@ export interface InvestmentPageSelect<T extends boolean = true> {
     | T
     | {
         headline?: T;
-        purchase?: T;
+        description?: T;
         size?: T;
         pricePerSqm?: T;
-        weeklyRate?: T;
-        occupancyWeeks?: T;
-        annualRent?: T;
-        yield?: T;
-        appreciationLow?: T;
-        appreciationHigh?: T;
+        hauptsaisonWochen?: T;
+        hauptsaisonWochenpreis?: T;
+        nebensaisonWochen?: T;
+        nebensaisonWochenpreis?: T;
+        verwaltungQuote?: T;
+        betriebskosten?: T;
+        steuersatz?: T;
+        fussnote?: T;
+      };
+  zahlungsplan?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        nebenkosten?: T;
       };
   paymentSteps?:
     | T
     | {
         step?: T;
-        date?: T;
         label?: T;
         amount?: T;
         note?: T;
@@ -3001,6 +3211,7 @@ export interface LagePageSelect<T extends boolean = true> {
   distances?:
     | T
     | {
+        icon?: T;
         place?: T;
         distance?: T;
         detail?: T;
@@ -3028,6 +3239,7 @@ export interface LagePageSelect<T extends boolean = true> {
         eyebrow?: T;
         headline?: T;
         description?: T;
+        standText?: T;
         note?: T;
       };
   marktPreise?:
@@ -3122,6 +3334,94 @@ export interface KontaktPageSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ueber-uns-page_select".
+ */
+export interface UeberUnsPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        description?: T;
+        image?: T;
+      };
+  werWirSind?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        text?: T;
+        punkte?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  warumBar?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        text?: T;
+        linkLabel?: T;
+        linkHref?: T;
+        image?: T;
+      };
+  wieWirBauen?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        text?: T;
+        punkte?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  kauf?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        text?: T;
+        schritte?:
+          | T
+          | {
+              step?: T;
+              title?: T;
+              amount?: T;
+              text?: T;
+              id?: T;
+            };
+        nebenkosten?: T;
+      };
+  cta?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        description?: T;
+        buttonLabel?: T;
+        buttonLink?: T;
+        note?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "architektur-page_select".
  */
 export interface ArchitekturPageSelect<T extends boolean = true> {
@@ -3194,6 +3494,7 @@ export interface ArchitekturPageSelect<T extends boolean = true> {
               detail?: T;
               id?: T;
             };
+        hinweis?: T;
       };
   galerie?:
     | T

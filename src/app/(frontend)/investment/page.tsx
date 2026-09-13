@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -11,35 +10,65 @@ import { PageFooter } from '@/components/PageFooter'
 export const metadata: Metadata = {
   title: 'Investment — Baliv Residence, Bar Montenegro',
   description:
-    'Montenegro: 6–8% Mietrendite, 25–40% Wertsteigerung bis 2030, Einkommensteuer 9%. Investieren Sie jetzt — vor dem EU-Beitritt 2028.',
+    'Investieren in Bar, Montenegro: Euro seit 2002, NATO seit 2017, 9 % Einkommensteuer auf Mieteinnahmen. Beispielrechnung, Steuerüberblick und Zahlungsplan.',
 }
 
+const WHATSAPP_URL =
+  'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Baliv%20Residence.'
+
+const defaultHeroKennzahlen = [
+  { value: 'Euro', label: 'seit 2002' },
+  { value: 'NATO', label: 'seit 2017' },
+  { value: '9 %', label: 'Einkommensteuer auf Mieteinnahmen' },
+]
+
+const defaultBildKennzahlen = [
+  { value: 'NATO', label: 'seit 2017' },
+  { value: 'Euro', label: 'seit 2002' },
+  { value: 'EU', label: 'Ziel 2028, Verhandlungen laufen' },
+  { value: '0 %', label: 'Vermögensteuer' },
+]
+
 const defaultTaxAdvantages = [
-  { label: 'Einkommensteuer auf Mieteinnahmen', value: '9 %', note: 'einer der niedrigsten Sätze Europas' },
-  { label: 'Körperschaftsteuer', value: '9 %', note: 'bei gewerblicher Vermietung' },
-  { label: 'Grunderwerbsteuer', value: '3 %', note: 'einmalig beim Kauf' },
-  { label: 'Vermögenssteuer', value: '0 %', note: 'keine Vermögenssteuer' },
-  { label: 'Erbschaftssteuer', value: '0 %', note: 'keine Erbschaftssteuer' },
-  { label: 'Kapitalertragsteuer', value: '9 %', note: 'bei Wiederverkauf' },
+  {
+    label: 'Grunderwerbsteuer',
+    value: 'entfällt',
+    note: 'Beim Kauf vom Bauträger. Der Kaufpreis enthält 21 % MwSt.; die Übertragungssteuer fällt erst beim Weiterverkauf an (gestaffelt 3–6 %).',
+  },
+  { label: 'Jahresgrundsteuer', value: '0,1–1 %', note: 'Je nach Lage und Größe' },
+  { label: 'Einkommensteuer (Miete)', value: '9 %', note: 'Pauschal auf Mieteinnahmen' },
+  { label: 'Körperschaftsteuer', value: '9 / 12 / 15 %', note: 'Gestaffelt nach Gewinnhöhe' },
+  { label: 'Kapitalertragsteuer', value: '9 %', note: 'Auf Veräußerungsgewinn' },
+  { label: 'Mehrwertsteuer', value: 'Inklusive', note: 'Im Kaufpreis enthalten' },
 ]
 
 const defaultPaymentSteps = [
-  { step: '01', date: 'Okt. 2026', label: 'Baugenehmigung', amount: '40 %', note: 'nach Erhalt der Baugenehmigung' },
-  { step: '02', date: 'Q2 2027', label: 'Rohbau', amount: '30 %', note: 'bei Rohbaufertigstellung' },
-  { step: '03', date: 'Q4 2027', label: 'Dachschluss', amount: '20 %', note: 'bei Dachschluss' },
-  { step: '04', date: 'Q1 2028', label: 'Übergabe', amount: '10 %', note: 'bei Schlüsselübergabe' },
+  {
+    step: '01',
+    label: 'Notarieller Kaufvertrag',
+    amount: '40 %',
+    note: 'Die Baugenehmigung liegt vor. Sie schließen direkt den notariellen Hauptvertrag, keinen Vorvertrag.',
+  },
+  { step: '02', label: 'Rohbau fertiggestellt', amount: '40 %', note: '' },
+  { step: '03', label: 'Fertigstellung und Schlüsselübergabe', amount: '20 %', note: '' },
 ]
 
-const defaultRentalExample = {
-  purchase: 125000,
-  size: 50,
+const defaultZeitleiste = [
+  { year: '2026', event: 'Genehmigung und Baubeginn', note: '' },
+  { year: '2027', event: 'Rohbau', note: '' },
+  { year: '2028', event: 'Übergabe (Q2)', note: '' },
+]
+
+const defaultRental = {
+  size: 46.79,
   pricePerSqm: 2500,
-  weeklyRate: 550,
-  occupancyWeeks: 20,
-  annualRent: 11000,
-  yield: 8.8,
-  appreciationLow: 30000,
-  appreciationHigh: 48000,
+  hauptsaisonWochen: 10,
+  hauptsaisonWochenpreis: 850,
+  nebensaisonWochen: 15,
+  nebensaisonWochenpreis: 450,
+  verwaltungQuote: 20,
+  betriebskosten: 900,
+  steuersatz: 9,
 }
 
 const reasons = [
@@ -51,7 +80,7 @@ const reasons = [
       </svg>
     ),
     title: 'NATO-Mitglied',
-    text: 'Seit 2017. Politische und militärische Stabilität nach westlichem Standard.',
+    text: 'Seit 2017 Mitglied des westlichen Verteidigungsbündnisses.',
   },
   {
     icon: (
@@ -61,7 +90,7 @@ const reasons = [
       </svg>
     ),
     title: 'Euro-Währung',
-    text: 'Seit 2002. Kein Wechselkursrisiko für DACH-Investoren.',
+    text: 'Seit 2002. Kein Wechselkursrisiko für Anleger aus dem Euroraum.',
   },
   {
     icon: (
@@ -70,8 +99,8 @@ const reasons = [
         <path d="M4 20h24" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
     ),
-    title: 'EU-Beitritt 2028',
-    text: 'Montenegro ist EU-Beitrittskandidat. Der Beitritt ist für 2028 geplant — zeitgleich mit der Fertigstellung.',
+    title: 'EU-Beitrittskandidat',
+    text: 'Die Beitrittsverhandlungen laufen; als Zieldatum wird 2028 genannt.',
   },
   {
     icon: (
@@ -82,7 +111,7 @@ const reasons = [
       </svg>
     ),
     title: 'Rechtssicherheit',
-    text: 'Ausländer dürfen Immobilien uneingeschränkt kaufen. Notariell beurkundete Eigentumsübertragung.',
+    text: 'Ausländer können Wohnungseigentum erwerben. Notariell beurkundete Eigentumsübertragung.',
   },
 ]
 
@@ -92,17 +121,36 @@ function mediaUrl(field: any, fallback: string): string {
   return field.url ?? fallback
 }
 
+function num(value: any, fallback: number): number {
+  const n = typeof value === 'string' ? parseFloat(value) : value
+  return typeof n === 'number' && Number.isFinite(n) ? n : fallback
+}
+
+const eur = (n: number) => `${Math.round(n).toLocaleString('de-DE')} €`
+const dec = (n: number) => n.toLocaleString('de-DE', { maximumFractionDigits: 2 })
+
 export default async function InvestmentPage() {
   const payload = await getPayload({ config })
   const cms = await payload.findGlobal({ slug: 'investment-page' })
 
-  const heroHeadline = (cms as any)?.hero?.headline ?? 'Investieren, wo Europa wächst.'
-  const heroDescription = (cms as any)?.hero?.description ?? 'Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas, zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.'
-  const heroImage = mediaUrl((cms as any)?.hero?.image, '/terrasse-berge.webp')
+  // ── Hero ──
+  const hero = (cms as any)?.hero ?? {}
+  const heroHeadline = hero.headline ?? 'Investieren, wo Europa wächst.'
+  const heroDescription =
+    hero.description ??
+    'Montenegro: stabile Währung, niedrige Unternehmens- und Einkommensteuer — und ein Markt, der gerade erst entdeckt wird.'
+  const heroImage = mediaUrl(hero.image, '/terrasse-berge.webp')
+  const cmsHeroKpis: any[] = hero.kennzahlen ?? []
+  const heroKennzahlen = cmsHeroKpis.length > 0
+    ? cmsHeroKpis.map((k: any) => ({ value: k.value ?? '', label: k.label ?? '' }))
+    : defaultHeroKennzahlen
 
+  // ── Warum Montenegro ──
   const warum = (cms as any)?.warumMontenegro ?? {}
   const warumHeadline = warum.headline ?? 'Warum Montenegro?'
-  const warumDescription = warum.description ?? 'Montenegro kombiniert westliche Rechtssicherheit mit den Wachstumsraten eines Schwellenmarkts. Das Fenster vor dem EU-Beitritt — in dem die größten Wertsteigerungen stattfinden — schließt sich 2028.'
+  const warumDescription =
+    warum.description ??
+    'Westliche Rahmenbedingungen: der Euro als Währung, die NATO-Mitgliedschaft und der Erwerb von Wohnungseigentum auch für Ausländer. Montenegro ist EU-Beitrittskandidat, die Verhandlungen laufen; als Zieldatum wird 2028 genannt.'
   const warumImage = mediaUrl(warum.image, '/building-front.webp')
   const cmsVorteile: any[] = warum.vorteile ?? []
   const vorteile = cmsVorteile.length > 0
@@ -112,50 +160,127 @@ export default async function InvestmentPage() {
         text: v.text ?? reasons[idx]?.text ?? '',
       }))
     : reasons
+  const cmsBildKpis: any[] = warum.bildKennzahlen ?? []
+  const bildKennzahlen = cmsBildKpis.length > 0
+    ? cmsBildKpis.map((k: any) => ({ value: k.value ?? '', label: k.label ?? '' }))
+    : defaultBildKennzahlen
 
+  // ── Marktdaten ──
+  const m = (cms as any)?.marktdaten ?? {}
+  const markt = {
+    eyebrow: m.eyebrow ?? 'Marktdaten',
+    headline: m.headline ?? 'Bar an der',
+    headlineAccent: m.headlineAccent ?? 'montenegrinischen Adria.',
+    description:
+      m.description ??
+      'Bar hat den wichtigsten Seehafen Montenegros und liegt direkt unterhalb der historischen Altstadt Stari Bar. Die Einstiegspreise bei Baliv Residence beginnen ab 2.500 €/m².',
+    kennzahlWert: (m.kennzahlWert ?? '').trim(),
+    kennzahlLabel: m.kennzahlLabel ?? '',
+    kennzahlText: m.kennzahlText ?? '',
+    quelle: (m.quelle ?? '').trim(),
+    zeitleisteTitel: m.zeitleisteTitel ?? 'Entwicklungspfad',
+  }
+  const cmsZeitleiste: any[] = m.zeitleiste ?? []
+  const zeitleiste = cmsZeitleiste.length > 0
+    ? cmsZeitleiste.map((t: any) => ({ year: t.year ?? '', event: t.event ?? '', note: t.note ?? '' }))
+    : defaultZeitleiste
+
+  // ── Mietrendite (alle Beträge werden aus den Feldern berechnet) ──
+  const r = (cms as any)?.mietRendite ?? {}
+  const rentalHeadline = r.headline ?? 'Mietertrag an einem Beispiel.'
+  const rentalDescription =
+    r.description ??
+    'Bar liegt nahe Stari Bar, dem Hafen und der Natur der Küste. Die Beispielrechnung zeigt, wie sich Mieteinnahmen, Kosten und Steuer bei einer Zweizimmerwohnung zusammensetzen.'
+  const rentalFootnote =
+    r.fussnote ??
+    'Beispielrechnung auf Basis marktüblicher Wochenpreise, Stand 2026. Keine Zusicherung einer Rendite. Steuerliche Behandlung individuell.'
+  const size = num(r.size, defaultRental.size)
+  const pricePerSqm = num(r.pricePerSqm, defaultRental.pricePerSqm)
+  const hsWochen = num(r.hauptsaisonWochen, defaultRental.hauptsaisonWochen)
+  const hsPreis = num(r.hauptsaisonWochenpreis, defaultRental.hauptsaisonWochenpreis)
+  const nsWochen = num(r.nebensaisonWochen, defaultRental.nebensaisonWochen)
+  const nsPreis = num(r.nebensaisonWochenpreis, defaultRental.nebensaisonWochenpreis)
+  const verwaltungQuote = num(r.verwaltungQuote, defaultRental.verwaltungQuote)
+  const betriebskosten = num(r.betriebskosten, defaultRental.betriebskosten)
+  const steuersatz = num(r.steuersatz, defaultRental.steuersatz)
+
+  const kaufpreis = Math.round(size * pricePerSqm)
+  const einnahmenHS = Math.round(hsWochen * hsPreis)
+  const einnahmenNS = Math.round(nsWochen * nsPreis)
+  const brutto = einnahmenHS + einnahmenNS
+  const verwaltung = Math.round((brutto * verwaltungQuote) / 100)
+  const betrieb = Math.round(betriebskosten)
+  const vorSteuer = brutto - verwaltung - betrieb
+  const steuer = Math.round((vorSteuer * steuersatz) / 100)
+  const netto = vorSteuer - steuer
+  const rendite = kaufpreis > 0 ? (netto / kaufpreis) * 100 : 0
+
+  const rentalRows: { label: string; value: string; strong?: boolean }[] = [
+    { label: `Kaufpreis (${dec(size)} m² × ${eur(pricePerSqm)})`, value: eur(kaufpreis) },
+    { label: `Hauptsaison · ${dec(hsWochen)} Wochen × ${eur(hsPreis)}`, value: eur(einnahmenHS) },
+    { label: `Nebensaison · ${dec(nsWochen)} Wochen × ${eur(nsPreis)}`, value: eur(einnahmenNS) },
+    { label: 'Bruttoeinnahmen', value: eur(brutto), strong: true },
+    { label: `– Verwaltung und Reinigung (${dec(verwaltungQuote)} %)`, value: `– ${eur(verwaltung)}` },
+    { label: '– Betrieb und Instandhaltung', value: `– ${eur(betrieb)}` },
+    { label: '= Ertrag vor Steuer', value: eur(vorSteuer), strong: true },
+    { label: `– Einkommensteuer ${dec(steuersatz)} %`, value: `– ${eur(steuer)}` },
+  ]
+
+  // ── Steuern ──
+  const st = (cms as any)?.steuerSektion ?? {}
+  const steuerSektion = {
+    headline: st.headline ?? 'Keine Vermögensteuer.',
+    headlineAccent: st.headlineAccent ?? '9 % auf Mieteinnahmen.',
+    description:
+      st.description ??
+      'Die wichtigsten Steuern beim Kauf und bei der Vermietung einer Wohnung in Montenegro im Überblick.',
+    fussnote:
+      st.fussnote ??
+      'Allgemeine Informationen, Stand 2026. Keine Steuerberatung. Die Behandlung im Wohnsitzland richtet sich nach dem jeweiligen Doppelbesteuerungsabkommen.',
+  }
   const cmsTax: any[] = (cms as any)?.steuerDaten ?? []
   const taxAdvantages = cmsTax.length > 0
     ? cmsTax.map((t: any) => ({ label: t.label ?? '', value: t.value ?? '', note: t.note ?? '' }))
     : defaultTaxAdvantages
 
+  // ── Zahlungsplan ──
+  const z = (cms as any)?.zahlungsplan ?? {}
+  const zahlungsplan = {
+    eyebrow: z.eyebrow ?? 'Zahlungsplan',
+    headline: z.headline ?? 'So läuft der Kauf',
+    nebenkosten:
+      z.nebenkosten ??
+      'Nebenkosten für Notar, Anwalt, Übersetzung und Grundbuch: ca. 1,5–2,5 %. MwSt. im Kaufpreis enthalten. Keine Maklerprovision. Keine Grunderwerbsteuer — beim Kauf vom Bauträger entfällt sie.',
+  }
   const cmsSteps: any[] = (cms as any)?.paymentSteps ?? []
   const paymentSteps = cmsSteps.length > 0
     ? cmsSteps.map((s: any, idx: number) => ({
         step: s.step ?? `0${idx + 1}`,
-        date: s.date ?? '',
         label: s.label ?? '',
         amount: s.amount ?? '',
         note: s.note ?? '',
       }))
     : defaultPaymentSteps
 
+  // ── CTA ──
   const c = (cms as any)?.cta ?? {}
   const cta = {
-    eyebrow: c.eyebrow ?? 'Jetzt sichern',
-    headline: c.headline ?? 'Das Fenster schließt sich',
-    headlineAccent: c.headlineAccent ?? 'mit dem EU-Beitritt.',
+    eyebrow: c.eyebrow ?? 'Investment-Exposé anfordern',
+    headline: c.headline ?? 'Zahlen, Marktdaten und Verfügbarkeit,',
+    headlineAccent: c.headlineAccent ?? 'direkt vom Bauträger.',
     description:
       c.description ??
-      'Vollständiges Investment-Exposé mit Renditeberechnungen, Marktanalyse und aktueller Verfügbarkeit — kostenlos, deutschsprachig, direkt vom Bauträger.',
+      'Das Investment-Exposé enthält Grundrisse, die vollständige Preisliste sowie Angaben zu Steuern und Abgaben — kostenlos und deutschsprachig.',
     buttonLabel: c.buttonLabel ?? 'Investment-Exposé anfordern',
     tags:
       (c.tags ?? []).length > 0
         ? (c.tags as any[]).map((t: any) => t.label ?? '')
-        : ['Antwort < 24 Stunden', 'Deutschsprachig', 'Kein Makler', 'Direkt vom Bauträger'],
+        : ['In der Regel Antwort innerhalb von 24 Stunden', 'Deutschsprachig', 'Kein Makler', 'Direkt vom Bauträger'],
   }
 
-  const r = (cms as any)?.mietRendite ?? {}
-  const rentalExample = {
-    purchase: r.purchase ?? defaultRentalExample.purchase,
-    size: r.size ?? defaultRentalExample.size,
-    pricePerSqm: r.pricePerSqm ?? defaultRentalExample.pricePerSqm,
-    weeklyRate: r.weeklyRate ?? defaultRentalExample.weeklyRate,
-    occupancyWeeks: r.occupancyWeeks ?? defaultRentalExample.occupancyWeeks,
-    annualRent: r.annualRent ?? defaultRentalExample.annualRent,
-    yield: r.yield ?? defaultRentalExample.yield,
-    appreciationLow: r.appreciationLow ?? defaultRentalExample.appreciationLow,
-    appreciationHigh: r.appreciationHigh ?? defaultRentalExample.appreciationHigh,
-  }
+  const kpiCols = heroKennzahlen.length >= 4 ? 'md:grid-cols-4' : heroKennzahlen.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'
+  const stepCols = paymentSteps.length >= 5 ? 'md:grid-cols-5' : paymentSteps.length === 4 ? 'md:grid-cols-4' : paymentSteps.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'
+  const timelineCols = zeitleiste.length >= 6 ? 'md:grid-cols-6' : zeitleiste.length === 5 ? 'md:grid-cols-5' : zeitleiste.length === 4 ? 'md:grid-cols-4' : zeitleiste.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'
 
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
@@ -187,14 +312,9 @@ export default async function InvestmentPage() {
 
         {/* KPI bar */}
         <div className="absolute bottom-0 left-0 right-0 bg-[#151E39]/90 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-8 py-5 grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
-            {[
-              { value: '6–8 %', label: 'Brutto-Mietrendite' },
-              { value: '+21 %', label: 'Küstenwachstum 2024' },
-              { value: '25–40 %', label: 'Wertsteigerung 5 J.' },
-              { value: '9 %', label: 'Einkommensteuer' },
-            ].map((kpi) => (
-              <div key={kpi.label} className="px-4 md:px-8 text-center py-1">
+          <div className={`max-w-7xl mx-auto px-8 py-5 grid grid-cols-2 ${kpiCols} divide-x divide-white/10`}>
+            {heroKennzahlen.map((kpi) => (
+              <div key={`${kpi.value}-${kpi.label}`} className="px-4 md:px-8 text-center py-1">
                 <div className="text-[#B69252] text-xl md:text-2xl font-light">{kpi.value}</div>
                 <div className="text-white/40 text-[9px] md:text-xs tracking-widest uppercase mt-0.5">{kpi.label}</div>
               </div>
@@ -241,15 +361,10 @@ export default async function InvestmentPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#151E39]/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <div className="grid grid-cols-2 gap-3">
-                {[
-                  { v: 'NATO', s: 'seit 2017' },
-                  { v: 'Euro', s: 'seit 2002' },
-                  { v: 'EU', s: 'Beitritt 2028' },
-                  { v: '0 %', s: 'Vermögenssteuer' },
-                ].map((b) => (
-                  <div key={b.v} className="bg-[#151E39]/70 backdrop-blur-sm rounded p-3 text-center">
-                    <div className="text-[#B69252] text-lg font-light">{b.v}</div>
-                    <div className="text-white/50 text-xs tracking-wide">{b.s}</div>
+                {bildKennzahlen.map((b) => (
+                  <div key={`${b.value}-${b.label}`} className="bg-[#151E39]/70 backdrop-blur-sm rounded p-3 text-center">
+                    <div className="text-[#B69252] text-lg font-light">{b.value}</div>
+                    <div className="text-white/50 text-xs tracking-wide">{b.label}</div>
                   </div>
                 ))}
               </div>
@@ -262,66 +377,48 @@ export default async function InvestmentPage() {
       <section className="bg-[#151E39] py-24 px-8 md:px-16 lg:px-24">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Marktdaten</p>
+            <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{markt.eyebrow}</p>
             <h2
               className="text-white text-3xl md:text-5xl leading-tight"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              Die Zahlen sprechen
+              {markt.headline}
               <br />
-              <em className="not-italic text-[#B69252]">für sich.</em>
+              <em className="not-italic text-[#B69252]">{markt.headlineAccent}</em>
             </h2>
+            {markt.description && (
+              <p className="text-white/60 mt-6 max-w-2xl mx-auto leading-relaxed">{markt.description}</p>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {[
-              {
-                value: '+21 %',
-                label: 'Preiswachstum Küste',
-                sub: 'Montenegro gesamt, 2024',
-                detail: 'Die montenegrinische Adriaküste gehört zu den am schnellsten wachsenden Immobilienmärkten Europas.',
-              },
-              {
-                value: '+12 %',
-                label: 'Jährlich in Bar',
-                sub: 'Durchschnitt letzte 3 Jahre',
-                detail: 'Bar entwickelt sich stärker als Kotor oder Budva — bei einem Bruchteil der Preise.',
-              },
-              {
-                value: '25–40 %',
-                label: 'Prognose bis 2030',
-                sub: 'Kumulierte Wertsteigerung',
-                detail: 'Getrieben durch EU-Beitritt, Infrastrukturausbau und steigendes internationales Käuferinteresse.',
-              },
-            ].map((stat) => (
-              <div key={stat.label} className="bg-white/5 border border-white/10 rounded p-8 hover:border-[#B69252]/40 transition-colors">
+          {markt.kennzahlWert && (
+            <div className="max-w-md mx-auto mb-12">
+              <div className="bg-white/5 border border-white/10 rounded p-8 text-center">
                 <div className="text-[#B69252] text-4xl md:text-5xl font-light mb-2" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                  {stat.value}
+                  {markt.kennzahlWert}
+                  {markt.quelle && <sup className="text-base align-super ml-1">1</sup>}
                 </div>
-                <div className="text-white font-medium mb-1">{stat.label}</div>
-                <div className="text-white/30 text-xs tracking-wide mb-4">{stat.sub}</div>
-                <div className="text-white/50 text-sm leading-relaxed border-t border-white/10 pt-4">{stat.detail}</div>
+                {markt.kennzahlLabel && <div className="text-white font-medium mb-1">{markt.kennzahlLabel}</div>}
+                {markt.kennzahlText && (
+                  <div className="text-white/50 text-sm leading-relaxed border-t border-white/10 pt-4 mt-4">{markt.kennzahlText}</div>
+                )}
               </div>
-            ))}
-          </div>
+              {markt.quelle && <p className="text-white/40 text-xs mt-3 text-center">¹ {markt.quelle}</p>}
+            </div>
+          )}
 
           {/* Timeline bar */}
           <div className="bg-white/5 border border-white/10 rounded p-8">
-            <p className="text-white/40 text-xs tracking-widest uppercase mb-6">Entwicklungspfad</p>
+            <p className="text-white/40 text-xs tracking-widest uppercase mb-6">{markt.zeitleisteTitel}</p>
             <div className="relative">
               <div className="absolute top-4 left-0 right-0 h-px bg-white/10" />
-              <div className="grid grid-cols-4 gap-4 relative">
-                {[
-                  { year: '2024', event: 'Projektstart', note: '+21% Markt' },
-                  { year: '2026', event: 'Baubeginn', note: 'Baugenehmigung Okt.' },
-                  { year: '2027', event: 'Rohbau', note: 'Dachschluss Q4' },
-                  { year: '2028', event: 'Übergabe + EU', note: 'Q1 2028' },
-                ].map((t, i) => (
-                  <div key={t.year} className="text-center">
-                    <div className={`w-3 h-3 rounded-full mx-auto mb-4 ${i === 3 ? 'bg-[#B69252]' : 'bg-white/30'}`} />
+              <div className={`grid grid-cols-1 ${timelineCols} gap-4 relative`}>
+                {zeitleiste.map((t, i) => (
+                  <div key={`${t.year}-${i}`} className="text-center">
+                    <div className={`w-3 h-3 rounded-full mx-auto mb-4 ${i === zeitleiste.length - 1 ? 'bg-[#B69252]' : 'bg-white/30'}`} />
                     <div className="text-[#B69252] text-lg font-light">{t.year}</div>
                     <div className="text-white text-sm mt-1">{t.event}</div>
-                    <div className="text-white/30 text-xs mt-0.5">{t.note}</div>
+                    {t.note && <div className="text-white/30 text-xs mt-0.5">{t.note}</div>}
                   </div>
                 ))}
               </div>
@@ -339,20 +436,18 @@ export default async function InvestmentPage() {
               className="text-[#151E39] text-3xl md:text-5xl leading-tight mb-6"
               style={{ fontFamily: 'var(--font-playfair), serif' }}
             >
-              {(cms as any)?.mietRendite?.headline ?? '6–8 % Rendite.\nBrutto. Realistisch.'}
+              {rentalHeadline}
             </h2>
             <p className="text-[#151E39]/60 leading-relaxed mb-8">
-              Die Adriaküste verzeichnet eine wachsende Nachfrage nach Kurzzeitvermietung.
-              Bar profitiert von seiner Nähe zu Stari Bar, dem Hafen und der Natur — mit
-              deutlich geringeren Einstiegspreisen als Kotor oder Budva.
+              {rentalDescription}
             </p>
 
             <div className="space-y-3">
               {[
-                { label: 'Hauptsaison', value: `${rentalExample.weeklyRate}–${rentalExample.weeklyRate + 150} €/Woche`, icon: '▲' },
-                { label: 'Nebensaison', value: '300–450 €/Woche', icon: '◆' },
-                { label: 'Belegung Ø', value: `${rentalExample.occupancyWeeks} Wochen/Jahr`, icon: '◆' },
-                { label: 'Verwaltung vor Ort', value: 'verfügbar', icon: '◆' },
+                { label: 'Hauptsaison', value: `${dec(hsWochen)} Wochen · ${eur(hsPreis)}/Woche` },
+                { label: 'Nebensaison', value: `${dec(nsWochen)} Wochen · ${eur(nsPreis)}/Woche` },
+                { label: 'Vermietung gesamt', value: `${dec(hsWochen + nsWochen)} Wochen/Jahr` },
+                { label: 'Verwaltung und Reinigung', value: `${dec(verwaltungQuote)} % der Einnahmen` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between py-3 border-b border-[#151E39]/10">
                   <span className="text-[#151E39]/60 text-sm">{item.label}</span>
@@ -365,58 +460,36 @@ export default async function InvestmentPage() {
           {/* Rendite-Rechner */}
           <div className="bg-[#151E39] rounded p-8">
             <p className="text-[#B69252] text-xs tracking-widest uppercase mb-6">
-              Beispielrechnung · {rentalExample.size} m² Zweizimmerwohnung
+              Beispielrechnung · {dec(size)} m² Zweizimmerwohnung
             </p>
 
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between items-center py-3 border-b border-white/10">
-                <span className="text-white/50 text-sm">Kaufpreis ({rentalExample.size} m² × {rentalExample.pricePerSqm.toLocaleString('de-DE')} €)</span>
-                <span className="text-white font-medium">{rentalExample.purchase.toLocaleString('de-DE')} €</span>
-              </div>
-              <div className="flex justify-between items-center py-3 border-b border-white/10">
-                <span className="text-white/50 text-sm">Einnahmen Hauptsaison (10 Wo.)</span>
-                <span className="text-white font-medium">{(rentalExample.weeklyRate * 10).toLocaleString('de-DE')} €</span>
-              </div>
-              <div className="flex justify-between items-center py-3 border-b border-white/10">
-                <span className="text-white/50 text-sm">Einnahmen Nebensaison (10 Wo.)</span>
-                <span className="text-white font-medium">{((rentalExample.annualRent - rentalExample.weeklyRate * 10)).toLocaleString('de-DE')} €</span>
-              </div>
-              <div className="flex justify-between items-center py-3 border-b border-white/10">
-                <span className="text-white/50 text-sm">Steuer (9 % auf Netto)</span>
-                <span className="text-white/50 text-sm">~ {Math.round(rentalExample.annualRent * 0.09).toLocaleString('de-DE')} €</span>
-              </div>
+            <div className="space-y-1 mb-8">
+              {rentalRows.map((row) => (
+                <div key={row.label} className="flex justify-between items-center gap-4 py-3 border-b border-white/10">
+                  <span className={row.strong ? 'text-white text-sm' : 'text-white/50 text-sm'}>{row.label}</span>
+                  <span className={`whitespace-nowrap ${row.strong ? 'text-white font-medium' : 'text-white/80'}`}>{row.value}</span>
+                </div>
+              ))}
             </div>
 
             <div className="bg-[#B69252]/10 border border-[#B69252]/30 rounded p-5 mb-6">
               <div className="flex justify-between items-end">
                 <div>
-                  <p className="text-[#B69252] text-xs tracking-widest uppercase mb-1">Netto-Jahresertrag</p>
+                  <p className="text-[#B69252] text-xs tracking-widest uppercase mb-1">= Nettoertrag</p>
                   <p className="text-white text-3xl font-light" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                    ~{Math.round(rentalExample.annualRent * 0.91).toLocaleString('de-DE')} €
+                    {eur(netto)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[#B69252] text-xs tracking-widest uppercase mb-1">Rendite</p>
+                  <p className="text-[#B69252] text-xs tracking-widest uppercase mb-1">Rendite auf {eur(kaufpreis)}</p>
                   <p className="text-[#B69252] text-3xl font-light" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                    {rentalExample.yield.toFixed(1).replace('.', ',')} %
+                    {rendite.toFixed(1).replace('.', ',')} %
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/5 rounded p-4">
-              <p className="text-white/40 text-xs tracking-widest uppercase mb-3">Wertsteigerung 5 Jahre (Prognose)</p>
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-white/40 text-xs mb-1">Konservativ (+25 %)</p>
-                  <p className="text-white font-medium">+{rentalExample.appreciationLow.toLocaleString('de-DE')} €</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-white/40 text-xs mb-1">Optimistisch (+40 %)</p>
-                  <p className="text-[#B69252] font-medium">+{rentalExample.appreciationHigh.toLocaleString('de-DE')} €</p>
-                </div>
-              </div>
-            </div>
+            <p className="text-white/40 text-xs leading-relaxed">{rentalFootnote}</p>
           </div>
         </div>
       </section>
@@ -426,42 +499,43 @@ export default async function InvestmentPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Steuervorteile</p>
+              <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Steuern</p>
               <h2
                 className="text-white text-3xl md:text-5xl leading-tight mb-6"
                 style={{ fontFamily: 'var(--font-playfair), serif' }}
               >
-                Kein Vermögen.
+                {steuerSektion.headline}
                 <br />
-                Kein Erbe.
-                <br />
-                <em className="not-italic text-[#B69252]">9 % auf alles andere.</em>
+                <em className="not-italic text-[#B69252]">{steuerSektion.headlineAccent}</em>
               </h2>
               <p className="text-white/60 leading-relaxed">
-                Montenegro hat eines der investorenfreundlichsten Steuersysteme Europas.
-                Im Vergleich zu Deutschland oder Österreich ergibt sich ein erheblicher
-                Steuervorteil — sowohl bei laufenden Einnahmen als auch beim Verkauf.
+                {steuerSektion.description}
               </p>
             </div>
 
-            <div className="space-y-3">
-              {taxAdvantages.map((tax) => (
-                <div
-                  key={tax.label}
-                  className="flex items-center justify-between bg-white/5 border border-white/10 rounded px-5 py-4 hover:border-[#B69252]/30 transition-colors"
-                >
-                  <div>
-                    <div className="text-white text-sm">{tax.label}</div>
-                    <div className="text-white/30 text-xs mt-0.5">{tax.note}</div>
-                  </div>
+            <div>
+              <div className="space-y-3">
+                {taxAdvantages.map((tax) => (
                   <div
-                    className={`text-xl font-light ml-6 flex-shrink-0 ${tax.value === '0 %' ? 'text-[#B69252]' : 'text-white'}`}
-                    style={{ fontFamily: 'var(--font-playfair), serif' }}
+                    key={tax.label}
+                    className="flex items-center justify-between bg-white/5 border border-white/10 rounded px-5 py-4 hover:border-[#B69252]/30 transition-colors"
                   >
-                    {tax.value}
+                    <div>
+                      <div className="text-white text-sm">{tax.label}</div>
+                      <div className="text-white/30 text-xs mt-0.5">{tax.note}</div>
+                    </div>
+                    <div
+                      className={`text-xl font-light ml-6 flex-shrink-0 ${tax.value === '0 %' || tax.value === 'entfällt' ? 'text-[#B69252]' : 'text-white'}`}
+                      style={{ fontFamily: 'var(--font-playfair), serif' }}
+                    >
+                      {tax.value}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              {steuerSektion.fussnote && (
+                <p className="text-white/40 text-xs leading-relaxed mt-4">{steuerSektion.fussnote}</p>
+              )}
             </div>
           </div>
         </div>
@@ -470,53 +544,44 @@ export default async function InvestmentPage() {
       {/* ── ZAHLUNGSPLAN ─────────────────────────────────────────────────── */}
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">Liquidität</p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-4">{zahlungsplan.eyebrow}</p>
           <h2
             className="text-[#151E39] text-3xl md:text-5xl leading-tight"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
-            Kapital schrittweise
-            <br />
-            <em className="not-italic text-[#B69252]">einsetzen.</em>
+            {zahlungsplan.headline}
           </h2>
-          <p className="text-[#151E39]/50 mt-4 max-w-xl mx-auto text-sm leading-relaxed">
-            Der gestaffelte Zahlungsplan schont die Liquidität und reduziert das Risiko —
-            der Großteil des Kapitals fließt erst, wenn der Bau nachweislich voranschreitet.
-          </p>
         </div>
 
         <div className="relative">
-          <div className="hidden md:block absolute top-10 left-[10%] right-[10%] h-px bg-[#B69252]/20" />
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          <div className="hidden md:block absolute top-4 left-[16%] right-[16%] h-px bg-[#B69252]/20" />
+          <div className={`grid grid-cols-1 ${stepCols} gap-6`}>
             {paymentSteps.map((step, idx) => (
-              <div key={step.step} className="relative text-center">
+              <div key={`${step.step}-${idx}`} className="relative text-center">
                 <div className={`w-8 h-8 rounded-full mx-auto mb-4 flex items-center justify-center text-xs font-medium relative z-10 ${
                   idx === 0 ? 'bg-[#B69252] text-white' : 'bg-[#F0EDE8] border-2 border-[#B69252]/40 text-[#B69252]'
                 }`}>
                   {step.step}
                 </div>
-                <div className="text-[#B69252] text-xs tracking-widest uppercase mb-1">{step.date}</div>
                 <div className="text-[#151E39] font-medium mb-1">{step.label}</div>
                 <div className="text-[#151E39] text-2xl font-light mb-2" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                   {step.amount}
                 </div>
-                <div className="text-[#151E39]/40 text-xs leading-relaxed">{step.note}</div>
+                {step.note && <div className="text-[#151E39]/50 text-xs leading-relaxed max-w-xs mx-auto">{step.note}</div>}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-12 bg-white border border-[#151E39]/10 rounded p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-            <circle cx="12" cy="12" r="9" stroke="#B69252" strokeWidth="1.2"/>
-            <path d="M12 8v4M12 16h.01" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
-          <p className="text-[#151E39]/60 text-sm leading-relaxed">
-            <strong className="text-[#151E39]">Nebenkosten:</strong> Notar, Anwalt, Übersetzung und Grundbucheintrag
-            belaufen sich auf ca. 1,5–2,5 % des Kaufpreises. MwSt. ist im Kaufpreis enthalten.
-            Keine Maklerprovision — direkter Kauf vom Bauträger.
-          </p>
-        </div>
+        {zahlungsplan.nebenkosten && (
+          <div className="mt-12 bg-white border border-[#151E39]/10 rounded p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+              <circle cx="12" cy="12" r="9" stroke="#B69252" strokeWidth="1.2"/>
+              <path d="M12 8v4M12 16h.01" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
+            </svg>
+            <p className="text-[#151E39]/60 text-sm leading-relaxed">{zahlungsplan.nebenkosten}</p>
+          </div>
+        )}
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
@@ -542,7 +607,7 @@ export default async function InvestmentPage() {
               {cta.buttonLabel}
             </a>
             <a
-              href="https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20das%20Investment-Expos%C3%A9%20bei%20Baliv%20Residence."
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 text-sm tracking-widest uppercase hover:border-white/50 transition-colors"

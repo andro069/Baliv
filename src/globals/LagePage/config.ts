@@ -21,20 +21,20 @@ export const LagePage: GlobalConfig = {
           name: 'headline',
           label: 'Überschrift',
           type: 'text',
-          defaultValue: 'Zwischen Festung, Meer und Bergen.',
+          defaultValue: 'Bar. Montenegros aufgehender Stern.',
         },
         {
           name: 'subline',
           label: 'Unterzeile',
           type: 'text',
-          defaultValue: 'Die Lage',
+          defaultValue: 'Adria · Rumija · Altstadt',
         },
         {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Bar — am südlichen Ende der montenegrinischen Riviera. Authentisch, gewachsen, und am Beginn einer Entwicklung, die Budva und Kotor bereits hinter sich haben.',
+            'Bar liegt an der Adria-Küste Montenegros, eingebettet zwischen dem Rumija-Gebirge und dem Mittelmeer. Die Stadt ist regionale Drehscheibe mit Fährhafen und Bahnlinie — die Autobahn Richtung Norden ist im Bau.',
         },
         {
           name: 'image',
@@ -64,7 +64,7 @@ export const LagePage: GlobalConfig = {
           name: 'mapsUrl',
           label: 'Karten-Link URL',
           type: 'text',
-          defaultValue: 'https://maps.google.com/?q=Bjeli%C5%A1i+BB,+Bar,+Montenegro',
+          defaultValue: 'https://maps.google.com/?q=42.089143,19.118888',
         },
       ],
     },
@@ -139,12 +139,35 @@ export const LagePage: GlobalConfig = {
     },
     {
       name: 'distances',
-      label: 'Entfernungen',
+      label: 'Entfernungen (Erreichbarkeitstabelle)',
       type: 'array',
+      defaultValue: [
+        { icon: 'altstadt', place: 'Stari Bar Festung', note: '2.500 Jahre Stadtgeschichte', distance: 'ca. 1 km', detail: '5 Min' },
+        { icon: 'kueste', place: 'Erster Strand', note: 'Topolica', distance: 'ca. 2,5 km', detail: '8 Min' },
+        { icon: 'kueste', place: 'Hafen Bar', note: 'Fähre nach Bari', distance: 'ca. 2 km', detail: '8 Min' },
+        { icon: 'kueste', place: 'Strand Sutomore', note: 'Sandstrand', distance: '7,4 km', detail: '15 Min' },
+        { icon: 'natur', place: 'Skadar See', note: 'Nationalpark', distance: '17,7 km', detail: '40 Min' },
+        { icon: 'ort', place: 'Flughafen Podgorica', note: 'International', distance: '32 km', detail: '45 Min' },
+        { icon: 'ort', place: 'Flughafen Tivat', note: 'Saisonflüge', distance: '48 km', detail: '60 Min' },
+        { icon: 'altstadt', place: 'Kotor Altstadt', note: 'UNESCO Welterbe', distance: '47 km', detail: '80 Min' },
+        { icon: 'ort', place: 'Flughafen Dubrovnik', note: 'beste Verbindungen nach DACH', distance: '125 km', detail: 'unter 3 Std.' },
+      ],
       fields: [
+        {
+          name: 'icon',
+          label: 'Symbol',
+          type: 'select',
+          options: [
+            { label: 'Ortsmarke (z.B. Flughafen)', value: 'ort' },
+            { label: 'Meer / Strand / Hafen', value: 'kueste' },
+            { label: 'Festung / Altstadt', value: 'altstadt' },
+            { label: 'Berge', value: 'berge' },
+            { label: 'Natur / Landschaft', value: 'natur' },
+          ],
+        },
         { name: 'place', label: 'Ort', type: 'text', required: true },
-        { name: 'distance', label: 'Entfernung (z.B. 5 min)', type: 'text', required: true },
-        { name: 'detail', label: 'Detail (z.B. zu Fuß)', type: 'text' },
+        { name: 'distance', label: 'Entfernung (z.B. ca. 2 km)', type: 'text', required: true },
+        { name: 'detail', label: 'Fahrzeit (z.B. 8 Min)', type: 'text' },
         { name: 'note', label: 'Hinweis', type: 'text' },
       ],
     },
@@ -177,6 +200,20 @@ export const LagePage: GlobalConfig = {
       name: 'highlights',
       label: 'Highlights',
       type: 'array',
+      defaultValue: [
+        {
+          title: 'Hafen & Fährverbindung',
+          text: 'Von Bar aus verkehrt regelmäßig eine Fähre nach Bari, Italien. Die Überfahrt dauert rund neun Stunden — ein wichtiger Korridor für Reisende und Handel.',
+        },
+        {
+          title: 'Autobahn & Schiene',
+          text: 'Die im Bau befindliche Autobahn Bar–Boljare wird die Stadt mit dem Balkan-Kernland verbinden; der erste Abschnitt ist seit 2022 in Betrieb. Die historische Eisenbahnlinie Bar–Belgrad durchquert spektakuläre Gebirgslandschaften.',
+        },
+        {
+          title: 'Gewachsene Küstenstadt',
+          text: 'Über Fähre und Bahn ist Bar für viele Reisende der Einstieg nach Montenegro — und zugleich eine gewachsene Stadt mit eigenem Alltag, nicht nur ein Ferienort.',
+        },
+      ],
       fields: [
         { name: 'title', label: 'Titel', type: 'text', required: true },
         { name: 'text', label: 'Text', type: 'textarea' },
@@ -190,7 +227,7 @@ export const LagePage: GlobalConfig = {
     },
     {
       name: 'markt',
-      label: 'Marktvergleich',
+      label: 'Preisniveau an der Küste (Sektion)',
       type: 'group',
       fields: [
         {
@@ -203,28 +240,38 @@ export const LagePage: GlobalConfig = {
           name: 'headline',
           label: 'Überschrift',
           type: 'text',
-          defaultValue: 'Was Budva und Kotor vor 15 Jahren waren.',
+          defaultValue: 'Preisniveau an der montenegrinischen Küste',
         },
         {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
-          defaultValue:
-            'Kotor kostet heute 4.000–6.000 €/m². Budva 3.500–5.000 €/m². Bar liegt bei 2.500 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge, mediterranes Klima. Der Unterschied: Bar entwickelt sich gerade erst.',
+          defaultValue: 'Montenegro ist Kandidat für den EU-Beitritt, die Verhandlungen laufen.',
+        },
+        {
+          name: 'standText',
+          label: 'Stand-Satz über der Preistabelle',
+          type: 'text',
+          defaultValue: 'Angebotspreise für Wohnungen, Stand September 2026.',
         },
         {
           name: 'note',
-          label: 'Hinweis unter der Preistabelle',
+          label: 'Quellenzeile unter der Preistabelle',
           type: 'textarea',
-          defaultValue:
-            'Vergleichspreise basieren auf öffentlich verfügbaren Marktdaten, Stand 2024/2025.',
+          defaultValue: 'Quelle: Estitor, Auswertung aktiver Inserate, 03.09.2026.',
         },
       ],
     },
     {
       name: 'marktPreise',
-      label: 'Preisvergleich (Zeilen)',
+      label: 'Preisniveau (Zeilen)',
       type: 'array',
+      defaultValue: [
+        { label: 'Tivat', price: '4.462 €/m²', highlight: false },
+        { label: 'Budva', price: '3.569 €/m²', highlight: false },
+        { label: 'Bar, Durchschnitt', price: '2.744 €/m²', highlight: false },
+        { label: 'Baliv Residence', price: 'ab 2.500 €/m²', highlight: true },
+      ],
       fields: [
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'price', label: 'Preis', type: 'text', required: true },
@@ -240,6 +287,12 @@ export const LagePage: GlobalConfig = {
       name: 'stats',
       label: 'Kennzahlen-Kacheln',
       type: 'array',
+      defaultValue: [
+        { value: '300+', label: 'Sonnentage/Jahr' },
+        { value: '26 °C', label: 'Ø Wassertemp. Juli' },
+        { value: '2.000+', label: 'Jahre Olivenhaine' },
+        { value: '13 km', label: 'Sandstrand · Velika Plaža, Ulcinj — 45 Min' },
+      ],
       fields: [
         { name: 'value', label: 'Wert', type: 'text', required: true },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
@@ -266,14 +319,14 @@ export const LagePage: GlobalConfig = {
           name: 'headlineAccent',
           label: 'Überschrift (zweite Zeile, goldene Farbe)',
           type: 'text',
-          defaultValue: 'jederzeit möglich.',
+          defaultValue: 'nach Vereinbarung.',
         },
         {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Wir organisieren Besichtigungen vor Ort — inklusive Abholung vom Flughafen Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.',
+            'Wir organisieren Besichtigungen vor Ort — nach Absprache auch mit Abholung vom Flughafen Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.',
         },
         {
           name: 'buttonLabel',

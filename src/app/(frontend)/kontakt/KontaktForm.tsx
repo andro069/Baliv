@@ -45,13 +45,18 @@ const defaultFelder: FormFeld[] = [
   {
     blockType: 'select', name: 'interesse', label: 'Mich interessiert', width: 100,
     options: [
-      { label: 'Studio (ab 25 m²)', value: 'studio' },
-      { label: 'Zweizimmerwohnung (ab 45 m²)', value: 'zweizimmer' },
-      { label: 'Penthouse (ab 85 m²)', value: 'penthouse' },
+      { label: 'Studio', value: 'studio' },
+      { label: 'Zweizimmerwohnung', value: 'zweizimmer' },
+      { label: 'Penthouse-Ebene', value: 'penthouse' },
       { label: 'Ich bin noch unentschlossen', value: 'unentschlossen' },
     ],
   },
   { blockType: 'textarea', name: 'nachricht', label: 'Nachricht', width: 100 },
+  {
+    blockType: 'checkbox', name: 'datenschutz', width: 100, required: true, defaultValue: false,
+    label:
+      'Ich habe die Datenschutzerklärung gelesen und stimme der Verarbeitung meiner Daten zur Bearbeitung dieser Anfrage zu.',
+  },
 ]
 
 const defaultContent: KontaktFormContent = {
@@ -61,7 +66,7 @@ const defaultContent: KontaktFormContent = {
   exposeCheckboxTitle: 'Kostenloses Exposé zusenden',
   exposeCheckboxText: 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
   datenschutzText:
-    'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',
+    'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Näheres in unserer Datenschutzerklärung.',
   fehlerText:
     'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt per E-Mail.',
   buttonSending: 'Wird gesendet …',
@@ -69,8 +74,31 @@ const defaultContent: KontaktFormContent = {
   buttonOhneExpose: 'Anfrage senden',
   erfolgHeadline: 'Vielen Dank!',
   erfolgText:
-    'Ihre Anfrage ist bei uns eingegangen. Wir melden uns innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
+    'Ihre Anfrage ist bei uns eingegangen. Wir melden uns in der Regel innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
   erfolgLinkLabel: 'Zurück zur Startseite',
+}
+
+/** Die Pflicht-Einwilligung — ersetzt den reinen Hinweistext unter den Feldern. */
+const DATENSCHUTZ_KEY = 'datenschutz'
+const DATENSCHUTZ_WORT = 'Datenschutzerklärung'
+
+/**
+ * Stellt das Wort „Datenschutzerklärung" im Label als Link auf /datenschutz dar,
+ * damit der Text selbst im Backend frei editierbar bleibt.
+ */
+function mitDatenschutzLink(text: string): React.ReactNode {
+  const teile = text.split(DATENSCHUTZ_WORT)
+  if (teile.length === 1) return text
+  return teile.map((teil, i) => (
+    <React.Fragment key={i}>
+      {teil}
+      {i < teile.length - 1 && (
+        <Link href="/datenschutz" className="text-[#B69252] underline hover:text-[#a07d3f]">
+          {DATENSCHUTZ_WORT}
+        </Link>
+      )}
+    </React.Fragment>
+  ))
 }
 
 const inputClass =
@@ -88,6 +116,9 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
     (f) => f.blockType === 'checkbox' && f.name === EXPOSE_KEY,
   )
   const felder = alleFelder.filter((f) => f !== exposeFeld)
+  const hatDatenschutzCheckbox = alleFelder.some(
+    (f) => f.blockType === 'checkbox' && f.name === DATENSCHUTZ_KEY,
+  )
 
   const [values, setValues] = useState<Record<string, string | boolean>>(() =>
     Object.fromEntries(
@@ -163,15 +194,15 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
 
     if (f.blockType === 'checkbox') {
       return (
-        <label key={key} className="flex items-center gap-3 cursor-pointer">
+        <label key={key} className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
             checked={Boolean(value)}
             required={f.required}
             onChange={(e) => set(key, e.target.checked)}
-            className="w-4 h-4 accent-[#B69252]"
+            className="w-4 h-4 mt-0.5 flex-shrink-0 accent-[#B69252]"
           />
-          <span className="text-[#151E39]/60 text-sm">{label}</span>
+          <span className="text-[#151E39]/60 text-sm leading-relaxed">{mitDatenschutzLink(label)}</span>
         </label>
       )
     }
@@ -307,7 +338,10 @@ export function KontaktForm({ content }: { content?: Partial<KontaktFormContent>
         ),
       )}
 
-      <p className="text-[#151E39]/30 text-xs leading-relaxed">{c.datenschutzText}</p>
+      {/* Der reine Hinweis entfällt, sobald die Einwilligung als Checkbox abgefragt wird. */}
+      {!hatDatenschutzCheckbox && c.datenschutzText && (
+        <p className="text-[#151E39]/30 text-xs leading-relaxed">{mitDatenschutzLink(c.datenschutzText)}</p>
+      )}
 
       {status === 'error' && <p className="text-red-500 text-sm">{c.fehlerText}</p>}
 

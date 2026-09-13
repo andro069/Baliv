@@ -36,5 +36,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  // Standard für Seiten ohne eigenen Titel, z. B. die 404-Seite. Unterseiten setzen
+  // ihren Titel vollständig selbst, daher das neutrale Template.
+  title: {
+    default: 'Baliv Residence — Neubau in Bar, Montenegro',
+    template: '%s',
+  },
+  description:
+    '39 Wohneinheiten am Fuße von Stari Bar, zwischen Olivenhainen, Bergen und Meer. Ab 2.500 €/m², direkt vom Bauträger, deutschsprachig, ohne Makler.',
   openGraph: mergeOpenGraph(),
 }

@@ -163,6 +163,12 @@ export const ArchitekturPage: GlobalConfig = {
           name: 'items',
           label: 'Merkmale',
           type: 'array',
+          defaultValue: [
+            { title: 'Natursteinfassade', text: 'Regional gebrochen, nach lokalem Baucode — aber hier bewusste Gestaltungsentscheidung.' },
+            { title: 'Rundbogen-Motiv', text: 'Wiederkehrendes Element aus der Festungsarchitektur von Stari Bar.' },
+            { title: 'Schmiedeeisen-Geländer', text: 'Geländer und Details in Schmiedeeisen als bewusster Gegenentwurf zu industriellen Standardlösungen.' },
+            { title: 'Bepflanzte Loggias', text: 'Lavendel und Rosmarin zwischen den Etagen — die Fassade lebt und wächst.' },
+          ],
           fields: [
             { name: 'title', label: 'Titel', type: 'text', required: true },
             { name: 'text', label: 'Text', type: 'textarea' },
@@ -198,18 +204,33 @@ export const ArchitekturPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Keine Verbundwerkstoffe, keine Imitate. Jedes Material wurde nach Herkunft, Langlebigkeit und handwerklichem Verarbeitungsstandard ausgewählt.',
+            'Materialien, die zum Ort passen — ausgewählt nach Herkunft, Langlebigkeit und handwerklicher Verarbeitung.',
         },
         { name: 'image', label: 'Sektionsbild', type: 'upload', relationTo: 'media' },
         {
           name: 'items',
           label: 'Materialien',
           type: 'array',
+          defaultValue: [
+            { name: 'Regionaler Naturstein', use: 'Fassade & Böden', detail: 'Stein aus der Region' },
+            { name: 'Eiche', use: 'Innenraum', detail: 'Holzoberflächen im Innenraum' },
+            { name: 'Weißputz', use: 'Innenwände', detail: 'Mineralisch, atmungsaktiv' },
+            { name: 'Schmiedeeisen', use: 'Außenbereiche', detail: 'Geländer und Details' },
+            { name: 'Terrakotta', use: 'Außenbereiche', detail: 'Gebrannter Ton im traditionellen Langformat' },
+            { name: 'Lavendel & Rosmarin', use: 'Terrassenbegrünung', detail: 'Mediterrane Wildpflanzen, pflegeleicht' },
+          ],
           fields: [
             { name: 'name', label: 'Material', type: 'text', required: true },
             { name: 'use', label: 'Verwendung', type: 'text' },
             { name: 'detail', label: 'Detail', type: 'text' },
           ],
+        },
+        {
+          name: 'hinweis',
+          label: 'Hinweis unter der Materialliste',
+          type: 'textarea',
+          defaultValue:
+            'Materialangaben sind Planungsstand. Verbindlich ist die Baubeschreibung im Kaufvertrag.',
         },
       ],
     },
@@ -264,6 +285,12 @@ export const ArchitekturPage: GlobalConfig = {
           name: 'stats',
           label: 'Kennzahlen',
           type: 'array',
+          defaultValue: [
+            { value: '7', label: 'Geschosse' },
+            { value: '39', label: 'Wohneinheiten' },
+            { value: '20', label: 'Stellplätze' },
+            { value: 'EC 8', label: 'Erdbebenstandard' },
+          ],
           fields: [
             { name: 'value', label: 'Wert', type: 'text', required: true },
             { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
@@ -273,6 +300,11 @@ export const ArchitekturPage: GlobalConfig = {
           name: 'features',
           label: 'Ausstattungsmerkmale',
           type: 'array',
+          defaultValue: [
+            { title: 'Fahrradabstellraum', text: 'Im Erdgeschoss, wettergeschützt und abschließbar — für nachhaltigen Alltag.' },
+            { title: 'Bepflanzte Gemeinschaftsterrassen', text: 'Lavendel, Rosmarin und mediterrane Begrünung auf mehreren Ebenen.' },
+            { title: 'Stellplätze', text: '20 Stellplätze in der Tiefgarage und im Außenbereich — Tiefgaragenplatz optional.' },
+          ],
           fields: [
             { name: 'title', label: 'Titel', type: 'text', required: true },
             { name: 'text', label: 'Text', type: 'textarea' },

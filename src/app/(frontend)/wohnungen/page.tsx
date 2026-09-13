@@ -12,7 +12,7 @@ import type { Media } from '@/payload-types'
 
 const DEFAULT_META_TITLE = 'Die Wohnungen — Baliv Residence, Bar Montenegro'
 const DEFAULT_META_DESCRIPTION =
-  'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.500 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Q1 2028.'
+  'Studio, Zweizimmer und Penthouse-Ebene. 39 Einheiten ab 2.500 €/m², schlüsselfertig übergeben. Übergabe Q2 2028.'
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -38,93 +38,110 @@ const defaultTypes = [
     nr: '01',
     type: 'Studio',
     tag: 'Erdgeschoss',
-    size: '28–30 m²',
-    terrace: 'Terrasse & Gartenzugang',
+    size: '28,1–29,7 m²',
+    terrace: 'Eigener Garten',
     units: '2 Einheiten',
-    price: 'ab 2.500 €/m²',
+    price: 'ab 2.700 €/m²',
     layout: '1 Wohn-/Schlafraum · Küchenzeile · Bad',
     description:
-      'Direkter Zugang zum begrünten Innenhof. Kompakter Einstieg als Pied-à-terre, Ferienobjekt oder renditestarkes Investment.',
+      'Kompakter Einstieg mit eigenem Garten, mindestens 4 Meter tief. Geeignet als Pied-à-terre oder Ferienwohnung.',
     floorplan: '/grundriss-studio.webp',
-    image: '/interieur-01.webp',
-    example: { size: 29, price: 72500 },
+    image: '/terrasse-meer.webp',
+    example: { size: 28.08, price: 75800 },
   },
   {
     nr: '02',
     type: 'Zweizimmer­wohnung',
     tag: 'Alle Etagen',
-    size: '47–52 m²',
+    size: '46,7–48,8 m²',
     terrace: 'Balkon oder Terrasse',
-    units: '35 Einheiten',
+    units: '34 Einheiten',
     price: 'ab 2.500 €/m²',
     layout: '1 Schlafzimmer · Wohn-/Essbereich · Küche · Bad',
     description:
-      'Der meistgewählte Typ. Mit steigender Etage wachsen die Ausblicke — von Olivenhainen im Erdgeschoss bis hin zu Meerespanoramen in den Obergeschossen.',
+      'Die Wahl der meisten Käufer. Mit steigender Etage wächst der Ausblick — von den Olivenhainen im Erdgeschoss bis zum Meer in den oberen Etagen. Im Erdgeschoss mit Terrasse und eigenem Gartenanteil, mindestens 4 Meter tief.',
     floorplan: '/grundriss-apartment.webp',
     image: '/interieur-wohnen-01.webp',
-    example: { size: 50, price: 125000 },
+    example: { size: 46.79, price: 116975 },
   },
   {
     nr: '03',
-    type: 'Dachgeschoss Panorama',
-    tag: 'Dachgeschoss',
-    size: '73–81 m²',
-    terrace: 'Dachterrasse 30–50 m²',
-    units: '2 Einheiten',
-    price: 'ab 3.000 €/m²',
-    layout: '2 Schlafzimmer · Wohn-/Essbereich · Küche · Bad & Gäste-WC',
+    type: 'Penthouse-Ebene',
+    tag: '6. Obergeschoss',
+    size: '51,6–81,2 m²',
+    terrace: 'Eigene Dachterrasse',
+    units: '3 Einheiten',
+    price: 'ab 3.600 €/m²',
+    layout: 'Zwei- oder Dreizimmer · Wohn-/Essbereich · Küche · Bad',
     description:
-      'Unverbauter 360°-Rundblick auf Adria, Rumija und Stari Bar. Großzügige Dachterrasse — das Highlight des gesamten Ensembles.',
+      'Zwei- und Dreizimmer auf der obersten Etage, jeweils mit eigener Dachterrasse: 38,5 m² · 42,9 m² · 65,9 m² zur alleinigen Nutzung, nicht Bestandteil der Wohnfläche. Panoramablick über Adria, Rumija und Stari Bar.',
     floorplan: '/grundriss-penthouse.webp',
     image: '/terrasse-berge.webp',
-    example: { size: 77, price: 192500 },
+    example: { size: 51.61, price: 185800 },
   },
 ]
 
+const DEFAULT_TYPES_HINWEIS =
+  'Alle Flächen sind Netto-Nutzflächen einschließlich Terrasse. Der Preis richtet sich nach Etage und Aussicht. Die vollständige Preisliste erhalten Sie mit dem Exposé.'
+
+const DEFAULT_AUSSTATTUNG_HINWEIS = 'Ausstattung nach Baubeschreibung. Marken und Modelle im Exposé.'
+
 const defaultAusstattung = [
-  { brand: 'Hansgrohe', label: 'Sanitärarmaturen' },
-  { brand: 'LG', label: 'Klimaanlage' },
+  { brand: 'Markenarmaturen im Bad', label: 'Sanitärausstattung' },
+  { brand: 'Klimaanlage vorbereitet', label: 'Klimatisierung' },
   { brand: 'Eurocode 8', label: 'Erdbebenstandard' },
   { brand: 'Naturstein', label: 'Böden & Fassade' },
-  { brand: 'Geölte Eiche', label: 'Holzoberflächen' },
+  { brand: 'Holzoberflächen', label: 'Innenraum' },
   { brand: 'Schlüsselfertig', label: 'Übergabe komplett' },
 ]
 
+// Icon-Zuordnung über Stichworte im Titel — robust gegenüber Umbenennungen im Backend.
+function ausstattungIcon(title: string): React.ReactNode {
+  const t = title.toLowerCase()
+  if (/armatur|sanitär|bad/.test(t)) return ausstattungIcons.sanitaer
+  if (/klima/.test(t)) return ausstattungIcons.klima
+  if (/eurocode|erdbeben/.test(t)) return ausstattungIcons.erdbeben
+  if (/stein/.test(t)) return ausstattungIcons.stein
+  if (/holz|eiche/.test(t)) return ausstattungIcons.holz
+  if (/schlüssel/.test(t)) return ausstattungIcons.schluessel
+  return null
+}
+
 const ausstattungIcons: Record<string, React.ReactNode> = {
-  Hansgrohe: (
+  sanitaer: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <path d="M14 4v8M10 8c0 0 1.5-2 4-2s4 2 4 2" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
       <path d="M8 12h12v2c0 4-2.5 7-6 8-3.5-1-6-4-6-8v-2z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
       <path d="M11 18h6" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
-  LG: (
+  klima: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <rect x="4" y="7" width="20" height="14" rx="1.5" stroke="#B69252" strokeWidth="1.2"/>
       <path d="M10 14h8M14 10v8" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
       <circle cx="14" cy="14" r="3" stroke="#B69252" strokeWidth="1.2"/>
     </svg>
   ),
-  'Eurocode 8': (
+  erdbeben: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <path d="M14 4L5 10v4c0 5.5 3.8 10.6 9 12 5.2-1.4 9-6.5 9-12v-4L14 4z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
       <path d="M10 14l3 3 5-5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Naturstein: (
+  stein: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <path d="M4 20L9 8l5 5 5-7 5 14H4z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
       <path d="M4 20h20" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
-  'Geölte Eiche': (
+  holz: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <path d="M14 24V14" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
       <path d="M14 14c-4 0-7-3-7-7 3 0 5.5 1.5 7 4 1.5-2.5 4-4 7-4 0 4-3 7-7 7z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
       <path d="M10 18c-2 0-4-1.5-4-4 2 0 3.5 1 4 2.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Schlüsselfertig: (
+  schluessel: (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <circle cx="11" cy="12" r="5" stroke="#B69252" strokeWidth="1.2"/>
       <path d="M15 16l8 8" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
@@ -136,8 +153,8 @@ const ausstattungIcons: Record<string, React.ReactNode> = {
 const defaultBuilding = [
   { value: '7', label: 'Geschosse' },
   { value: '39', label: 'Wohneinheiten' },
-  { value: '17', label: 'Tiefgaragenplätze' },
-  { value: 'Q1 2028', label: 'Fertigstellung' },
+  { value: '20', label: 'Stellplätze' },
+  { value: 'Q2 2028', label: 'Übergabe' },
 ]
 
 const defaultPremiumPaket = [
@@ -153,11 +170,11 @@ const defaultInteriorImages = [
 ]
 
 const defaultGebaeudeFeatures = [
-  { title: '17 Tiefgaragenplätze', text: 'Separat erwerbbar; direkter Zugang ins Gebäude.' },
+  { title: '20 Stellplätze', text: 'In der Tiefgarage und im Außenbereich; Tiefgaragenplatz optional.' },
   { title: 'Bepflanzte Terrassen', text: 'Lavendel, Rosmarin und mediterrane Begrünung auf mehreren Ebenen.' },
   { title: 'Fahrradabstellraum', text: 'Im Erdgeschoss, wettergeschützt und abschließbar.' },
   { title: 'Naturstein-Fassade', text: 'Bögen, Pergolen und variierende Fassadengestaltung — von allen Seiten hochwertig.' },
-  { title: 'Eurocode 8', text: 'Erbaut nach europäischem Erdbebenstandard — maximale Sicherheit.' },
+  { title: 'Eurocode 8', text: 'Geplant nach europäischem Erdbebenstandard.' },
 ]
 
 export default async function WohnungenPage() {
@@ -166,7 +183,7 @@ export default async function WohnungenPage() {
 
   const heroEyebrow = (cms as any)?.hero?.eyebrow ?? 'Die Wohnungen'
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Drei Typen. Ihre Wahl.'
-  const heroDescription = (cms as any)?.hero?.description ?? '39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur großzügigen Dachgeschosswohnung mit Panoramablick.'
+  const heroDescription = (cms as any)?.hero?.description ?? '39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur Penthouse-Ebene mit eigener Dachterrasse.'
   const heroImage = mediaUrl((cms as any)?.hero?.image, '/building-front.webp')
 
   const cmsBuilding: any[] = (cms as any)?.buildingStats ?? []
@@ -180,15 +197,17 @@ export default async function WohnungenPage() {
   const typesHeadlineLine2 = typesSection.headlineLine2 ?? 'Sieben Geschosse.'
   const typesUnitsLabel = typesSection.unitsLabel ?? 'Einheiten'
   const typesPriceLabel = typesSection.priceLabel ?? 'Preis'
-  const typesExampleNote = typesSection.exampleNote ?? 'Frühbucher · inkl. MwSt. · ohne Makler'
+  const typesExampleNote = typesSection.exampleNote ?? 'inkl. MwSt.'
+  const typesHinweis = typesSection.hinweis ?? DEFAULT_TYPES_HINWEIS
   const typesCtaLabel = typesSection.ctaLabel ?? 'Exposé anfragen'
 
   const ausstattungSection = (cms as any)?.ausstattungSection ?? {}
   const ausstattungEyebrow = ausstattungSection.eyebrow ?? 'Ausstattung'
   const ausstattungHeadline = ausstattungSection.headline ?? 'Schlüsselfertig übergeben.'
   const ausstattungHeadlineAccent = ausstattungSection.headlineAccent ?? 'Hochwertig ausgestattet.'
-  const ausstattungDescription = ausstattungSection.description ?? 'Jede Wohnung wird vollständig fertiggestellt übergeben — mit geprüften Markenprodukten, die dem mitteleuropäischen Qualitätsstandard entsprechen.'
+  const ausstattungDescription = ausstattungSection.description ?? 'Jede Wohnung wird vollständig fertiggestellt übergeben. Einbauküche und Tiefgaragenplatz sind optional.'
   const premiumTitle = ausstattungSection.premiumTitle ?? 'Premium-Paket optional'
+  const ausstattungHinweis = ausstattungSection.hinweis ?? DEFAULT_AUSSTATTUNG_HINWEIS
 
   const cmsPremium: any[] = (cms as any)?.premiumPaket ?? []
   const premiumPaket = cmsPremium.length > 0
@@ -219,8 +238,8 @@ export default async function WohnungenPage() {
   const ctaButtonLabel = cta.buttonLabel ?? 'Exposé anfordern'
   const ctaButtonLink = cta.buttonLink ?? '/kontakt'
   const ctaWhatsappLabel = cta.whatsappLabel ?? 'WhatsApp'
-  const ctaWhatsappUrl = cta.whatsappUrl ?? 'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Wohnung%20bei%20Baliv%20Residence.'
-  const ctaNote = cta.note ?? 'Antwort in < 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger'
+  const ctaWhatsappUrl = cta.whatsappUrl ?? 'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Baliv%20Residence.'
+  const ctaNote = cta.note ?? 'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger'
 
   const cmsTypes: any[] = (cms as any)?.types ?? []
   const types = cmsTypes.length > 0
@@ -352,11 +371,18 @@ export default async function WohnungenPage() {
                     >
                       {apt.type}
                     </h3>
-                    <p className="text-[#B69252] text-sm tracking-wide mt-1">{apt.size} · {apt.terrace}</p>
+                    <p className="text-[#151E39]/50 text-xs tracking-widest uppercase mt-1">
+                      {[apt.units, apt.tag].filter(Boolean).join(' · ')}
+                    </p>
+                    <p className="text-[#B69252] text-sm tracking-wide mt-1">
+                      {[apt.size, apt.price].filter(Boolean).join(' · ')}
+                    </p>
                   </div>
                 </div>
 
-                <p className="text-[#151E39]/60 text-sm mb-6 leading-relaxed">{apt.layout}</p>
+                <p className="text-[#151E39]/60 text-sm mb-6 leading-relaxed">
+                  {[apt.layout, apt.terrace].filter(Boolean).join(' · ')}
+                </p>
                 <p className="text-[#151E39] text-base leading-relaxed mb-8">{apt.description}</p>
 
                 <div className="grid grid-cols-2 gap-4 mb-8">
@@ -369,7 +395,7 @@ export default async function WohnungenPage() {
                     <div className="text-[#151E39] text-lg font-light">{apt.price}</div>
                   </div>
                   <div className="bg-[#151E39] rounded p-4 col-span-2">
-                    <div className="text-white/40 text-xs tracking-widest uppercase mb-1">Beispiel · {apt.example.size} m²</div>
+                    <div className="text-white/40 text-xs tracking-widest uppercase mb-1">Beispiel · {Number(apt.example.size).toLocaleString('de-DE')} m²</div>
                     <div className="text-white text-xl font-light">
                       {apt.example.price.toLocaleString('de-DE')} €
                     </div>
@@ -390,6 +416,12 @@ export default async function WohnungenPage() {
             </div>
           ))}
         </div>
+
+        {typesHinweis && (
+          <p className="mt-20 max-w-3xl text-[#151E39]/60 text-sm leading-relaxed border-l-2 border-[#B69252] pl-4">
+            {typesHinweis}
+          </p>
+        )}
       </section>
 
       {/* ── AUSSTATTUNG ──────────────────────────────────────────────────── */}
@@ -423,13 +455,17 @@ export default async function WohnungenPage() {
             <div className="grid grid-cols-2 gap-4">
               {ausstattung.map((item) => (
                 <div key={item.brand} className="bg-white/5 border border-white/10 rounded p-5 hover:border-[#B69252]/40 transition-colors">
-                  <div className="mb-3">{ausstattungIcons[item.brand] ?? null}</div>
+                  <div className="mb-3">{ausstattungIcon(item.brand)}</div>
                   <div className="text-white font-medium mb-1">{item.brand}</div>
                   <div className="text-white/40 text-xs tracking-wide">{item.label}</div>
                 </div>
               ))}
             </div>
           </div>
+
+          {ausstattungHinweis && (
+            <p className="text-white/40 text-xs mt-8 lg:text-right">{ausstattungHinweis}</p>
+          )}
 
           {/* Interior images */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-16">

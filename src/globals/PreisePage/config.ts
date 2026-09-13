@@ -34,7 +34,7 @@ export const PreisePage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Keine Maklergebühren, keine versteckten Kosten. MwSt. ist im Kaufpreis enthalten. Frühbucherpreise gelten bis zur Baugenehmigung im Oktober 2026.',
+            'Direkt vom Bauträger, ohne Maklerprovision. Die MwSt. ist im Kaufpreis enthalten, die Nebenkosten sind unten aufgeschlüsselt.',
         },
         {
           name: 'statPrefix',
@@ -52,7 +52,7 @@ export const PreisePage: GlobalConfig = {
           name: 'extraStatLabel',
           label: 'Vierte Kennzahl — Bezeichnung',
           type: 'text',
-          defaultValue: 'Maklergebühr',
+          defaultValue: 'Maklerprovision',
         },
       ],
     },
@@ -62,12 +62,12 @@ export const PreisePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Wohnungstypen' },
-        { name: 'headline', label: 'Überschrift', type: 'text', defaultValue: 'Drei Typen, ein Preisniveau.' },
+        { name: 'headline', label: 'Überschrift', type: 'text', defaultValue: 'Drei Typen. Drei Preise.' },
         {
           name: 'highlightLabel',
           label: 'Badge bei hervorgehobenem Typ',
           type: 'text',
-          defaultValue: 'Meistgewählt',
+          defaultValue: 'Größte Auswahl',
         },
         { name: 'typeLabelPrefix', label: 'Präfix vor der Typ-Nummer', type: 'text', defaultValue: 'Typ' },
         { name: 'exampleLabel', label: 'Beschriftung Beispielpreis-Box', type: 'text', defaultValue: 'Beispiel' },
@@ -75,10 +75,17 @@ export const PreisePage: GlobalConfig = {
           name: 'exampleNote',
           label: 'Hinweis unter dem Beispielpreis',
           type: 'text',
-          defaultValue: 'Frühbucher · inkl. MwSt.',
+          defaultValue: 'inkl. MwSt.',
         },
         { name: 'buttonLabel', label: 'Button-Text', type: 'text', defaultValue: 'Exposé anfragen' },
         { name: 'buttonLink', label: 'Button-Link', type: 'text', defaultValue: '/kontakt' },
+        {
+          name: 'areaNote',
+          label: 'Hinweis unter den Wohnungstypen (Flächen und Preise)',
+          type: 'textarea',
+          defaultValue:
+            'Alle Flächen sind Netto-Nutzflächen einschließlich Terrasse. Der Preis richtet sich nach Etage und Aussicht. Die vollständige Preisliste erhalten Sie mit dem Exposé.',
+        },
       ],
     },
     {
@@ -102,6 +109,12 @@ export const PreisePage: GlobalConfig = {
             'Alle Wohnungen werden schlüsselfertig übergeben. Was im Kaufpreis enthalten ist — und was optional hinzugebucht werden kann.',
         },
         { name: 'includedLabel', label: 'Label bei enthaltenen Punkten', type: 'text', defaultValue: 'inklusive' },
+        {
+          name: 'footnote',
+          label: 'Hinweis unter der Liste',
+          type: 'text',
+          defaultValue: 'Ausstattung nach Baubeschreibung. Marken und Modelle im Exposé.',
+        },
       ],
     },
     {
@@ -110,12 +123,12 @@ export const PreisePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Zahlungsplan' },
-        { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Kapital schützen.' },
+        { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'So läuft der Kauf.' },
         {
           name: 'headlineAccent',
           label: 'Überschrift (zweite Zeile, goldene Farbe)',
           type: 'text',
-          defaultValue: 'Schrittweise investieren.',
+          defaultValue: 'Zahlung nach Baufortschritt.',
         },
         {
           name: 'amountNote',
@@ -129,6 +142,12 @@ export const PreisePage: GlobalConfig = {
       name: 'nebenkosten',
       label: 'Nebenkosten-Boxen (unter dem Zahlungsplan)',
       type: 'array',
+      defaultValue: [
+        { label: 'Nebenkosten', value: 'ca. 1,5–2,5 %', note: 'Notar, Anwalt, Übersetzung und Grundbuch' },
+        { label: 'MwSt.', value: 'enthalten', note: 'Im Kaufpreis enthalten' },
+        { label: 'Maklerprovision', value: 'keine', note: 'Direktkauf vom Bauträger' },
+        { label: 'Grunderwerbsteuer', value: 'entfällt', note: 'Beim Kauf vom Bauträger' },
+      ],
       fields: [
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'value', label: 'Wert', type: 'text', required: true },
@@ -141,14 +160,19 @@ export const PreisePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Beispielrechnung' },
-        { name: 'headline', label: 'Überschrift (erster Teil)', type: 'text', defaultValue: 'Was kostet eine' },
+        {
+          name: 'headline',
+          label: 'Überschrift (erster Teil)',
+          type: 'text',
+          defaultValue: 'Was kostet eine Wohnung',
+        },
         {
           name: 'headlineAccent',
           label: 'Überschrift (zweiter Teil, goldene Farbe)',
           type: 'text',
           defaultValue: 'konkret?',
         },
-        { name: 'rowArea', label: 'Zeile: Wohnfläche', type: 'text', defaultValue: 'Wohnfläche' },
+        { name: 'rowArea', label: 'Zeile: Fläche', type: 'text', defaultValue: 'Fläche inkl. Terrasse' },
         { name: 'rowPricePerSqm', label: 'Zeile: Preis pro m²', type: 'text', defaultValue: 'Preis/m²' },
         { name: 'rowPurchase', label: 'Zeile: Kaufpreis', type: 'text', defaultValue: 'Kaufpreis' },
         {
@@ -163,6 +187,10 @@ export const PreisePage: GlobalConfig = {
           label: 'Nebenkosten-Satz in Prozent (für die Berechnung)',
           type: 'number',
           defaultValue: 2,
+          admin: {
+            description:
+              'Nebenkosten = Kaufpreis × Satz, auf volle 10 € gerundet. Gesamt = Kaufpreis + Nebenkosten.',
+          },
         },
       ],
     },
@@ -171,26 +199,26 @@ export const PreisePage: GlobalConfig = {
       label: 'CTA-Sektion (unten)',
       type: 'group',
       fields: [
-        { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Jetzt reservieren' },
-        { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Frühbucherpreise' },
+        { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Exposé & Preisliste' },
+        { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Preisliste' },
         {
           name: 'headlineAccent',
           label: 'Überschrift (zweite Zeile, goldene Farbe)',
           type: 'text',
-          defaultValue: 'bis Oktober 2026.',
+          defaultValue: 'anfordern.',
         },
         {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Nach Erteilung der Baugenehmigung im Oktober 2026 werden die Preise angepasst. Sichern Sie sich jetzt Ihre Einheit zum Frühbucherpreis.',
+            'Die vollständige Preisliste mit allen Einheiten, Etagen und Aussichten erhalten Sie mit dem Exposé — direkt vom Bauträger.',
         },
         {
           name: 'buttonLabel',
           label: 'Button-Text',
           type: 'text',
-          defaultValue: 'Aktuelle Preisliste anfordern',
+          defaultValue: 'Exposé und Preisliste anfordern',
         },
         { name: 'buttonLink', label: 'Button-Link', type: 'text', defaultValue: '/kontakt' },
         { name: 'whatsappLabel', label: 'WhatsApp-Button-Text', type: 'text', defaultValue: 'WhatsApp' },
@@ -199,13 +227,13 @@ export const PreisePage: GlobalConfig = {
           label: 'WhatsApp-Link',
           type: 'text',
           defaultValue:
-            'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20die%20aktuelle%20Preisliste%20und%20Verf%C3%BCgbarkeit%20von%20Baliv%20Residence%20anfragen.',
+            'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Baliv%20Residence.',
         },
         {
           name: 'note',
           label: 'Hinweis unter den Buttons',
           type: 'text',
-          defaultValue: 'Antwort in < 24 Stunden · Deutschsprachig · Direkt vom Bauträger · Kein Makler',
+          defaultValue: 'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachig · Direkt vom Bauträger · Kein Makler',
         },
       ],
     },
@@ -215,6 +243,68 @@ export const PreisePage: GlobalConfig = {
       type: 'array',
       minRows: 3,
       maxRows: 3,
+      defaultValue: [
+        {
+          nr: '01',
+          type: 'Studio',
+          tag: 'Erdgeschoss',
+          size: '28,1–29,7 m²',
+          pricePerSqm: 'ab 2.700 €/m²',
+          units: '2 Einheiten',
+          highlight: false,
+          exampleSize: 28.08,
+          examplePricePerSqm: 2700,
+          examplePrice: 75800,
+          features: [
+            { label: 'Wohn-/Schlafbereich kombiniert' },
+            { label: 'Küchenbereich' },
+            { label: 'Badezimmer' },
+            { label: 'Eigener Garten, mindestens 4 m tief' },
+          ],
+        },
+        {
+          nr: '02',
+          type: 'Zweizimmer',
+          tag: 'Erdgeschoss bis 5. OG',
+          size: '46,7–48,8 m²',
+          pricePerSqm: 'ab 2.500 €/m²',
+          units: '34 Einheiten',
+          highlight: true,
+          exampleSize: 46.79,
+          examplePricePerSqm: 2500,
+          examplePrice: 116975,
+          features: [
+            { label: '1 Schlafzimmer' },
+            { label: 'Wohn-/Essbereich' },
+            { label: 'Küchenbereich' },
+            { label: 'Badezimmer' },
+            { label: 'Balkon oder Terrasse' },
+            { label: 'Im Erdgeschoss: Terrasse und eigener Gartenanteil, mindestens 4 m tief' },
+          ],
+        },
+        {
+          nr: '03',
+          type: 'Penthouse-Ebene',
+          tag: '6. Obergeschoss',
+          size: '51,6–81,2 m²',
+          pricePerSqm: 'ab 3.600 €/m²',
+          units: '3 Einheiten',
+          highlight: false,
+          exampleSize: 51.61,
+          examplePricePerSqm: 3600,
+          examplePrice: 185800,
+          exampleExtraNote: 'Größte Einheit: 81,20 m² × 3.600 €/m² = 292.320 €',
+          features: [
+            { label: 'Zwei- und Dreizimmer' },
+            { label: 'Wohn-/Essbereich' },
+            { label: 'Küchenbereich' },
+            { label: 'Badezimmer' },
+            { label: 'Dachterrassen 38,5 / 42,9 / 65,9 m² zur alleinigen Nutzung' },
+            { label: 'Dachterrasse nicht Bestandteil der Wohnfläche' },
+            { label: 'Panoramablick auf Meer, Berge und Stari Bar' },
+          ],
+        },
+      ],
       fields: [
         { name: 'nr', label: 'Nummer', type: 'text', required: true },
         { name: 'type', label: 'Typ', type: 'text', required: true },
@@ -223,8 +313,30 @@ export const PreisePage: GlobalConfig = {
         { name: 'pricePerSqm', label: 'Preis pro m²', type: 'text' },
         { name: 'units', label: 'Einheiten', type: 'text' },
         { name: 'highlight', label: 'Hervorheben', type: 'checkbox', defaultValue: false },
-        { name: 'exampleSize', label: 'Beispiel Größe (m²)', type: 'number' },
-        { name: 'examplePrice', label: 'Beispiel Preis (€)', type: 'number' },
+        {
+          name: 'exampleSize',
+          label: 'Beispiel: Fläche der Beispiel-Einheit (m², z. B. 28.08)',
+          type: 'number',
+        },
+        {
+          name: 'examplePricePerSqm',
+          label: 'Beispiel: Preis pro m² (€, nur Zahl)',
+          type: 'number',
+        },
+        {
+          name: 'examplePrice',
+          label: 'Beispiel: Kaufpreis (€, darf gerundet sein)',
+          type: 'number',
+          admin: {
+            description:
+              'Weicht der Wert von Fläche × Preis/m² ab, wird er automatisch mit „≈" angezeigt. Wird auch als „ab"-Preis im Hero verwendet.',
+          },
+        },
+        {
+          name: 'exampleExtraNote',
+          label: 'Beispiel: Zusatzzeile (z. B. größte Einheit)',
+          type: 'text',
+        },
         {
           name: 'floorplan',
           label: 'Grundriss',
@@ -245,9 +357,23 @@ export const PreisePage: GlobalConfig = {
       name: 'paymentSteps',
       label: 'Zahlungsplan',
       type: 'array',
+      defaultValue: [
+        {
+          step: '01',
+          label: 'Notarieller Kaufvertrag',
+          amount: '40 %',
+          note: 'Die Baugenehmigung liegt vor. Sie schließen direkt den notariellen Hauptvertrag, keinen Vorvertrag.',
+        },
+        { step: '02', label: 'Rohbau fertiggestellt', amount: '40 %' },
+        { step: '03', label: 'Fertigstellung und Schlüsselübergabe', amount: '20 %' },
+      ],
       fields: [
         { name: 'step', label: 'Schritt (z.B. 01)', type: 'text', required: true },
-        { name: 'date', label: 'Datum', type: 'text' },
+        {
+          name: 'date',
+          label: 'Datum (optional — leer lassen, wenn keine Termine genannt werden)',
+          type: 'text',
+        },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'amount', label: 'Betrag (z.B. 40 %)', type: 'text', required: true },
         { name: 'note', label: 'Hinweis', type: 'text' },
@@ -257,6 +383,17 @@ export const PreisePage: GlobalConfig = {
       name: 'included',
       label: 'Im Kaufpreis enthalten',
       type: 'array',
+      defaultValue: [
+        { label: 'Markenarmaturen im Bad', included: true },
+        { label: 'Klimaanlage vorbereitet', included: true },
+        { label: 'Naturstein-Böden', included: true },
+        { label: 'Holzoberflächen', included: true },
+        { label: 'Eurocode 8 Erdbebenstandard', included: true },
+        { label: 'Schlüsselfertige Übergabe', included: true },
+        { label: 'MwSt. inklusive', included: true },
+        { label: 'Einbauküche', included: false, note: 'optional' },
+        { label: 'Tiefgaragenplatz', included: false, note: 'optional' },
+      ],
       fields: [
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'included', label: 'Enthalten', type: 'checkbox', defaultValue: true },

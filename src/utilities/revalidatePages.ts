@@ -29,6 +29,7 @@ export const allPagePaths = [
   '/investment',
   '/architektur',
   '/kontakt',
+  '/ueber-uns',
   '/impressum',
   '/datenschutz',
 ]

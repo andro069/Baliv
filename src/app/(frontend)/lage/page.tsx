@@ -12,7 +12,7 @@ import type { Media } from '@/payload-types'
 export const metadata: Metadata = {
   title: 'Lage — Baliv Residence, Bar Montenegro',
   description:
-    'Bar liegt am Fuß der Stari-Bar-Festung — zwischen Adria, Olivenhainen und dem Rumija-Gebirge. 50 km bis Podgorica, 35 km bis Budva.',
+    'Bar liegt am Fuß der Stari-Bar-Festung — zwischen Adria, Olivenhainen und dem Rumija-Gebirge. Ca. 1 km bis Stari Bar, 32 km bis zum Flughafen Podgorica.',
 }
 
 function mediaUrl(field: number | string | Media | null | undefined, fallback: string): string {
@@ -20,6 +20,9 @@ function mediaUrl(field: number | string | Media | null | undefined, fallback: s
   if (typeof field === 'string' || typeof field === 'number') return fallback
   return field.url ?? fallback
 }
+
+// Reihenfolge der Symbole — Schlüssel entsprechen den Optionen des Select-Felds „icon" im Global
+const iconKeys = ['ort', 'kueste', 'altstadt', 'berge', 'natur'] as const
 
 const distanceIcons: React.ReactNode[] = [
   <svg key="0" width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -44,64 +47,69 @@ const distanceIcons: React.ReactNode[] = [
     <path d="M6 18l3-3 2 2 3-5 2 3 3-6 3 9H6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
     <path d="M4 21h20M14 4v4M10 5l1.5 3.5M18 5l-1.5 3.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
   </svg>,
-  <svg key="5" width="28" height="28" viewBox="0 0 28 28" fill="none">
-    <path d="M6 18l3-3 2 2 3-5 2 3 3-6 3 9H6z" stroke="#B69252" strokeWidth="1.2" strokeLinejoin="round"/>
-    <path d="M4 21h20M14 4v4M10 5l1.5 3.5M18 5l-1.5 3.5" stroke="#B69252" strokeWidth="1.2" strokeLinecap="round"/>
-  </svg>,
 ]
 
+function distanceIcon(icon: unknown, idx: number): React.ReactNode {
+  const pos = iconKeys.indexOf(icon as (typeof iconKeys)[number])
+  return pos >= 0 ? distanceIcons[pos] : distanceIcons[idx % distanceIcons.length]
+}
+
 const defaultDistances = [
-  { place: 'Stari Bar', distance: '5 min', detail: 'zu Fuß', note: 'Mittelalterliche Festungsstadt, UNESCO-Kandidat' },
-  { place: 'Strand Bar', distance: '8 min', detail: 'mit dem Auto', note: '13 km Sandstrand, flaches Wasser' },
-  { place: 'Budva', distance: '35 km', detail: '30 min', note: 'Touristisches Zentrum der Riviera' },
-  { place: 'Kotor', distance: '50 km', detail: '45 min', note: 'UNESCO-Welterbe, Bucht von Kotor' },
-  { place: 'Flughafen Podgorica', distance: '50 km', detail: '45 min', note: 'Internationaler Flughafen, direkte Verbindungen' },
-  { place: 'Flughafen Tivat', distance: '65 km', detail: '60 min', note: 'Saisonale Direktflüge aus Europa' },
+  { icon: 'altstadt', place: 'Stari Bar Festung', note: '2.500 Jahre Stadtgeschichte', distance: 'ca. 1 km', detail: '5 Min' },
+  { icon: 'kueste', place: 'Erster Strand', note: 'Topolica', distance: 'ca. 2,5 km', detail: '8 Min' },
+  { icon: 'kueste', place: 'Hafen Bar', note: 'Fähre nach Bari', distance: 'ca. 2 km', detail: '8 Min' },
+  { icon: 'kueste', place: 'Strand Sutomore', note: 'Sandstrand', distance: '7,4 km', detail: '15 Min' },
+  { icon: 'natur', place: 'Skadar See', note: 'Nationalpark', distance: '17,7 km', detail: '40 Min' },
+  { icon: 'ort', place: 'Flughafen Podgorica', note: 'International', distance: '32 km', detail: '45 Min' },
+  { icon: 'ort', place: 'Flughafen Tivat', note: 'Saisonflüge', distance: '48 km', detail: '60 Min' },
+  { icon: 'altstadt', place: 'Kotor Altstadt', note: 'UNESCO Welterbe', distance: '47 km', detail: '80 Min' },
+  { icon: 'ort', place: 'Flughafen Dubrovnik', note: 'beste Verbindungen nach DACH', distance: '125 km', detail: 'unter 3 Std.' },
 ]
 
 const defaultHighlights = [
   {
-    title: 'Stari Bar — Geschichte zu Fuß',
-    text: 'Die mittelalterliche Festungsstadt Stari Bar liegt in Sichtweite des Projekts. Über 400 historische Gebäude, Olivenhaine die über 2.000 Jahre alt sind — ein lebendiges Kulturerbe direkt vor der Haustür.',
-    image: '/detail-terrassen.webp',
+    title: 'Hafen & Fährverbindung',
+    text: 'Von Bar aus verkehrt regelmäßig eine Fähre nach Bari, Italien. Die Überfahrt dauert rund neun Stunden — ein wichtiger Korridor für Reisende und Handel.',
+    image: '/building-front.webp',
   },
   {
-    title: 'Adria — 13 km Strand',
-    text: 'Bar verfügt über einen der längsten Sandstrände Montenegros. Flaches, warmes Wasser, kaum Tourismenmassen außerhalb der Hochsaison — ideal für Eigenbedarf und Kurzzeitvermietung.',
-    image: '/terrasse-meerblick.webp',
+    title: 'Autobahn & Schiene',
+    text: 'Die im Bau befindliche Autobahn Bar–Boljare wird die Stadt mit dem Balkan-Kernland verbinden; der erste Abschnitt ist seit 2022 in Betrieb. Die historische Eisenbahnlinie Bar–Belgrad durchquert spektakuläre Gebirgslandschaften.',
+    image: '/architektur-detail.webp',
   },
   {
-    title: 'Rumija — Natur pur',
-    text: 'Das Rumija-Gebirge erhebt sich direkt hinter Bar auf über 1.500 Meter. Wanderwege, Schluchten, klare Luft — ein seltener Kontrast zum Meer in unmittelbarer Nachbarschaft.',
-    image: '/terrasse-berge.webp',
+    title: 'Gewachsene Küstenstadt',
+    text: 'Über Fähre und Bahn ist Bar für viele Reisende der Einstieg nach Montenegro — und zugleich eine gewachsene Stadt mit eigenem Alltag, nicht nur ein Ferienort.',
+    image: '/interieur-wohnen-02.webp',
   },
 ]
 
 const defaultMarktPreise = [
-  { label: 'Bar heute', price: 'ab 2.500 €/m²', highlight: true },
-  { label: 'Budva aktuell', price: '3.500–5.000 €/m²', highlight: false },
-  { label: 'Kotor aktuell', price: '4.000–6.000 €/m²', highlight: false },
+  { label: 'Tivat', price: '4.462 €/m²', highlight: false },
+  { label: 'Budva', price: '3.569 €/m²', highlight: false },
+  { label: 'Bar, Durchschnitt', price: '2.744 €/m²', highlight: false },
+  { label: 'Baliv Residence', price: 'ab 2.500 €/m²', highlight: true },
 ]
 
 const defaultStats = [
   { v: '300+', l: 'Sonnentage/Jahr' },
   { v: '26 °C', l: 'Ø Wassertemp. Juli' },
   { v: '2.000+', l: 'Jahre Olivenhaine' },
-  { v: '13 km', l: 'Sandstrand' },
+  { v: '13 km', l: 'Sandstrand · Velika Plaža, Ulcinj — 45 Min' },
 ]
 
 export default async function LagePage() {
   const payload = await getPayload({ config })
   const cms = await payload.findGlobal({ slug: 'lage-page' })
 
-  const heroHeadline = (cms as any)?.hero?.headline ?? 'Zwischen Festung, Meer und Bergen.'
-  const heroSubline = (cms as any)?.hero?.subline ?? 'Die Lage'
-  const heroDescription = (cms as any)?.hero?.description ?? 'Bar — am südlichen Ende der montenegrinischen Riviera. Authentisch, gewachsen, und am Beginn einer Entwicklung, die Budva und Kotor bereits hinter sich haben.'
+  const heroHeadline = (cms as any)?.hero?.headline ?? 'Bar. Montenegros aufgehender Stern.'
+  const heroSubline = (cms as any)?.hero?.subline ?? 'Adria · Rumija · Altstadt'
+  const heroDescription = (cms as any)?.hero?.description ?? 'Bar liegt an der Adria-Küste Montenegros, eingebettet zwischen dem Rumija-Gebirge und dem Mittelmeer. Die Stadt ist regionale Drehscheibe mit Fährhafen und Bahnlinie — die Autobahn Richtung Norden ist im Bau.'
   const heroImage = mediaUrl((cms as any)?.hero?.image, '/lage-hero.webp')
   const heroImageAlt = (cms as any)?.hero?.imageAlt ?? 'Bar, Montenegro — Luftaufnahme'
   const heroAddress = (cms as any)?.hero?.address ?? 'Bjeliši BB, 85000 Bar, Montenegro'
   const heroMapsLabel = (cms as any)?.hero?.mapsLabel ?? 'Google Maps öffnen'
-  const heroMapsUrl = (cms as any)?.hero?.mapsUrl ?? 'https://maps.google.com/?q=Bjeli%C5%A1i+BB,+Bar,+Montenegro'
+  const heroMapsUrl = (cms as any)?.hero?.mapsUrl ?? 'https://maps.google.com/?q=42.089143,19.118888'
 
   const erreichbarkeitEyebrow = (cms as any)?.erreichbarkeit?.eyebrow ?? 'Erreichbarkeit'
   const erreichbarkeitHeadline = (cms as any)?.erreichbarkeit?.headline ?? 'Alles nah.'
@@ -119,9 +127,10 @@ export default async function LagePage() {
   const highlightsHeadlineAccent = (cms as any)?.highlightsSection?.headlineAccent ?? 'einzigartig macht.'
 
   const marktEyebrow = (cms as any)?.markt?.eyebrow ?? 'Warum Bar'
-  const marktHeadline = (cms as any)?.markt?.headline ?? 'Was Budva und Kotor vor 15 Jahren waren.'
-  const marktDescription = (cms as any)?.markt?.description ?? 'Kotor kostet heute 4.000–6.000 €/m². Budva 3.500–5.000 €/m². Bar liegt bei 2.500 €/m² — mit denselben natürlichen Vorteilen: Adriaküste, Berge, mediterranes Klima. Der Unterschied: Bar entwickelt sich gerade erst.'
-  const marktNote = (cms as any)?.markt?.note ?? 'Vergleichspreise basieren auf öffentlich verfügbaren Marktdaten, Stand 2024/2025.'
+  const marktHeadline = (cms as any)?.markt?.headline ?? 'Preisniveau an der montenegrinischen Küste'
+  const marktDescription = (cms as any)?.markt?.description ?? 'Montenegro ist Kandidat für den EU-Beitritt, die Verhandlungen laufen.'
+  const marktStandText = (cms as any)?.markt?.standText ?? 'Angebotspreise für Wohnungen, Stand September 2026.'
+  const marktNote = (cms as any)?.markt?.note ?? 'Quelle: Estitor, Auswertung aktiver Inserate, 03.09.2026.'
 
   const cmsMarktPreise: any[] = (cms as any)?.marktPreise ?? []
   const marktPreise = cmsMarktPreise.length > 0
@@ -140,8 +149,8 @@ export default async function LagePage() {
   const cta = {
     eyebrow: (cms as any)?.cta?.eyebrow ?? 'Vor Ort überzeugen',
     headline: (cms as any)?.cta?.headline ?? 'Besichtigung',
-    headlineAccent: (cms as any)?.cta?.headlineAccent ?? 'jederzeit möglich.',
-    description: (cms as any)?.cta?.description ?? 'Wir organisieren Besichtigungen vor Ort — inklusive Abholung vom Flughafen Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.',
+    headlineAccent: (cms as any)?.cta?.headlineAccent ?? 'nach Vereinbarung.',
+    description: (cms as any)?.cta?.description ?? 'Wir organisieren Besichtigungen vor Ort — nach Absprache auch mit Abholung vom Flughafen Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.',
     buttonLabel: (cms as any)?.cta?.buttonLabel ?? 'Besichtigung anfragen',
     buttonUrl: (cms as any)?.cta?.buttonUrl ?? '/kontakt',
     whatsappLabel: (cms as any)?.cta?.whatsappLabel ?? 'WhatsApp',
@@ -151,6 +160,7 @@ export default async function LagePage() {
   const cmsDistances: any[] = (cms as any)?.distances ?? []
   const distances = cmsDistances.length > 0
     ? cmsDistances.map((d: any) => ({
+        icon: d.icon ?? '',
         place: d.place ?? '',
         distance: d.distance ?? '',
         detail: d.detail ?? '',
@@ -243,7 +253,7 @@ export default async function LagePage() {
                   key={d.place}
                   className="flex items-center gap-4 bg-white rounded p-4 hover:shadow-sm transition-shadow"
                 >
-                  <div className="flex-shrink-0">{distanceIcons[idx % distanceIcons.length]}</div>
+                  <div className="flex-shrink-0">{distanceIcon(d.icon, idx)}</div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[#151E39] font-medium">{d.place}</div>
                     <div className="text-[#151E39]/40 text-xs mt-0.5 truncate">{d.note}</div>
@@ -319,7 +329,7 @@ export default async function LagePage() {
         </div>
       </section>
 
-      {/* ── BAR VS. BUDVA/KOTOR ──────────────────────────────────────────── */}
+      {/* ── PREISNIVEAU AN DER KÜSTE ─────────────────────────────────────── */}
       <section className="py-24 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
@@ -330,9 +340,12 @@ export default async function LagePage() {
             >
               {marktHeadline}
             </h2>
-            <p className="text-[#151E39]/60 leading-relaxed mb-8">
+            <p className="text-[#151E39]/60 leading-relaxed mb-4">
               {marktDescription}
             </p>
+            {marktStandText ? (
+              <p className="text-[#151E39]/50 text-sm mb-6">{marktStandText}</p>
+            ) : null}
 
             <div className="space-y-4">
               {marktPreise.map((row) => {

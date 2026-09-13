@@ -33,7 +33,7 @@ export const KontaktPage: GlobalConfig = {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
-          defaultValue: 'Wir antworten innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.',
+          defaultValue: 'Wir antworten in der Regel innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.',
         },
       ],
     },
@@ -187,8 +187,12 @@ export const KontaktPage: GlobalConfig = {
           name: 'datenschutzText',
           label: 'Datenschutz-Hinweis',
           type: 'textarea',
+          admin: {
+            description:
+              'Wird nur angezeigt, wenn das gewählte Formular keine Checkbox mit dem Namen „datenschutz“ enthält. Das Wort „Datenschutzerklärung“ wird automatisch verlinkt.',
+          },
           defaultValue:
-            'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',
+            'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Näheres in unserer Datenschutzerklärung.',
         },
         {
           name: 'fehlerText',
@@ -226,7 +230,7 @@ export const KontaktPage: GlobalConfig = {
           label: 'Danke-Seite — Text',
           type: 'textarea',
           defaultValue:
-            'Ihre Anfrage ist bei uns eingegangen. Wir melden uns innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
+            'Ihre Anfrage ist bei uns eingegangen. Wir melden uns in der Regel innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
         },
         {
           name: 'erfolgLinkLabel',

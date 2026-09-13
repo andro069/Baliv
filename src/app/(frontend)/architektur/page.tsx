@@ -38,29 +38,29 @@ const defaultDesignPrinciples = [
 ]
 
 const defaultMaterials = [
-  { name: 'Regionaler Naturstein', use: 'Fassade & Böden', detail: 'Lokal gebrochen, von Hand verlegt' },
-  { name: 'Geölte Eiche', use: 'Innenböden & Oberflächen', detail: 'Europäische Eiche, kaltgepresst geölt' },
+  { name: 'Regionaler Naturstein', use: 'Fassade & Böden', detail: 'Stein aus der Region' },
+  { name: 'Eiche', use: 'Innenraum', detail: 'Holzoberflächen im Innenraum' },
   { name: 'Weißputz', use: 'Innenwände', detail: 'Mineralisch, atmungsaktiv' },
-  { name: 'Schmiedeeisen', use: 'Geländer & Details', detail: 'Handgeschmiedet vor Ort' },
-  { name: 'Terrakotta', use: 'Außenbereiche', detail: 'Traditionelles Balkenboden-Format' },
+  { name: 'Schmiedeeisen', use: 'Außenbereiche', detail: 'Geländer und Details' },
+  { name: 'Terrakotta', use: 'Außenbereiche', detail: 'Gebrannter Ton im traditionellen Langformat' },
   { name: 'Lavendel & Rosmarin', use: 'Terrassenbegrünung', detail: 'Mediterrane Wildpflanzen, pflegeleicht' },
 ]
 
 const defaultFassadeItems = [
   { title: 'Natursteinfassade', text: 'Regional gebrochen, nach lokalem Baucode — aber hier bewusste Gestaltungsentscheidung.' },
   { title: 'Rundbogen-Motiv', text: 'Wiederkehrendes Element aus der Festungsarchitektur von Stari Bar.' },
-  { title: 'Schmiedeeisen-Geländer', text: 'Handgefertigte Details, die industriellen Standardlösungen bewusst widersprechen.' },
+  { title: 'Schmiedeeisen-Geländer', text: 'Geländer und Details in Schmiedeeisen als bewusster Gegenentwurf zu industriellen Standardlösungen.' },
   { title: 'Bepflanzte Loggias', text: 'Lavendel und Rosmarin zwischen den Etagen — die Fassade lebt und wächst.' },
 ]
 
 const defaultGallery = [
   { src: '/detail-bogen.webp', alt: 'Rundbogen-Detail Fassade', aspect: 'tall' },
-  { src: '/detail-sanitaer.webp', alt: 'Hansgrohe Badezimmer mit Marmor', aspect: 'tall' },
+  { src: '/detail-sanitaer.webp', alt: 'Badezimmer-Detail', aspect: 'tall' },
   { src: '/architektur-detail.webp', alt: 'Architekturdetail Baliv Residence', aspect: 'wide' },
   { src: '/detail-stein.webp', alt: 'Naturstein-Bogenmotiv', aspect: 'square' },
   { src: '/interieur-wohnen-01.webp', alt: 'Wohnbereich Baliv Residence', aspect: 'wide' },
   { src: '/detail-terrassen.webp', alt: 'Terrassendetail', aspect: 'square' },
-  { src: '/detail-boden.webp', alt: 'Travertin-Steinboden Nahaufnahme', aspect: 'wide' },
+  { src: '/detail-boden.webp', alt: 'Steinboden Nahaufnahme', aspect: 'wide' },
   { src: '/interieur-bad-01.webp', alt: 'Badezimmer Interieur', aspect: 'tall' },
   { src: '/detail-fassade.webp', alt: 'Fassadenstruktur Naturstein', aspect: 'square' },
 ]
@@ -68,14 +68,14 @@ const defaultGallery = [
 const defaultStats = [
   { v: '7', l: 'Geschosse' },
   { v: '39', l: 'Wohneinheiten' },
-  { v: '17', l: 'Tiefgaragenplätze' },
+  { v: '20', l: 'Stellplätze' },
   { v: 'EC 8', l: 'Erdbebenstandard' },
 ]
 
 const defaultFeatures = [
   { title: 'Fahrradabstellraum', text: 'Im Erdgeschoss, wettergeschützt und abschließbar — für nachhaltigen Alltag.' },
   { title: 'Bepflanzte Gemeinschaftsterrassen', text: 'Lavendel, Rosmarin und mediterrane Begrünung auf mehreren Ebenen.' },
-  { title: 'Unterirdisches Parken', text: '17 Stellplätze direkt im Gebäude — separat erwerbbar.' },
+  { title: 'Stellplätze', text: '20 Stellplätze in der Tiefgarage und im Außenbereich — Tiefgaragenplatz optional.' },
 ]
 
 function mediaUrl(field: any, fallback: string): string {
@@ -148,7 +148,10 @@ export default async function ArchitekturPage() {
   const materialienAccent = materialienGroup.headlineAccent ?? 'Langlebig. Ehrlich.'
   const materialienDescription =
     materialienGroup.description ??
-    'Keine Verbundwerkstoffe, keine Imitate. Jedes Material wurde nach Herkunft, Langlebigkeit und handwerklichem Verarbeitungsstandard ausgewählt.'
+    'Materialien, die zum Ort passen — ausgewählt nach Herkunft, Langlebigkeit und handwerklicher Verarbeitung.'
+  const materialienHinweis =
+    materialienGroup.hinweis ??
+    'Materialangaben sind Planungsstand. Verbindlich ist die Baubeschreibung im Kaufvertrag.'
   const materialienImage = mediaUrl(materialienGroup.image, '/architektur-materialien.webp')
   const cmsMaterials: any[] = materialienGroup.items ?? []
   const materials =
@@ -394,6 +397,10 @@ export default async function ArchitekturPage() {
                 </div>
               ))}
             </div>
+
+            {materialienHinweis && (
+              <p className="text-[#151E39]/50 text-xs leading-relaxed mt-6">{materialienHinweis}</p>
+            )}
           </div>
         </div>
       </section>

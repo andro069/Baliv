@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const payload = await getPayload({ config })
 
     // Auswahlfelder speichern einen Wert (z. B. "penthouse"); für Mail und
-    // Anfragenliste soll aber die Beschriftung stehen ("Penthouse (ab 85 m²)").
+    // Anfragenliste soll aber die Beschriftung stehen ("Penthouse-Ebene").
     let form: any = null
     if (formId) {
       try {
@@ -38,6 +38,18 @@ export async function POST(req: NextRequest) {
       } catch {
         /* Formular gelöscht — dann bleibt es beim Rohwert. */
       }
+    }
+
+    // Einwilligung serverseitig prüfen, sobald das Formular sie als Pflicht abfragt.
+    const datenschutzPflicht = (form?.fields ?? []).some(
+      (x: any) => x?.blockType === 'checkbox' && x?.name === 'datenschutz' && x?.required,
+    )
+    const einwilligung = data.datenschutz === true
+    if (datenschutzPflicht && !einwilligung) {
+      return NextResponse.json(
+        { error: 'Bitte stimmen Sie der Datenschutzerklärung zu.' },
+        { status: 400 },
+      )
     }
     const optionLabel = (feldName: string, wert: string): string => {
       const feld = (form?.fields ?? []).find((x: any) => x?.name === feldName)
@@ -49,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     // Alles ausser den festen Spalten — damit ein im Backend ergänztes Feld
     // ohne Code-Änderung in Mail und Anfrage landet.
-    const STANDARD_KEYS = ['name', 'email', 'phone', 'interesse', 'nachricht', 'expose']
+    const STANDARD_KEYS = ['name', 'email', 'phone', 'interesse', 'nachricht', 'expose', 'datenschutz']
     const zusatzFelder = Object.entries(data)
       .filter(([k, v]) => !STANDARD_KEYS.includes(k) && v !== '' && v !== null && v !== undefined)
       .map(([k, v]) => ({
@@ -90,6 +102,7 @@ export async function POST(req: NextRequest) {
       `${(labels.phone || 'Telefon').padEnd(10)} ${phone || '—'}`,
       `${(labels.interesse || 'Interesse').padEnd(10)} ${interesse || '—'}`,
       `${'Exposé'.padEnd(10)} ${expose ? 'Ja, gewünscht' : 'Nein'}`,
+      ...('datenschutz' in data ? [`Einwilligung Datenschutz: ${einwilligung ? 'Ja' : 'Nein'}`] : []),
       ...(zusatzFelder.length
         ? ['', ...zusatzFelder.map((z) => `${z.feld}: ${z.wert}`)]
         : []),

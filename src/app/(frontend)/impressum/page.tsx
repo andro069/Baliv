@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: 'Impressum und Anbieterkennzeichnung von Baliv Residence, Real Living d.o.o., Bar, Montenegro.',
 }
 
+const h2Class = 'text-[#151E39] text-lg font-semibold mb-3'
+const h2Style = { fontFamily: 'var(--font-playfair), serif' }
+
 export default function ImpressumPage() {
   return (
     <main className="bg-[#F0EDE8]" style={{ fontFamily: 'var(--font-raleway), sans-serif' }}>
@@ -26,93 +29,67 @@ export default function ImpressumPage() {
           <div className="prose prose-sm max-w-none space-y-10 text-[#151E39]/80 leading-relaxed">
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                Angaben gemäß § 5 TMG
+              <h2 className={h2Class} style={h2Style}>
+                Angaben gemäß § 5 DDG
               </h2>
-              <p className="bg-[#B69252]/10 border border-[#B69252]/20 rounded px-4 py-3 text-xs text-[#B69252] mb-4">
-                ⚠ Platzhalter — bitte durch echte Unternehmensdaten ersetzen
-              </p>
               <p>
                 Real Living d.o.o.<br />
-                [Straße und Hausnummer]<br />
+                Bjeliši BB<br />
                 85000 Bar<br />
                 Montenegro
               </p>
             </div>
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                Vertreten durch
-              </h2>
-              <p>[Name des Geschäftsführers]</p>
-            </div>
-
-            <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+              <h2 className={h2Class} style={h2Style}>
                 Kontakt
               </h2>
               <p>
-                E-Mail: info@baliv-residence.com<br />
-                Telefon: +382 68 517 873
+                E-Mail:{' '}
+                <a href="mailto:info@baliv-residence.com" className="text-[#B69252] hover:underline">
+                  info@baliv-residence.com
+                </a>
+                <br />
+                Telefon:{' '}
+                <a href="tel:+38268517873" className="text-[#B69252] hover:underline">
+                  +382 68 517 873
+                </a>
               </p>
             </div>
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                Handelsregistereintrag
+              <h2 className={h2Class} style={h2Style}>
+                Registrierung
               </h2>
               <p>
-                Eintragung im Handelsregister Montenegro<br />
-                Registergericht: [Handelsgericht Bar]<br />
-                Registernummer: [HRB XXXXXX]
+                Centralni registar privrednih subjekata (CRPS), Podgorica
               </p>
             </div>
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                Umsatzsteuer-Identifikationsnummer
+              <h2 className={h2Class} style={h2Style}>
+                Steuernummer
               </h2>
-              <p>
-                USt-IdNr.: [XX XXXXXXXXX]<br />
-                gemäß § 27a Umsatzsteuergesetz
-              </p>
+              <p>PIB (Steuernummer): 03550168</p>
             </div>
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                Verantwortlich für den Inhalt
+              <h2 className={h2Class} style={h2Style}>
+                Verbraucherstreitbeilegung
               </h2>
               <p>
-                [Name des Verantwortlichen]<br />
-                Real Living d.o.o.<br />
-                [Adresse wie oben]
-              </p>
-            </div>
-
-            <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                Streitschlichtung
-              </h2>
-              <p>
-                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
-                {' '}<a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" className="text-[#B69252] hover:underline">
-                  https://ec.europa.eu/consumers/odr
-                </a>.
-                Unsere E-Mail-Adresse finden Sie oben im Impressum.
-              </p>
-              <p className="mt-3">
                 Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
                 Verbraucherschlichtungsstelle teilzunehmen.
               </p>
             </div>
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+              <h2 className={h2Class} style={h2Style}>
                 Haftung für Inhalte
               </h2>
               <p>
-                Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den
-                allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht
+                Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den
+                allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch nicht
                 verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu
                 forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
               </p>
@@ -125,12 +102,12 @@ export default function ImpressumPage() {
             </div>
 
             <div>
-              <h2 className="text-[#151E39] text-lg font-semibold mb-3" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+              <h2 className={h2Class} style={h2Style}>
                 Urheberrecht
               </h2>
               <p>
-                Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen
-                Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der
+                Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten sind urheberrechtlich
+                geschützt. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der
                 Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
                 Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet.
               </p>

@@ -21,7 +21,7 @@ export default async function KontaktPage() {
   const cms = await payload.findGlobal({ slug: 'kontakt-page', depth: 2 })
 
   const heroHeadline = (cms as any)?.hero?.headline ?? 'Sprechen wir miteinander.'
-  const heroDescription = (cms as any)?.hero?.description ?? 'Wir antworten innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.'
+  const heroDescription = (cms as any)?.hero?.description ?? 'Wir antworten in der Regel innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.'
   const email = (cms as any)?.info?.email ?? 'info@baliv-residence.com'
   const whatsapp = (cms as any)?.info?.whatsapp ?? '38268517873'
   const whatsappDisplay = (cms as any)?.info?.telefon ?? '+382 68 517 873'
@@ -62,7 +62,7 @@ export default async function KontaktPage() {
       f.exposeCheckboxText ?? 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
     datenschutzText:
       f.datenschutzText ??
-      'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Keine Weitergabe an Dritte. Keine Werbung ohne Ihre Zustimmung.',
+      'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Näheres in unserer Datenschutzerklärung.',
     fehlerText:
       f.fehlerText ??
       'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt per E-Mail.',
@@ -72,7 +72,7 @@ export default async function KontaktPage() {
     erfolgHeadline: f.erfolgHeadline ?? 'Vielen Dank!',
     erfolgText:
       f.erfolgText ??
-      'Ihre Anfrage ist bei uns eingegangen. Wir melden uns innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
+      'Ihre Anfrage ist bei uns eingegangen. Wir melden uns in der Regel innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
     erfolgLinkLabel: f.erfolgLinkLabel ?? 'Zurück zur Startseite',
   }
 
@@ -153,7 +153,7 @@ export default async function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">{dkLabelWhatsapp}</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">{dkLabelWhatsapp}</p>
                   <p className="text-[#151E39] group-hover:text-[#B69252] transition-colors text-sm">
                     {whatsappDisplay}
                   </p>
@@ -168,7 +168,7 @@ export default async function KontaktPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[#151E39]/40 text-xs tracking-widests uppercase mb-0.5">{dkLabelAdresse}</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase mb-0.5">{dkLabelAdresse}</p>
                   <p className="text-[#151E39] text-sm whitespace-pre-line">{adresse}</p>
                 </div>
               </div>

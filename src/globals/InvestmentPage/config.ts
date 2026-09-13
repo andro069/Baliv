@@ -28,13 +28,28 @@ export const InvestmentPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Montenegro vor dem EU-Beitritt: stabile Währung, niedrigste Steuern Europas, zweistellige Renditen — und ein Markt, der gerade erst entdeckt wird.',
+            'Montenegro: stabile Währung, niedrige Unternehmens- und Einkommensteuer — und ein Markt, der gerade erst entdeckt wird.',
         },
         {
           name: 'image',
           label: 'Hintergrundbild',
           type: 'upload',
           relationTo: 'media',
+        },
+        {
+          name: 'kennzahlen',
+          label: 'Kennzahlenleiste (nur belegbare Angaben)',
+          type: 'array',
+          maxRows: 4,
+          defaultValue: [
+            { value: 'Euro', label: 'seit 2002' },
+            { value: 'NATO', label: 'seit 2017' },
+            { value: '9 %', label: 'Einkommensteuer auf Mieteinnahmen' },
+          ],
+          fields: [
+            { name: 'value', label: 'Wert', type: 'text', required: true },
+            { name: 'label', label: 'Beschriftung', type: 'text', required: true },
+          ],
         },
       ],
     },
@@ -54,7 +69,7 @@ export const InvestmentPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Montenegro kombiniert westliche Rechtssicherheit mit den Wachstumsraten eines Schwellenmarkts. Das Fenster vor dem EU-Beitritt — in dem die größten Wertsteigerungen stattfinden — schließt sich 2028.',
+            'Westliche Rahmenbedingungen: der Euro als Währung, die NATO-Mitgliedschaft und der Erwerb von Wohnungseigentum auch für Ausländer. Montenegro ist EU-Beitrittskandidat, die Verhandlungen laufen; als Zieldatum wird 2028 genannt.',
         },
         {
           name: 'image',
@@ -67,10 +82,117 @@ export const InvestmentPage: GlobalConfig = {
           label: 'Vorteile (4 Punkte)',
           type: 'array',
           maxRows: 4,
+          defaultValue: [
+            { title: 'NATO-Mitglied', text: 'Seit 2017 Mitglied des westlichen Verteidigungsbündnisses.' },
+            { title: 'Euro-Währung', text: 'Seit 2002. Kein Wechselkursrisiko für Anleger aus dem Euroraum.' },
+            { title: 'EU-Beitrittskandidat', text: 'Die Beitrittsverhandlungen laufen; als Zieldatum wird 2028 genannt.' },
+            { title: 'Rechtssicherheit', text: 'Ausländer können Wohnungseigentum erwerben. Notariell beurkundete Eigentumsübertragung.' },
+          ],
           fields: [
             { name: 'title', label: 'Titel', type: 'text', required: true },
             { name: 'text', label: 'Text', type: 'textarea' },
           ],
+        },
+        {
+          name: 'bildKennzahlen',
+          label: 'Kacheln auf dem Sektionsbild',
+          type: 'array',
+          maxRows: 4,
+          defaultValue: [
+            { value: 'NATO', label: 'seit 2017' },
+            { value: 'Euro', label: 'seit 2002' },
+            { value: 'EU', label: 'Ziel 2028, Verhandlungen laufen' },
+            { value: '0 %', label: 'Vermögensteuer' },
+          ],
+          fields: [
+            { name: 'value', label: 'Wert', type: 'text', required: true },
+            { name: 'label', label: 'Beschriftung', type: 'text', required: true },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'marktdaten',
+      label: 'Marktdaten & Zeitleiste (Sektion)',
+      type: 'group',
+      fields: [
+        { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Marktdaten' },
+        { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Bar an der' },
+        {
+          name: 'headlineAccent',
+          label: 'Überschrift (zweite Zeile, goldene Farbe)',
+          type: 'text',
+          defaultValue: 'montenegrinischen Adria.',
+        },
+        {
+          name: 'description',
+          label: 'Beschreibung',
+          type: 'textarea',
+          defaultValue:
+            'Bar hat den wichtigsten Seehafen Montenegros und liegt direkt unterhalb der historischen Altstadt Stari Bar. Die Einstiegspreise bei Baliv Residence beginnen ab 2.500 €/m².',
+        },
+        {
+          name: 'kennzahlWert',
+          label: 'Kennzahl (optional, z. B. „+5 %")',
+          type: 'text',
+          admin: {
+            description:
+              'Höchstens eine Zahl — nur mit belegter Quelle und Jahr (z. B. MONSTAT oder Zentralbank von Montenegro). Leer lassen, dann wird keine Zahl angezeigt.',
+          },
+        },
+        { name: 'kennzahlLabel', label: 'Kennzahl — Beschriftung', type: 'text' },
+        { name: 'kennzahlText', label: 'Kennzahl — Erläuterung', type: 'textarea' },
+        {
+          name: 'quelle',
+          label: 'Fußnote: Quelle und Jahr',
+          type: 'text',
+          admin: {
+            description: 'z. B. „Quelle: MONSTAT, Statistik der Wohnungspreise, 2025". Wird nur zusammen mit einer Kennzahl angezeigt.',
+          },
+        },
+        { name: 'zeitleisteTitel', label: 'Zeitleiste — Titel', type: 'text', defaultValue: 'Entwicklungspfad' },
+        {
+          name: 'zeitleiste',
+          label: 'Zeitleiste',
+          type: 'array',
+          maxRows: 6,
+          defaultValue: [
+            { year: '2026', event: 'Genehmigung und Baubeginn' },
+            { year: '2027', event: 'Rohbau' },
+            { year: '2028', event: 'Übergabe (Q2)' },
+          ],
+          fields: [
+            { name: 'year', label: 'Jahr', type: 'text', required: true },
+            { name: 'event', label: 'Ereignis', type: 'text', required: true },
+            { name: 'note', label: 'Hinweis (optional)', type: 'text' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'steuerSektion',
+      label: 'Steuer-Sektion (Texte)',
+      type: 'group',
+      fields: [
+        { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Keine Vermögensteuer.' },
+        {
+          name: 'headlineAccent',
+          label: 'Überschrift (zweite Zeile, goldene Farbe)',
+          type: 'text',
+          defaultValue: '9 % auf Mieteinnahmen.',
+        },
+        {
+          name: 'description',
+          label: 'Beschreibung',
+          type: 'textarea',
+          defaultValue: 'Die wichtigsten Steuern beim Kauf und bei der Vermietung einer Wohnung in Montenegro im Überblick.',
+        },
+        {
+          name: 'fussnote',
+          label: 'Fußnote',
+          type: 'textarea',
+          defaultValue:
+            'Allgemeine Informationen, Stand 2026. Keine Steuerberatung. Die Behandlung im Wohnsitzland richtet sich nach dem jeweiligen Doppelbesteuerungsabkommen.',
         },
       ],
     },
@@ -78,6 +200,18 @@ export const InvestmentPage: GlobalConfig = {
       name: 'steuerDaten',
       label: 'Steuerdaten',
       type: 'array',
+      defaultValue: [
+        {
+          label: 'Grunderwerbsteuer',
+          value: 'entfällt',
+          note: 'Beim Kauf vom Bauträger. Der Kaufpreis enthält 21 % MwSt.; die Übertragungssteuer fällt erst beim Weiterverkauf an (gestaffelt 3–6 %).',
+        },
+        { label: 'Jahresgrundsteuer', value: '0,1–1 %', note: 'Je nach Lage und Größe' },
+        { label: 'Einkommensteuer (Miete)', value: '9 %', note: 'Pauschal auf Mieteinnahmen' },
+        { label: 'Körperschaftsteuer', value: '9 / 12 / 15 %', note: 'Gestaffelt nach Gewinnhöhe' },
+        { label: 'Kapitalertragsteuer', value: '9 %', note: 'Auf Veräußerungsgewinn' },
+        { label: 'Mehrwertsteuer', value: 'Inklusive', note: 'Im Kaufpreis enthalten' },
+      ],
       fields: [
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'value', label: 'Wert', type: 'text', required: true },
@@ -88,26 +222,69 @@ export const InvestmentPage: GlobalConfig = {
       name: 'mietRendite',
       label: 'Mietrendite Beispiel',
       type: 'group',
+      admin: {
+        description:
+          'Alle Beträge der Beispielrechnung werden aus diesen Feldern berechnet: Kaufpreis = Größe × Preis/m²; Brutto = Wochen × Wochenpreis je Saison; Ertrag vor Steuer = Brutto − Verwaltungsquote − Betriebskosten; Nettoertrag = Ertrag vor Steuer − Steuersatz; Rendite = Nettoertrag ÷ Kaufpreis.',
+      },
       fields: [
-        { name: 'headline', label: 'Überschrift', type: 'text', defaultValue: '6–8 % Rendite. Brutto. Realistisch.' },
-        { name: 'purchase', label: 'Kaufpreis (€)', type: 'number', defaultValue: 125000 },
-        { name: 'size', label: 'Größe (m²)', type: 'number', defaultValue: 50 },
+        { name: 'headline', label: 'Überschrift', type: 'text', defaultValue: 'Mietertrag an einem Beispiel.' },
+        {
+          name: 'description',
+          label: 'Einleitungstext',
+          type: 'textarea',
+          defaultValue:
+            'Bar liegt nahe Stari Bar, dem Hafen und der Natur der Küste. Die Beispielrechnung zeigt, wie sich Mieteinnahmen, Kosten und Steuer bei einer Zweizimmerwohnung zusammensetzen.',
+        },
+        { name: 'size', label: 'Größe (m²)', type: 'number', defaultValue: 46.79 },
         { name: 'pricePerSqm', label: 'Preis pro m² (€)', type: 'number', defaultValue: 2500 },
-        { name: 'weeklyRate', label: 'Wochenrate Hauptsaison (€)', type: 'number', defaultValue: 550 },
-        { name: 'occupancyWeeks', label: 'Belegungswochen', type: 'number', defaultValue: 20 },
-        { name: 'annualRent', label: 'Jahreseinnahmen (€)', type: 'number', defaultValue: 11000 },
-        { name: 'yield', label: 'Rendite (%)', type: 'number', defaultValue: 8.8 },
-        { name: 'appreciationLow', label: 'Wertsteigerung konservativ (€)', type: 'number', defaultValue: 30000 },
-        { name: 'appreciationHigh', label: 'Wertsteigerung optimistisch (€)', type: 'number', defaultValue: 48000 },
+        { name: 'hauptsaisonWochen', label: 'Hauptsaison — Wochen', type: 'number', defaultValue: 10 },
+        { name: 'hauptsaisonWochenpreis', label: 'Hauptsaison — Wochenpreis (€)', type: 'number', defaultValue: 850 },
+        { name: 'nebensaisonWochen', label: 'Nebensaison — Wochen', type: 'number', defaultValue: 15 },
+        { name: 'nebensaisonWochenpreis', label: 'Nebensaison — Wochenpreis (€)', type: 'number', defaultValue: 450 },
+        { name: 'verwaltungQuote', label: 'Verwaltung und Reinigung (% der Bruttoeinnahmen)', type: 'number', defaultValue: 20 },
+        { name: 'betriebskosten', label: 'Betrieb und Instandhaltung (€ pro Jahr)', type: 'number', defaultValue: 900 },
+        { name: 'steuersatz', label: 'Einkommensteuer (%)', type: 'number', defaultValue: 9 },
+        {
+          name: 'fussnote',
+          label: 'Fußnote',
+          type: 'textarea',
+          defaultValue:
+            'Beispielrechnung auf Basis marktüblicher Wochenpreise, Stand 2026. Keine Zusicherung einer Rendite. Steuerliche Behandlung individuell.',
+        },
+      ],
+    },
+    {
+      name: 'zahlungsplan',
+      label: 'Zahlungsplan (Texte)',
+      type: 'group',
+      fields: [
+        { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Zahlungsplan' },
+        { name: 'headline', label: 'Überschrift', type: 'text', defaultValue: 'So läuft der Kauf' },
+        {
+          name: 'nebenkosten',
+          label: 'Hinweis Nebenkosten',
+          type: 'textarea',
+          defaultValue:
+            'Nebenkosten für Notar, Anwalt, Übersetzung und Grundbuch: ca. 1,5–2,5 %. MwSt. im Kaufpreis enthalten. Keine Maklerprovision. Keine Grunderwerbsteuer — beim Kauf vom Bauträger entfällt sie.',
+        },
       ],
     },
     {
       name: 'paymentSteps',
-      label: 'Zahlungsplan',
+      label: 'Zahlungsplan — Stufen',
       type: 'array',
+      defaultValue: [
+        {
+          step: '01',
+          label: 'Notarieller Kaufvertrag',
+          amount: '40 %',
+          note: 'Die Baugenehmigung liegt vor. Sie schließen direkt den notariellen Hauptvertrag, keinen Vorvertrag.',
+        },
+        { step: '02', label: 'Rohbau fertiggestellt', amount: '40 %' },
+        { step: '03', label: 'Fertigstellung und Schlüsselübergabe', amount: '20 %' },
+      ],
       fields: [
         { name: 'step', label: 'Schritt (z.B. 01)', type: 'text', required: true },
-        { name: 'date', label: 'Datum', type: 'text' },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'amount', label: 'Betrag (z.B. 40 %)', type: 'text', required: true },
         { name: 'note', label: 'Hinweis', type: 'text' },
@@ -122,26 +299,26 @@ export const InvestmentPage: GlobalConfig = {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
           type: 'text',
-          defaultValue: 'Jetzt sichern',
+          defaultValue: 'Investment-Exposé anfordern',
         },
         {
           name: 'headline',
           label: 'Überschrift (erste Zeile)',
           type: 'text',
-          defaultValue: 'Das Fenster schließt sich',
+          defaultValue: 'Zahlen, Marktdaten und Verfügbarkeit,',
         },
         {
           name: 'headlineAccent',
           label: 'Überschrift (zweite Zeile, goldene Farbe)',
           type: 'text',
-          defaultValue: 'mit dem EU-Beitritt.',
+          defaultValue: 'direkt vom Bauträger.',
         },
         {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Vollständiges Investment-Exposé mit Renditeberechnungen, Marktanalyse und aktueller Verfügbarkeit — kostenlos, deutschsprachig, direkt vom Bauträger.',
+            'Das Investment-Exposé enthält Grundrisse, die vollständige Preisliste sowie Angaben zu Steuern und Abgaben — kostenlos und deutschsprachig.',
         },
         {
           name: 'buttonLabel',
@@ -154,6 +331,12 @@ export const InvestmentPage: GlobalConfig = {
           label: 'Vertrauens-Punkte (unter den Buttons)',
           type: 'array',
           maxRows: 6,
+          defaultValue: [
+            { label: 'In der Regel Antwort innerhalb von 24 Stunden' },
+            { label: 'Deutschsprachig' },
+            { label: 'Kein Makler' },
+            { label: 'Direkt vom Bauträger' },
+          ],
           fields: [{ name: 'label', label: 'Text', type: 'text', required: true }],
         },
       ],

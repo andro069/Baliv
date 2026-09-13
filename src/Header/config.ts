@@ -20,6 +20,7 @@ export const Header: GlobalConfig = {
         { label: 'Wohnungen', href: '/wohnungen' },
         { label: 'Investment', href: '/investment' },
         { label: 'Preise', href: '/preise' },
+        { label: 'Über uns', href: '/ueber-uns' },
         { label: 'Kontakt', href: '/kontakt' },
       ],
       fields: [

@@ -28,7 +28,7 @@ export const WohnungenPage: GlobalConfig = {
           label: 'Meta-Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Studio, Zweizimmer und Penthouse. 39 Einheiten, schlüsselfertig ab 2.500 €/m². Hochwertige Ausstattung mit Hansgrohe und LG. Fertigstellung Q1 2028.',
+            'Studio, Zweizimmer und Penthouse-Ebene. 39 Einheiten ab 2.500 €/m², schlüsselfertig übergeben. Übergabe Q2 2028.',
         },
       ],
     },
@@ -54,7 +54,7 @@ export const WohnungenPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            '39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur großzügigen Dachgeschosswohnung mit Panoramablick.',
+            '39 Einheiten in sieben Geschossen — vom kompakten Studio bis zur Penthouse-Ebene mit eigener Dachterrasse.',
         },
         {
           name: 'image',
@@ -69,6 +69,12 @@ export const WohnungenPage: GlobalConfig = {
       label: 'Kennzahlen-Leiste (unter dem Hero)',
       type: 'array',
       maxRows: 4,
+      defaultValue: [
+        { value: '7', label: 'Geschosse' },
+        { value: '39', label: 'Wohneinheiten' },
+        { value: '20', label: 'Stellplätze' },
+        { value: 'Q2 2028', label: 'Übergabe' },
+      ],
       fields: [
         { name: 'value', label: 'Wert', type: 'text', required: true },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
@@ -113,7 +119,14 @@ export const WohnungenPage: GlobalConfig = {
           name: 'exampleNote',
           label: 'Hinweis unter dem Beispielpreis',
           type: 'text',
-          defaultValue: 'Frühbucher · inkl. MwSt. · ohne Makler',
+          defaultValue: 'inkl. MwSt.',
+        },
+        {
+          name: 'hinweis',
+          label: 'Hinweis unter den Wohnungstypen (Flächen & Preise)',
+          type: 'textarea',
+          defaultValue:
+            'Alle Flächen sind Netto-Nutzflächen einschließlich Terrasse. Der Preis richtet sich nach Etage und Aussicht. Die vollständige Preisliste erhalten Sie mit dem Exposé.',
         },
         {
           name: 'ctaLabel',
@@ -129,15 +142,59 @@ export const WohnungenPage: GlobalConfig = {
       type: 'array',
       minRows: 3,
       maxRows: 3,
+      defaultValue: [
+        {
+          nr: '01',
+          type: 'Studio',
+          tag: 'Erdgeschoss',
+          size: '28,1–29,7 m²',
+          terrace: 'Eigener Garten',
+          units: '2 Einheiten',
+          price: 'ab 2.700 €/m²',
+          layout: '1 Wohn-/Schlafraum · Küchenzeile · Bad',
+          description:
+            'Kompakter Einstieg mit eigenem Garten, mindestens 4 Meter tief. Geeignet als Pied-à-terre oder Ferienwohnung.',
+          exampleSize: 28.08,
+          examplePrice: 75800,
+        },
+        {
+          nr: '02',
+          type: 'Zweizimmerwohnung',
+          tag: 'Alle Etagen',
+          size: '46,7–48,8 m²',
+          terrace: 'Balkon oder Terrasse',
+          units: '34 Einheiten',
+          price: 'ab 2.500 €/m²',
+          layout: '1 Schlafzimmer · Wohn-/Essbereich · Küche · Bad',
+          description:
+            'Die Wahl der meisten Käufer. Mit steigender Etage wächst der Ausblick — von den Olivenhainen im Erdgeschoss bis zum Meer in den oberen Etagen. Im Erdgeschoss mit Terrasse und eigenem Gartenanteil, mindestens 4 Meter tief.',
+          exampleSize: 46.79,
+          examplePrice: 116975,
+        },
+        {
+          nr: '03',
+          type: 'Penthouse-Ebene',
+          tag: '6. Obergeschoss',
+          size: '51,6–81,2 m²',
+          terrace: 'Eigene Dachterrasse',
+          units: '3 Einheiten',
+          price: 'ab 3.600 €/m²',
+          layout: 'Zwei- oder Dreizimmer · Wohn-/Essbereich · Küche · Bad',
+          description:
+            'Zwei- und Dreizimmer auf der obersten Etage, jeweils mit eigener Dachterrasse: 38,5 m² · 42,9 m² · 65,9 m² zur alleinigen Nutzung, nicht Bestandteil der Wohnfläche. Panoramablick über Adria, Rumija und Stari Bar.',
+          exampleSize: 51.61,
+          examplePrice: 185800,
+        },
+      ],
       fields: [
         { name: 'nr', label: 'Nummer', type: 'text', required: true },
-        { name: 'type', label: 'Typ', type: 'text', required: true },
-        { name: 'tag', label: 'Tag (z.B. Erdgeschoss)', type: 'text' },
-        { name: 'size', label: 'Größe (z.B. 28–30 m²)', type: 'text' },
-        { name: 'terrace', label: 'Terrasse/Balkon', type: 'text' },
+        { name: 'type', label: 'Typ (Überschrift)', type: 'text', required: true },
+        { name: 'tag', label: 'Lage im Haus (z.B. Erdgeschoss) — Bild-Etikett und Zeile unter dem Typ', type: 'text' },
+        { name: 'size', label: 'Fläche (z.B. 28,1–29,7 m²)', type: 'text' },
+        { name: 'terrace', label: 'Außenbereich (Garten/Balkon/Terrasse)', type: 'text' },
         { name: 'units', label: 'Einheiten', type: 'text' },
         { name: 'price', label: 'Preis (z.B. ab 2.500 €/m²)', type: 'text' },
-        { name: 'layout', label: 'Grundriss-Beschreibung', type: 'text' },
+        { name: 'layout', label: 'Zimmer / Grundriss-Beschreibung', type: 'text' },
         { name: 'description', label: 'Beschreibung', type: 'textarea' },
         { name: 'exampleSize', label: 'Beispiel Größe (m²)', type: 'number' },
         { name: 'examplePrice', label: 'Beispiel Preis (€)', type: 'number' },
@@ -183,7 +240,13 @@ export const WohnungenPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Jede Wohnung wird vollständig fertiggestellt übergeben — mit geprüften Markenprodukten, die dem mitteleuropäischen Qualitätsstandard entsprechen.',
+            'Jede Wohnung wird vollständig fertiggestellt übergeben. Einbauküche und Tiefgaragenplatz sind optional.',
+        },
+        {
+          name: 'hinweis',
+          label: 'Hinweis unter der Ausstattung',
+          type: 'text',
+          defaultValue: 'Ausstattung nach Baubeschreibung. Marken und Modelle im Exposé.',
         },
         {
           name: 'premiumTitle',
@@ -238,6 +301,13 @@ export const WohnungenPage: GlobalConfig = {
       name: 'gebaeudeFeatures',
       label: 'Gebäude-Merkmale',
       type: 'array',
+      defaultValue: [
+        { title: '20 Stellplätze', text: 'In der Tiefgarage und im Außenbereich; Tiefgaragenplatz optional.' },
+        { title: 'Bepflanzte Terrassen', text: 'Lavendel, Rosmarin und mediterrane Begrünung auf mehreren Ebenen.' },
+        { title: 'Fahrradabstellraum', text: 'Im Erdgeschoss, wettergeschützt und abschließbar.' },
+        { title: 'Naturstein-Fassade', text: 'Bögen, Pergolen und variierende Fassadengestaltung — von allen Seiten hochwertig.' },
+        { title: 'Eurocode 8', text: 'Geplant nach europäischem Erdbebenstandard.' },
+      ],
       fields: [
         { name: 'title', label: 'Titel', type: 'text', required: true },
         { name: 'text', label: 'Text', type: 'textarea' },
@@ -290,22 +360,35 @@ export const WohnungenPage: GlobalConfig = {
           label: 'WhatsApp-Link',
           type: 'text',
           defaultValue:
-            'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Wohnung%20bei%20Baliv%20Residence.',
+            'https://wa.me/38268517873?text=Guten%20Tag%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Baliv%20Residence.',
         },
         {
           name: 'note',
           label: 'Hinweis unter den Buttons',
           type: 'text',
-          defaultValue: 'Antwort in < 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger',
+          defaultValue:
+            'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger',
         },
       ],
     },
     {
       name: 'ausstattung',
-      label: 'Ausstattung',
+      label: 'Ausstattung (Kacheln)',
       type: 'array',
+      admin: {
+        description:
+          'Keine Markennamen als Zusage verwenden. Das Symbol richtet sich nach Stichworten im Titel (Armatur/Bad, Klima, Eurocode/Erdbeben, Stein, Holz, Schlüssel).',
+      },
+      defaultValue: [
+        { brand: 'Markenarmaturen im Bad', label: 'Sanitärausstattung' },
+        { brand: 'Klimaanlage vorbereitet', label: 'Klimatisierung' },
+        { brand: 'Eurocode 8', label: 'Erdbebenstandard' },
+        { brand: 'Naturstein', label: 'Böden & Fassade' },
+        { brand: 'Holzoberflächen', label: 'Innenraum' },
+        { brand: 'Schlüsselfertig', label: 'Übergabe komplett' },
+      ],
       fields: [
-        { name: 'brand', label: 'Marke', type: 'text', required: true },
+        { name: 'brand', label: 'Titel', type: 'text', required: true },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
       ],
     },
@@ -313,6 +396,15 @@ export const WohnungenPage: GlobalConfig = {
       name: 'included',
       label: 'Standard-Ausstattung (immer dabei)',
       type: 'array',
+      defaultValue: [
+        { label: 'Markenarmaturen im Bad' },
+        { label: 'Klimaanlage vorbereitet' },
+        { label: 'Naturstein-Böden' },
+        { label: 'Holzoberflächen' },
+        { label: 'Eurocode 8 Erdbebenstandard' },
+        { label: 'Schlüsselfertige Übergabe' },
+        { label: 'MwSt. inklusive' },
+      ],
       fields: [
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
       ],

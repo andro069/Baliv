@@ -261,7 +261,8 @@ export default async function HomePage() {
 
         {/* Stats bar */}
         <div className="absolute bottom-0 left-0 right-0 z-10 bg-[#151E39]/80 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-2 md:px-8 py-4 md:py-5 grid grid-cols-3 divide-x divide-white/10">
+          {/* Rechts Platz lassen, damit der WhatsApp-Knopf auf dem Handy keine Kennzahl verdeckt. */}
+          <div className="max-w-7xl mx-auto pl-2 pr-16 md:px-8 py-4 md:py-5 grid grid-cols-3 divide-x divide-white/10">
             {heroStats.map((stat) => (
               <div key={stat.label} className="text-center px-1 md:px-4">
                 <p
