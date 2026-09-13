@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const WohnungenPage: GlobalConfig = {
   slug: 'wohnungen-page',
@@ -11,7 +12,7 @@ export const WohnungenPage: GlobalConfig = {
   admin: {
     group: 'Seiten-Inhalte',
   },
-  fields: [
+  fields: lokalisiert([
     {
       name: 'meta',
       label: 'SEO / Meta-Angaben',
@@ -37,6 +38,7 @@ export const WohnungenPage: GlobalConfig = {
       label: 'Hero',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Baliv Residence Gebäude" },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -85,6 +87,7 @@ export const WohnungenPage: GlobalConfig = {
       label: 'Wohnungstypen (Sektions-Texte)',
       type: 'group',
       fields: [
+        { name: 'exampleLabel', label: "Label Beispielpreis", type: 'text', defaultValue: "Beispiel" },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -277,6 +280,7 @@ export const WohnungenPage: GlobalConfig = {
       label: 'Das Gebäude (Sektion)',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Terrassen und Architektur" },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -318,6 +322,7 @@ export const WohnungenPage: GlobalConfig = {
       label: 'CTA-Sektion (unten)',
       type: 'group',
       fields: [
+        { name: 'whatsappNachricht', label: "WhatsApp — vorbelegte Nachricht", type: 'textarea', defaultValue: "Guten Tag, ich interessiere mich für Baliv Residence." },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -335,7 +340,7 @@ export const WohnungenPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Vollständiges Exposé mit allen Grundrissen, Preisliste und aktueller Verfügbarkeit — direkt vom Bauträger, deutschsprachig, ohne Makler.',
+            'Vollständiges Exposé mit allen Grundrissen, Preisliste und aktueller Verfügbarkeit — direkt vom Bauträger, Beratung in vier Sprachen, ohne Makler.',
         },
         {
           name: 'buttonLabel',
@@ -367,7 +372,7 @@ export const WohnungenPage: GlobalConfig = {
           label: 'Hinweis unter den Buttons',
           type: 'text',
           defaultValue:
-            'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger',
+            'In der Regel Antwort innerhalb von 24 Stunden · Beratung in vier Sprachen · Direkt vom Bauträger',
         },
       ],
     },
@@ -377,7 +382,7 @@ export const WohnungenPage: GlobalConfig = {
       type: 'array',
       admin: {
         description:
-          'Keine Markennamen als Zusage verwenden. Das Symbol richtet sich nach Stichworten im Titel (Armatur/Bad, Klima, Eurocode/Erdbeben, Stein, Holz, Schlüssel).',
+          'Keine Markennamen als Zusage verwenden. Das Symbol bitte über das Feld „Symbol“ wählen — es gilt für alle Sprachen. Ohne Auswahl richtet es sich nach deutschen Stichworten im Titel (Armatur/Bad, Klima, Eurocode/Erdbeben, Stein, Holz, Schlüssel), in Übersetzungen nach der Position der Kachel.',
       },
       defaultValue: [
         { brand: 'Markenarmaturen im Bad', label: 'Sanitärausstattung' },
@@ -388,6 +393,7 @@ export const WohnungenPage: GlobalConfig = {
         { brand: 'Schlüsselfertig', label: 'Übergabe komplett' },
       ],
       fields: [
+        { name: 'icon', label: 'Symbol', type: 'select', options: [{ label: 'Armatur / Bad', value: 'armatur' }, { label: 'Klima', value: 'klima' }, { label: 'Erdbebensicherheit', value: 'erdbeben' }, { label: 'Naturstein', value: 'stein' }, { label: 'Holz', value: 'holz' }, { label: 'Schlüssel', value: 'schluessel' }] },
         { name: 'brand', label: 'Titel', type: 'text', required: true },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
       ],
@@ -409,7 +415,7 @@ export const WohnungenPage: GlobalConfig = {
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/wohnungen'])],
   },

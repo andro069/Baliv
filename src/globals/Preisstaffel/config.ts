@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const Preisstaffel: GlobalConfig = {
   slug: 'preisstaffel',
@@ -12,7 +13,7 @@ export const Preisstaffel: GlobalConfig = {
     group: 'Seiten-Inhalte',
     description: 'Erscheint auf der Startseite und auf der Wohnungen-Seite.',
   },
-  fields: [
+  fields: lokalisiert([
     {
       name: 'eyebrow',
       label: 'Kleine Überschrift',
@@ -97,7 +98,7 @@ export const Preisstaffel: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/', '/wohnungen'])],
   },

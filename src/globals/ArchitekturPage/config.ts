@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const ArchitekturPage: GlobalConfig = {
   slug: 'architektur-page',
@@ -11,12 +12,22 @@ export const ArchitekturPage: GlobalConfig = {
   admin: {
     group: 'Seiten-Inhalte',
   },
-  fields: [
+  fields: lokalisiert([
+    {
+      name: 'meta',
+      label: 'SEO / Meta-Angaben',
+      type: 'group',
+      fields: [
+        { name: 'title', label: 'Seitentitel (Browser-Tab und Google)', type: 'text', defaultValue: "Architektur — Baliv Residence, Bar Montenegro" },
+        { name: 'description', label: 'Meta-Beschreibung', type: 'textarea', defaultValue: "Entworfen von Ahmed Divanović (ArchDesign Studio Bar). Natursteinfassade, Bögen, Loggias — mediterrane Architektur die sich in ihre Umgebung einfügt, nicht über sie hinwegsetzt." },
+      ],
+    },
     {
       name: 'hero',
       label: 'Hero',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Blick vom Penthouse durch den Rundbogen über Bar und die Adria" },
         { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Architektur' },
         {
           name: 'headline',
@@ -95,6 +106,7 @@ export const ArchitekturPage: GlobalConfig = {
       label: 'Gestaltungsprinzipien',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Fassadendetail Baliv Residence" },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -138,6 +150,7 @@ export const ArchitekturPage: GlobalConfig = {
       label: 'Fassade',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Baliv Residence Gebäudeansicht" },
         { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Fassade' },
         {
           name: 'headline',
@@ -181,6 +194,7 @@ export const ArchitekturPage: GlobalConfig = {
       label: 'Materialpalette',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Materialpalette Baliv Residence" },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -340,7 +354,7 @@ export const ArchitekturPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Vollständige Grundrisse, Schnitte und Materialspezifikationen sind Bestandteil des Exposés — kostenlos, deutschsprachig, direkt vom Bauträger.',
+            'Vollständige Grundrisse, Schnitte und Materialspezifikationen sind Bestandteil des Exposés — kostenlos, in vier Sprachen, direkt vom Bauträger.',
         },
         {
           name: 'buttonLabel',
@@ -363,7 +377,7 @@ export const ArchitekturPage: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/architektur'])],
   },

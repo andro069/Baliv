@@ -66,7 +66,8 @@ export const FormConfigs: CollectionConfig = {
             { label: 'Srpski', value: 'sr' },
             { label: 'Русский', value: 'ru' },
           ],
-          admin: { width: '50%' },
+          // Veraltet: Betreff, Nachricht und Anhang werden jetzt je Sprache gepflegt.
+          admin: { hidden: true },
         },
         {
           name: 'benachrichtigungsEmail',
@@ -92,6 +93,7 @@ export const FormConfigs: CollectionConfig = {
       name: 'autoresponderBetreff',
       type: 'text',
       label: 'Autoresponder Betreff',
+      localized: true,
       admin: {
         condition: (data) => Boolean(data?.autoresponderAktiv),
         description: 'Verfügbare Variablen: {{name}}, {{email}}',
@@ -101,6 +103,7 @@ export const FormConfigs: CollectionConfig = {
       name: 'autoresponderNachricht',
       type: 'textarea',
       label: 'Autoresponder Nachricht',
+      localized: true,
       admin: {
         condition: (data) => Boolean(data?.autoresponderAktiv),
         description: 'Verfügbare Variablen: {{name}}, {{email}}, {{interesse}}, {{nachricht}}',
@@ -112,6 +115,8 @@ export const FormConfigs: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       label: 'Anhang (z. B. Exposé-PDF)',
+      // Je Sprache eine eigene Datei: Anfragen von der englischen Seite bekommen das englische Exposé.
+      localized: true,
       admin: {
         condition: (data) => Boolean(data?.autoresponderAktiv),
         description:

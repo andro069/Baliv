@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const PreisePage: GlobalConfig = {
   slug: 'preise-page',
@@ -11,7 +12,16 @@ export const PreisePage: GlobalConfig = {
   admin: {
     group: 'Seiten-Inhalte',
   },
-  fields: [
+  fields: lokalisiert([
+    {
+      name: 'meta',
+      label: 'SEO / Meta-Angaben',
+      type: 'group',
+      fields: [
+        { name: 'title', label: 'Seitentitel (Browser-Tab und Google)', type: 'text', defaultValue: "Preise — Baliv Residence, Bar Montenegro" },
+        { name: 'description', label: 'Meta-Beschreibung', type: 'textarea', defaultValue: "Studio ab 75.800 €, Zweizimmer ab 116.975 €, Penthouse-Ebene ab 185.800 € inkl. MwSt. Direkt vom Bauträger, ohne Makler." },
+      ],
+    },
     {
       name: 'hero',
       label: 'Hero',
@@ -199,6 +209,7 @@ export const PreisePage: GlobalConfig = {
       label: 'CTA-Sektion (unten)',
       type: 'group',
       fields: [
+        { name: 'whatsappNachricht', label: "WhatsApp — vorbelegte Nachricht", type: 'textarea', defaultValue: "Guten Tag, ich interessiere mich für Baliv Residence." },
         { name: 'eyebrow', label: 'Kleine Überschrift', type: 'text', defaultValue: 'Exposé & Preisliste' },
         { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Preisliste' },
         {
@@ -233,7 +244,7 @@ export const PreisePage: GlobalConfig = {
           name: 'note',
           label: 'Hinweis unter den Buttons',
           type: 'text',
-          defaultValue: 'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachig · Direkt vom Bauträger · Kein Makler',
+          defaultValue: 'In der Regel Antwort innerhalb von 24 Stunden · Beratung in vier Sprachen · Direkt vom Bauträger · Kein Makler',
         },
       ],
     },
@@ -400,7 +411,7 @@ export const PreisePage: GlobalConfig = {
         { name: 'note', label: 'Hinweis', type: 'text' },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/preise'])],
   },

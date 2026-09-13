@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const InvestmentPage: GlobalConfig = {
   slug: 'investment-page',
@@ -11,12 +12,23 @@ export const InvestmentPage: GlobalConfig = {
   admin: {
     group: 'Seiten-Inhalte',
   },
-  fields: [
+  fields: lokalisiert([
+    {
+      name: 'meta',
+      label: 'SEO / Meta-Angaben',
+      type: 'group',
+      fields: [
+        { name: 'title', label: 'Seitentitel (Browser-Tab und Google)', type: 'text', defaultValue: "Investment — Baliv Residence, Bar Montenegro" },
+        { name: 'description', label: 'Meta-Beschreibung', type: 'textarea', defaultValue: "Investieren in Bar, Montenegro: Euro seit 2002, NATO seit 2017, 9 % Einkommensteuer auf Mieteinnahmen. Beispielrechnung, Steuerüberblick und Zahlungsplan." },
+      ],
+    },
     {
       name: 'hero',
       label: 'Hero',
       type: 'group',
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Investment" },
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Aussicht von der Terrasse der Baliv Residence" },
         {
           name: 'headline',
           label: 'Überschrift',
@@ -58,6 +70,8 @@ export const InvestmentPage: GlobalConfig = {
       label: 'Warum Montenegro? (Sektion)',
       type: 'group',
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Standortvorteil" },
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Baliv Residence" },
         {
           name: 'headline',
           label: 'Überschrift',
@@ -157,7 +171,7 @@ export const InvestmentPage: GlobalConfig = {
           type: 'array',
           maxRows: 6,
           defaultValue: [
-            { year: '2026', event: 'Genehmigung und Baubeginn' },
+            { year: '2026', event: 'Genehmigung · Baubeginn Oktober 2026' },
             { year: '2027', event: 'Rohbau' },
             { year: '2028', event: 'Übergabe (Q2)' },
           ],
@@ -174,6 +188,7 @@ export const InvestmentPage: GlobalConfig = {
       label: 'Steuer-Sektion (Texte)',
       type: 'group',
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Steuern" },
         { name: 'headline', label: 'Überschrift (erste Zeile)', type: 'text', defaultValue: 'Keine Vermögensteuer.' },
         {
           name: 'headlineAccent',
@@ -213,6 +228,7 @@ export const InvestmentPage: GlobalConfig = {
         { label: 'Mehrwertsteuer', value: 'Inklusive', note: 'Im Kaufpreis enthalten' },
       ],
       fields: [
+        { name: 'hervorheben', label: 'Wert golden hervorheben', type: 'checkbox', defaultValue: false },
         { name: 'label', label: 'Bezeichnung', type: 'text', required: true },
         { name: 'value', label: 'Wert', type: 'text', required: true },
         { name: 'note', label: 'Hinweis', type: 'text' },
@@ -227,6 +243,25 @@ export const InvestmentPage: GlobalConfig = {
           'Alle Beträge der Beispielrechnung werden aus diesen Feldern berechnet: Kaufpreis = Größe × Preis/m²; Brutto = Wochen × Wochenpreis je Saison; Ertrag vor Steuer = Brutto − Verwaltungsquote − Betriebskosten; Nettoertrag = Ertrag vor Steuer − Steuersatz; Rendite = Nettoertrag ÷ Kaufpreis.',
       },
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Mietrendite" },
+        { name: 'labelHauptsaison', label: "Liste — Hauptsaison", type: 'text', defaultValue: "Hauptsaison" },
+        { name: 'labelNebensaison', label: "Liste — Nebensaison", type: 'text', defaultValue: "Nebensaison" },
+        { name: 'labelGesamt', label: "Liste — Vermietung gesamt", type: 'text', defaultValue: "Vermietung gesamt" },
+        { name: 'labelVerwaltung', label: "Liste — Verwaltung", type: 'text', defaultValue: "Verwaltung und Reinigung" },
+        { name: 'vorlageSaison', label: "Liste — Wert Saison (Platzhalter {wochen}, {preis})", type: 'text', defaultValue: "{wochen} Wochen · {preis}/Woche" },
+        { name: 'vorlageGesamt', label: "Liste — Wert gesamt (Platzhalter {wochen})", type: 'text', defaultValue: "{wochen} Wochen/Jahr" },
+        { name: 'vorlageVerwaltung', label: "Liste — Wert Verwaltung (Platzhalter {quote})", type: 'text', defaultValue: "{quote} % der Einnahmen" },
+        { name: 'rechnerTitel', label: "Rechnung — Titel (Platzhalter {flaeche})", type: 'text', defaultValue: "Beispielrechnung · {flaeche} m² Zweizimmerwohnung" },
+        { name: 'zeileKaufpreis', label: "Rechnung — Kaufpreis (Platzhalter {flaeche}, {preisProQm})", type: 'text', defaultValue: "Kaufpreis ({flaeche} m² × {preisProQm})" },
+        { name: 'zeileHauptsaison', label: "Rechnung — Hauptsaison (Platzhalter {wochen}, {preis})", type: 'text', defaultValue: "Hauptsaison · {wochen} Wochen × {preis}" },
+        { name: 'zeileNebensaison', label: "Rechnung — Nebensaison (Platzhalter {wochen}, {preis})", type: 'text', defaultValue: "Nebensaison · {wochen} Wochen × {preis}" },
+        { name: 'zeileBrutto', label: "Rechnung — Brutto", type: 'text', defaultValue: "Bruttoeinnahmen" },
+        { name: 'zeileVerwaltung', label: "Rechnung — Verwaltung (Platzhalter {quote})", type: 'text', defaultValue: "– Verwaltung und Reinigung ({quote} %)" },
+        { name: 'zeileBetrieb', label: "Rechnung — Betrieb", type: 'text', defaultValue: "– Betrieb und Instandhaltung" },
+        { name: 'zeileVorSteuer', label: "Rechnung — vor Steuer", type: 'text', defaultValue: "= Ertrag vor Steuer" },
+        { name: 'zeileSteuer', label: "Rechnung — Steuer (Platzhalter {satz})", type: 'text', defaultValue: "– Einkommensteuer {satz} %" },
+        { name: 'zeileNetto', label: "Rechnung — Nettoertrag", type: 'text', defaultValue: "= Nettoertrag" },
+        { name: 'zeileRendite', label: "Rechnung — Rendite (Platzhalter {kaufpreis})", type: 'text', defaultValue: "Rendite auf {kaufpreis}" },
         { name: 'headline', label: 'Überschrift', type: 'text', defaultValue: 'Mietertrag an einem Beispiel.' },
         {
           name: 'description',
@@ -318,7 +353,7 @@ export const InvestmentPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Das Investment-Exposé enthält Grundrisse, die vollständige Preisliste sowie Angaben zu Steuern und Abgaben — kostenlos und deutschsprachig.',
+            'Das Investment-Exposé enthält Grundrisse, die vollständige Preisliste sowie Angaben zu Steuern und Abgaben — kostenlos, auf Deutsch, Englisch, Montenegrinisch oder Türkisch.',
         },
         {
           name: 'buttonLabel',
@@ -333,7 +368,7 @@ export const InvestmentPage: GlobalConfig = {
           maxRows: 6,
           defaultValue: [
             { label: 'In der Regel Antwort innerhalb von 24 Stunden' },
-            { label: 'Deutschsprachig' },
+            { label: 'Beratung in vier Sprachen' },
             { label: 'Kein Makler' },
             { label: 'Direkt vom Bauträger' },
           ],
@@ -341,7 +376,7 @@ export const InvestmentPage: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/investment'])],
   },

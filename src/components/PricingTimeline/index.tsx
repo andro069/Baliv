@@ -2,18 +2,20 @@ import React from 'react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+import type { Locale } from '@/i18n/config'
+
 import { PricingTimelineClient, type PreisstaffelDaten, type Preisstufe } from './Client'
 
 /**
  * Lädt die Preisstaffelung aus dem Backend und reicht sie an die animierte
  * Client-Komponente weiter. Leere Felder fallen auf die Standardwerte zurück.
  */
-export async function PricingTimeline() {
+export async function PricingTimeline({ locale }: { locale: Locale }) {
   let daten: Partial<PreisstaffelDaten> | undefined
 
   try {
     const payload = await getPayload({ config })
-    const cms = (await payload.findGlobal({ slug: 'preisstaffel' })) as any
+    const cms = (await payload.findGlobal({ slug: 'preisstaffel', locale })) as any
 
     const stages: Preisstufe[] = (cms?.stages ?? [])
       .filter((s: any) => s?.phase && s?.price)

@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 
+import { useRahmen } from '@/components/SeitenRahmen'
+
 export type Preisstufe = {
   phase: string
   label?: string
@@ -29,7 +31,7 @@ export const defaultPreisstaffel: PreisstaffelDaten = {
   stages: [
     {
       phase: 'Jetzt · Baugenehmigung erteilt',
-      label: 'Baubeginn · 2026',
+      label: 'Baubeginn · Oktober 2026',
       price: '2.500',
       description:
         'Baugenehmigung liegt vor. Beste Auswahl, attraktivster Einstiegspreis direkt vom Bauträger.',
@@ -58,7 +60,7 @@ const GRID_COLS: Record<number, string> = {
   4: 'md:grid-cols-4',
 }
 
-const BuildingIcon = ({ level, aktiv }: { level: number; aktiv: boolean }) => {
+const BuildingIcon = ({ level, aktiv, hinweis }: { level: number; aktiv: boolean; hinweis: string }) => {
   if (level === 0)
     return (
       <svg width="48" height="40" viewBox="0 0 48 40" fill="none" className="opacity-60">
@@ -70,7 +72,7 @@ const BuildingIcon = ({ level, aktiv }: { level: number; aktiv: boolean }) => {
         <line x1="24" y1="34" x2="24" y2="30" stroke="#B69252" strokeWidth="1" strokeDasharray="2 2" />
         {aktiv && (
           <text x="18" y="22" fontSize="6" fill="#B69252" fontFamily="sans-serif">
-            Sie sind hier
+            {hinweis}
           </text>
         )}
       </svg>
@@ -106,6 +108,7 @@ const BuildingIcon = ({ level, aktiv }: { level: number; aktiv: boolean }) => {
 }
 
 export function PricingTimelineClient({ daten }: { daten?: Partial<PreisstaffelDaten> }) {
+  const { ui } = useRahmen()
   const d: PreisstaffelDaten = { ...defaultPreisstaffel, ...(daten ?? {}) }
   const stages = d.stages?.length ? d.stages : defaultPreisstaffel.stages
   const aktivIndex = Math.max(0, stages.findIndex((s) => s.active))
@@ -181,9 +184,9 @@ export function PricingTimelineClient({ daten }: { daten?: Partial<PreisstaffelD
             style={{ transitionDelay: `${i * 150 + 200}ms` }}
           >
             <div className="mb-6 h-10 flex items-end gap-3">
-              <BuildingIcon level={Math.min(i, 3)} aktiv={Boolean(stage.active)} />
+              <BuildingIcon level={Math.min(i, 3)} aktiv={Boolean(stage.active)} hinweis={ui.sieSindHier} />
               {stage.active && i > 0 && (
-                <span className="text-[#B69252] text-[10px] tracking-wide">Sie sind hier</span>
+                <span className="text-[#B69252] text-[10px] tracking-wide">{ui.sieSindHier}</span>
               )}
             </div>
 
@@ -211,14 +214,14 @@ export function PricingTimelineClient({ daten }: { daten?: Partial<PreisstaffelD
             )}
 
             <p className={`mb-4 ${stage.active ? 'text-white' : 'text-white/30'}`}>
-              <span className="text-sm">ab </span>
+              <span className="text-sm">{ui.ab} </span>
               <span
                 className={`text-3xl font-light ${stage.active ? 'text-white' : ''}`}
                 style={{ fontFamily: 'var(--font-playfair), serif' }}
               >
                 {stage.price}
               </span>
-              <span className="text-sm"> €/m²</span>
+              <span className="text-sm"> {ui.proQm}</span>
             </p>
 
             <div className={`w-6 h-px mb-4 ${stage.active ? 'bg-[#B69252]' : 'bg-white/20'}`} />

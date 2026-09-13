@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { revalidateHeader } from './hooks/revalidateHeader'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const Header: GlobalConfig = {
   slug: 'header',
@@ -8,7 +9,7 @@ export const Header: GlobalConfig = {
   access: {
     read: () => true,
   },
-  fields: [
+  fields: lokalisiert([
     {
       name: 'navItems',
       label: 'Navigationspunkte',
@@ -38,7 +39,7 @@ export const Header: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidateHeader],
   },

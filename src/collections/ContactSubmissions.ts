@@ -8,7 +8,7 @@ export const ContactSubmissions: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'phone', 'interesse', 'expose', 'createdAt'],
+    defaultColumns: ['name', 'email', 'phone', 'interesse', 'expose', 'sprache', 'createdAt'],
     listSearchableFields: ['name', 'email', 'phone'],
     group: 'Anfragen',
     pagination: {
@@ -68,6 +68,23 @@ export const ContactSubmissions: CollectionConfig = {
       type: 'checkbox',
       label: 'Exposé angefordert',
       defaultValue: false,
+    },
+    {
+      name: 'sprache',
+      type: 'select',
+      label: 'Sprache der Anfrage',
+      defaultValue: 'de',
+      options: [
+        { label: 'Deutsch', value: 'de' },
+        { label: 'English', value: 'en' },
+        { label: 'Crnogorski', value: 'me' },
+        { label: 'Türkçe', value: 'tr' },
+      ],
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'Auf welcher Sprachfassung der Website die Anfrage abgeschickt wurde.',
+      },
     },
     {
       name: 'weitereAngaben',

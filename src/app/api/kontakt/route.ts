@@ -2,18 +2,52 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+import { defaultLocale, isLocale, localeNames, type Locale } from '@/i18n/config'
+
 function fillTemplate(template: string, vars: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] ?? '')
 }
 
+/** Fehlermeldungen an den Besucher, in der Sprache der Seite. */
+const meldungen: Record<Locale, Record<'pflicht' | 'datenschutz' | 'versand' | 'server', string>> = {
+  de: {
+    pflicht: 'Name und E-Mail sind Pflicht.',
+    datenschutz: 'Bitte stimmen Sie der Datenschutzerklärung zu.',
+    versand: 'E-Mail konnte nicht gesendet werden.',
+    server: 'Serverfehler.',
+  },
+  en: {
+    pflicht: 'Name and email are required.',
+    datenschutz: 'Please accept the privacy policy.',
+    versand: 'The email could not be sent.',
+    server: 'Server error.',
+  },
+  me: {
+    pflicht: 'Ime i e-mail su obavezni.',
+    datenschutz: 'Molimo vas da prihvatite politiku privatnosti.',
+    versand: 'E-mail nije moguće poslati.',
+    server: 'Greška na serveru.',
+  },
+  tr: {
+    pflicht: 'Ad ve e-posta zorunludur.',
+    datenschutz: 'Lütfen gizlilik politikasını kabul edin.',
+    versand: 'E-posta gönderilemedi.',
+    server: 'Sunucu hatası.',
+  },
+}
+
 export async function POST(req: NextRequest) {
+  let locale: Locale = defaultLocale
   try {
     const body = await req.json()
 
-    // Neues Format vom Form-Builder: { formId, data, labels }.
+    // Sprache der Seite, auf der das Formular abgeschickt wurde. Bestimmt Formular-
+    // beschriftungen, Autoresponder-Texte und das angehängte Exposé.
+    if (isLocale(body.locale)) locale = body.locale
+
+    // Neues Format vom Form-Builder: { formId, data, labels, locale }.
     // Das alte Flach-Format bleibt als Rückfallebene erhalten.
     const data: Record<string, unknown> = body.data ?? body
-    const labels: Record<string, string> = body.labels ?? body._labels ?? {}
     const formId = body.formId
 
     const str = (v: unknown) => (v === undefined || v === null ? '' : String(v))
@@ -24,21 +58,26 @@ export async function POST(req: NextRequest) {
     const expose = Boolean(data.expose)
 
     if (!name || !email) {
-      return NextResponse.json({ error: 'Name und E-Mail sind pflicht.' }, { status: 400 })
+      return NextResponse.json({ error: meldungen[locale].pflicht }, { status: 400 })
     }
 
     const payload = await getPayload({ config })
 
-    // Auswahlfelder speichern einen Wert (z. B. "penthouse"); für Mail und
-    // Anfragenliste soll aber die Beschriftung stehen ("Penthouse-Ebene").
-    let form: any = null
-    if (formId) {
+    // Das Formular zweimal: deutsch für die Mail ans Büro und die Anfragenliste,
+    // in der Sprache des Besuchers für seine Bestätigungsmail.
+    const ladeFormular = async (sprache: Locale): Promise<any> => {
+      if (!formId) return null
       try {
-        form = await payload.findByID({ collection: 'forms', id: formId, depth: 0 })
+        return await payload.findByID({ collection: 'forms', id: formId, depth: 0, locale: sprache })
       } catch {
-        /* Formular gelöscht — dann bleibt es beim Rohwert. */
+        return null // Formular gelöscht — dann bleibt es beim Rohwert.
       }
     }
+    const [formDe, formBesucher] = await Promise.all([
+      ladeFormular(defaultLocale),
+      locale === defaultLocale ? null : ladeFormular(locale),
+    ])
+    const form = formDe
 
     // Einwilligung serverseitig prüfen, sobald das Formular sie als Pflicht abfragt.
     const datenschutzPflicht = (form?.fields ?? []).some(
@@ -46,18 +85,27 @@ export async function POST(req: NextRequest) {
     )
     const einwilligung = data.datenschutz === true
     if (datenschutzPflicht && !einwilligung) {
-      return NextResponse.json(
-        { error: 'Bitte stimmen Sie der Datenschutzerklärung zu.' },
-        { status: 400 },
-      )
+      return NextResponse.json({ error: meldungen[locale].datenschutz }, { status: 400 })
     }
-    const optionLabel = (feldName: string, wert: string): string => {
-      const feld = (form?.fields ?? []).find((x: any) => x?.name === feldName)
+
+    // Auswahlfelder speichern einen Wert (z. B. "penthouse"); in Mails und
+    // Anfragenliste soll aber die Beschriftung stehen ("Penthouse-Ebene").
+    const optionLabel = (formular: any, feldName: string, wert: string): string => {
+      const feld = (formular?.fields ?? []).find((x: any) => x?.name === feldName)
       const opt = (feld?.options ?? []).find((o: any) => o?.value === wert)
       return opt?.label ?? wert
     }
+    // Deutsche Feldbeschriftung fürs Büro; sonst die vom Browser mitgeschickte.
+    const besucherLabels: Record<string, string> = body.labels ?? body._labels ?? {}
+    const labelDe = (feldName: string, standard: string): string =>
+      (form?.fields ?? []).find((x: any) => x?.name === feldName)?.label ||
+      besucherLabels[feldName] ||
+      standard
 
-    const interesse = data.interesse ? optionLabel('interesse', str(data.interesse)) : ''
+    const interesse = data.interesse ? optionLabel(form, 'interesse', str(data.interesse)) : ''
+    const interesseBesucher = data.interesse
+      ? optionLabel(formBesucher ?? form, 'interesse', str(data.interesse))
+      : ''
 
     // Alles ausser den festen Spalten — damit ein im Backend ergänztes Feld
     // ohne Code-Änderung in Mail und Anfrage landet.
@@ -65,11 +113,12 @@ export async function POST(req: NextRequest) {
     const zusatzFelder = Object.entries(data)
       .filter(([k, v]) => !STANDARD_KEYS.includes(k) && v !== '' && v !== null && v !== undefined)
       .map(([k, v]) => ({
-        feld: labels[k] || k,
-        wert: typeof v === 'boolean' ? (v ? 'Ja' : 'Nein') : optionLabel(k, String(v)),
+        feld: labelDe(k, k),
+        wert: typeof v === 'boolean' ? (v ? 'Ja' : 'Nein') : optionLabel(form, k, String(v)),
       }))
 
-    // Einstellungen zum abgeschickten Formular. Ältere Einträge ohne
+    // Einstellungen zum abgeschickten Formular, in der Sprache des Besuchers.
+    // Leere Übersetzungen fallen auf Deutsch zurück. Ältere Einträge ohne
     // Verknüpfung greifen weiter über die Formular-ID.
     const formConfigResult = await payload.find({
       collection: 'form-configs' as any,
@@ -79,6 +128,7 @@ export async function POST(req: NextRequest) {
       // depth: 1, damit der Anhang mit url und filename mitkommt.
       depth: 1,
       limit: 10,
+      locale,
     })
     const docs = formConfigResult.docs as any[]
     // Ein direkt verknüpfter Eintrag hat Vorrang vor der Rückfallebene.
@@ -93,25 +143,27 @@ export async function POST(req: NextRequest) {
       process.env.CONTACT_EMAIL ||
       'info@baliv-residence.com'
 
-    // Build admin notification email
+    // Mail ans Büro — immer deutsch, mit der Sprache der Anfrage.
     const lines = [
       `Neue Anfrage über baliv-residence.com`,
       ``,
-      `${(labels.name || 'Name').padEnd(10)} ${name}`,
-      `${(labels.email || 'E-Mail').padEnd(10)} ${email}`,
-      `${(labels.phone || 'Telefon').padEnd(10)} ${phone || '—'}`,
-      `${(labels.interesse || 'Interesse').padEnd(10)} ${interesse || '—'}`,
+      `${labelDe('name', 'Name').padEnd(10)} ${name}`,
+      `${labelDe('email', 'E-Mail').padEnd(10)} ${email}`,
+      `${labelDe('phone', 'Telefon').padEnd(10)} ${phone || '—'}`,
+      `${labelDe('interesse', 'Interesse').padEnd(10)} ${interesse || '—'}`,
       `${'Exposé'.padEnd(10)} ${expose ? 'Ja, gewünscht' : 'Nein'}`,
+      `${'Sprache'.padEnd(10)} ${localeNames[locale]}`,
       ...('datenschutz' in data ? [`Einwilligung Datenschutz: ${einwilligung ? 'Ja' : 'Nein'}`] : []),
       ...(zusatzFelder.length
         ? ['', ...zusatzFelder.map((z) => `${z.feld}: ${z.wert}`)]
         : []),
       ``,
-      `${labels.nachricht || 'Nachricht'}:`,
+      `${labelDe('nachricht', 'Nachricht')}:`,
       nachricht || '—',
     ].join('\n')
 
-    const subject = expose ? `Exposé-Anfrage von ${name}` : `Kontaktanfrage von ${name}`
+    const sprachHinweis = locale === defaultLocale ? '' : ` [${locale.toUpperCase()}]`
+    const subject = `${expose ? 'Exposé-Anfrage' : 'Kontaktanfrage'} von ${name}${sprachHinweis}`
 
     const RESEND_API_KEY = process.env.RESEND_API_KEY
 
@@ -135,7 +187,7 @@ export async function POST(req: NextRequest) {
       if (!notifyRes.ok) {
         const err = await notifyRes.text()
         console.error('Resend notification error:', err)
-        return NextResponse.json({ error: 'E-Mail konnte nicht gesendet werden.' }, { status: 500 })
+        return NextResponse.json({ error: meldungen[locale].versand }, { status: 500 })
       }
 
       // 2. Send autoresponder if configured
@@ -143,7 +195,7 @@ export async function POST(req: NextRequest) {
         const vars: Record<string, string> = {
           name: name || '',
           email: email || '',
-          interesse: interesse || '',
+          interesse: interesseBesucher || '',
           nachricht: nachricht || '',
         }
 
@@ -157,8 +209,8 @@ export async function POST(req: NextRequest) {
           text: arBody,
         }
 
-        // Anhang, sofern hinterlegt. Standardmässig nur, wenn der Interessent
-        // das Exposé-Häkchen gesetzt hat.
+        // Anhang in der Sprache des Besuchers, sofern hinterlegt (sonst das deutsche
+        // Exposé). Standardmässig nur, wenn der Interessent das Exposé-Häkchen gesetzt hat.
         const anhang = formConfig.autoresponderAnhang
         const nurMitExpose = formConfig.autoresponderNurMitExpose !== false
         if (anhang?.url && (expose || !nurMitExpose)) {
@@ -209,6 +261,7 @@ export async function POST(req: NextRequest) {
           interesse: interesse || '',
           nachricht: nachricht || '',
           expose: Boolean(expose),
+          sprache: locale,
           ...(zusatzFelder.length ? { weitereAngaben: zusatzFelder } : {}),
         },
       })
@@ -224,10 +277,13 @@ export async function POST(req: NextRequest) {
           collection: 'form-submissions',
           data: {
             form: formId,
-            submissionData: Object.entries(data).map(([field, value]) => ({
-              field,
-              value: typeof value === 'boolean' ? (value ? 'Ja' : 'Nein') : String(value ?? ''),
-            })),
+            submissionData: [
+              ...Object.entries(data).map(([field, value]) => ({
+                field,
+                value: typeof value === 'boolean' ? (value ? 'Ja' : 'Nein') : String(value ?? ''),
+              })),
+              { field: 'sprache', value: localeNames[locale] },
+            ],
           },
           // Die Mails verschickt diese Route bereits selbst.
           context: { disableEmails: true },
@@ -240,6 +296,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Kontakt API error:', err)
-    return NextResponse.json({ error: 'Serverfehler.' }, { status: 500 })
+    return NextResponse.json({ error: meldungen[locale].server }, { status: 500 })
   }
 }

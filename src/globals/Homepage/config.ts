@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
@@ -10,7 +11,7 @@ export const Homepage: GlobalConfig = {
   admin: {
     description: 'Die Preisstaffelung wird separat unter „Preisstaffelung" gepflegt.',
   },
-  fields: [
+  fields: lokalisiert([
     // ── SEO ───────────────────────────────────────────────────────
     {
       name: 'meta',
@@ -28,7 +29,7 @@ export const Homepage: GlobalConfig = {
           label: 'Meta-Beschreibung',
           type: 'textarea',
           defaultValue:
-            '39 Wohneinheiten am Fuße von Stari Bar, zwischen Olivenhainen, Bergen und Meer. Ab 2.500 €/m², direkt vom Bauträger, deutschsprachig, ohne Makler.',
+            '39 Wohneinheiten am Fuße von Stari Bar, zwischen Olivenhainen, Bergen und Meer. Ab 2.500 €/m², direkt vom Bauträger, Beratung in vier Sprachen, ohne Makler.',
         },
       ],
     },
@@ -148,6 +149,11 @@ export const Homepage: GlobalConfig = {
       label: 'Die Lage',
       type: 'group',
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Die Lage" },
+        // Bildbeschreibungen der drei festen Lage-Bilder auf der Startseite
+        { name: 'imageAlt1', label: 'Bildbeschreibung großes Bild', type: 'text', defaultValue: 'Stari Bar Festung' },
+        { name: 'imageAlt2', label: 'Bildbeschreibung Bild links', type: 'text', defaultValue: 'Olivenhaine' },
+        { name: 'imageAlt3', label: 'Bildbeschreibung Bild rechts', type: 'text', defaultValue: 'Hafen von Bar' },
         {
           name: 'headline',
           label: 'Überschrift',
@@ -222,6 +228,8 @@ export const Homepage: GlobalConfig = {
       label: 'Die Wohnungen',
       type: 'group',
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Die Wohnungen" },
+        { name: 'detailsLabel', label: "Link-Text auf den Karten", type: 'text', defaultValue: "Details" },
         {
           name: 'headline',
           label: 'Überschrift',
@@ -305,6 +313,9 @@ export const Homepage: GlobalConfig = {
       label: 'Investment',
       type: 'group',
       fields: [
+        { name: 'eyebrow', label: "Kleine Überschrift", type: 'text', defaultValue: "Investment" },
+        { name: 'linkLabel', label: "Link-Text", type: 'text', defaultValue: "Vollständige Investment-Analyse" },
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Blick über den Hafen von Bar" },
         {
           name: 'headline',
           label: 'Überschrift',
@@ -405,6 +416,8 @@ export const Homepage: GlobalConfig = {
       label: 'Abschluss CTA',
       type: 'group',
       fields: [
+        { name: 'buttonLabel', label: "Button-Text", type: 'text', defaultValue: "Exposé anfragen" },
+        { name: 'imageAlt', label: "Bildbeschreibung Hintergrund", type: 'text', defaultValue: "Terrasse mit Blick auf das Rumija-Gebirge" },
         {
           name: 'eyebrow',
           label: 'Band über der Überschrift',
@@ -422,14 +435,14 @@ export const Homepage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Vollständiges Exposé mit Grundrissen, Preisliste und Verfügbarkeit — direkt vom Bauträger, deutschsprachig, ohne Makler.',
+            'Vollständiges Exposé mit Grundrissen, Preisliste und Verfügbarkeit — direkt vom Bauträger, Beratung in vier Sprachen, ohne Makler.',
         },
         {
           name: 'note',
           label: 'Hinweistext',
           type: 'text',
           defaultValue:
-            'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger',
+            'In der Regel Antwort innerhalb von 24 Stunden · Beratung in vier Sprachen · Direkt vom Bauträger',
         },
       ],
     },
@@ -454,7 +467,7 @@ export const Homepage: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/'])],
   },

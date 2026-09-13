@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { revalidateFooter } from './hooks/revalidateFooter'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
@@ -8,7 +9,7 @@ export const Footer: GlobalConfig = {
   access: {
     read: () => true,
   },
-  fields: [
+  fields: lokalisiert([
     {
       name: 'address',
       label: 'Adresse',
@@ -45,7 +46,7 @@ export const Footer: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidateFooter],
   },

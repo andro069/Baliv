@@ -22,6 +22,8 @@ import { KontaktPage } from './globals/KontaktPage/config'
 import { Preisstaffel } from './globals/Preisstaffel/config'
 import { UeberUnsPage } from './globals/UeberUnsPage/config'
 import { ArchitekturPage } from './globals/ArchitekturPage/config'
+import { Website } from './globals/Website/config'
+import { DatenschutzPage, ImpressumPage } from './globals/Rechtstexte/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -66,6 +68,18 @@ export default buildConfig({
       ],
     },
   },
+  // Inhalte werden je Sprache gepflegt. Leere Felder zeigen den deutschen Text.
+  // Die Sprach-Codes müssen zu `src/i18n/config.ts` passen.
+  localization: {
+    locales: [
+      { label: 'Deutsch', code: 'de' },
+      { label: 'English', code: 'en' },
+      { label: 'Crnogorski', code: 'me' },
+      { label: 'Türkçe', code: 'tr' },
+    ],
+    defaultLocale: 'de',
+    fallback: true,
+  },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: postgresAdapter({
@@ -78,7 +92,22 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Media, Categories, Users, ContactSubmissions, FormConfigs],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Homepage, Preisstaffel, WohnungenPage, PreisePage, InvestmentPage, LagePage, KontaktPage, UeberUnsPage, ArchitekturPage],
+  globals: [
+    Website,
+    Header,
+    Footer,
+    Homepage,
+    Preisstaffel,
+    WohnungenPage,
+    PreisePage,
+    InvestmentPage,
+    LagePage,
+    KontaktPage,
+    UeberUnsPage,
+    ArchitekturPage,
+    ImpressumPage,
+    DatenschutzPage,
+  ],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

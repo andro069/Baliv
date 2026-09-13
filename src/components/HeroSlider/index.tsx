@@ -5,6 +5,9 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 
+import { useRahmen } from '@/components/SeitenRahmen'
+import { fuelle } from '@/i18n/format'
+
 const defaultSlides = [
   { src: '/terrasse-meer.webp', alt: 'Terrasse mit Meerblick' },
   { src: '/interieur-wohnen-01.webp', alt: 'Wohnbereich mit Meerblick' },
@@ -14,6 +17,7 @@ const defaultSlides = [
 type Slide = { src: string; alt: string }
 
 export function HeroSlider({ slides }: { slides?: Slide[] }) {
+  const { ui } = useRahmen()
   const activeSlides = slides && slides.length > 0 ? slides : defaultSlides
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 60 }, [
     Autoplay({ delay: 7000, stopOnInteraction: false }),
@@ -56,7 +60,7 @@ export function HeroSlider({ slides }: { slides?: Slide[] }) {
                 ? 'w-2.5 h-2.5 bg-[#B69252]'
                 : 'w-1.5 h-1.5 bg-white/50 hover:bg-white/80'
             }`}
-            aria-label={`Slide ${i + 1}`}
+            aria-label={fuelle(ui.sliderBild, { n: i + 1 })}
           />
         ))}
       </div>

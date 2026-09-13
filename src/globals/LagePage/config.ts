@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const LagePage: GlobalConfig = {
   slug: 'lage-page',
@@ -11,7 +12,16 @@ export const LagePage: GlobalConfig = {
   admin: {
     group: 'Seiten-Inhalte',
   },
-  fields: [
+  fields: lokalisiert([
+    {
+      name: 'meta',
+      label: 'SEO / Meta-Angaben',
+      type: 'group',
+      fields: [
+        { name: 'title', label: 'Seitentitel (Browser-Tab und Google)', type: 'text', defaultValue: "Lage — Baliv Residence, Bar Montenegro" },
+        { name: 'description', label: 'Meta-Beschreibung', type: 'textarea', defaultValue: "Bar liegt am Fuß der Stari-Bar-Festung — zwischen Adria, Olivenhainen und dem Rumija-Gebirge. Ca. 1 km bis Stari Bar, 32 km bis zum Flughafen Podgorica." },
+      ],
+    },
     {
       name: 'hero',
       label: 'Hero',
@@ -288,7 +298,7 @@ export const LagePage: GlobalConfig = {
       label: 'Kennzahlen-Kacheln',
       type: 'array',
       defaultValue: [
-        { value: '300+', label: 'Sonnentage/Jahr' },
+        { value: '250+', label: 'Sonnentage/Jahr' },
         { value: '26 °C', label: 'Ø Wassertemp. Juli' },
         { value: '2.000+', label: 'Jahre Olivenhaine' },
         { value: '13 km', label: 'Sandstrand · Velika Plaža, Ulcinj — 45 Min' },
@@ -303,6 +313,7 @@ export const LagePage: GlobalConfig = {
       label: 'CTA-Sektion (unten)',
       type: 'group',
       fields: [
+        { name: 'whatsappNachricht', label: "WhatsApp — vorbelegte Nachricht", type: 'textarea', defaultValue: "Guten Tag, ich möchte eine Besichtigung bei Baliv Residence anfragen." },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -326,7 +337,7 @@ export const LagePage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Wir organisieren Besichtigungen vor Ort — nach Absprache auch mit Abholung vom Flughafen Podgorica oder Tivat. Deutschsprachige Begleitung, kein Makler, kein Druck.',
+            'Wir organisieren Besichtigungen vor Ort — nach Absprache auch mit Abholung vom Flughafen Podgorica oder Tivat. Begleitung auf Deutsch, Englisch, Montenegrinisch oder Türkisch, kein Makler, kein Druck.',
         },
         {
           name: 'buttonLabel',
@@ -355,7 +366,7 @@ export const LagePage: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/lage'])],
   },

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 export const KontaktPage: GlobalConfig = {
   slug: 'kontakt-page',
@@ -11,12 +12,22 @@ export const KontaktPage: GlobalConfig = {
   admin: {
     group: 'Seiten-Inhalte',
   },
-  fields: [
+  fields: lokalisiert([
+    {
+      name: 'meta',
+      label: 'SEO / Meta-Angaben',
+      type: 'group',
+      fields: [
+        { name: 'title', label: 'Seitentitel (Browser-Tab und Google)', type: 'text', defaultValue: "Kontakt & Exposé — Baliv Residence, Bar Montenegro" },
+        { name: 'description', label: 'Meta-Beschreibung', type: 'textarea', defaultValue: "Exposé, Grundrisse und Preisliste kostenlos anfordern. Direktkontakt zum Bauträger Real Living d.o.o. — kein Makler, keine Provision." },
+      ],
+    },
     {
       name: 'hero',
       label: 'Hero',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Terrasse der Baliv Residence mit Meerblick" },
         {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
@@ -33,7 +44,7 @@ export const KontaktPage: GlobalConfig = {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
-          defaultValue: 'Wir antworten in der Regel innerhalb von 24 Stunden — auf Deutsch, persönlich, ohne Verkaufsdruck.',
+          defaultValue: 'Wir antworten in der Regel innerhalb von 24 Stunden — auf Deutsch, Englisch, Montenegrinisch oder Türkisch, persönlich, ohne Verkaufsdruck.',
         },
       ],
     },
@@ -140,7 +151,7 @@ export const KontaktPage: GlobalConfig = {
           label: 'Text',
           type: 'textarea',
           defaultValue:
-            'Grundrisse aller Wohntypen, vollständige Preisliste, Zahlungsplan, Lageplan und Baubeschreibung — auf Deutsch, direkt per E-Mail.',
+            'Grundrisse aller Wohntypen, vollständige Preisliste, Zahlungsplan, Lageplan und Baubeschreibung — direkt per E-Mail.',
         },
       ],
     },
@@ -149,6 +160,7 @@ export const KontaktPage: GlobalConfig = {
       label: 'Kontaktformular',
       type: 'group',
       fields: [
+        { name: 'datenschutzLinkWort', label: "Wort, das auf die Datenschutzerklärung verlinkt", type: 'text', defaultValue: "Datenschutzerklärung" },
         {
           name: 'form',
           label: 'Welches Formular?',
@@ -181,7 +193,7 @@ export const KontaktPage: GlobalConfig = {
           name: 'exposeCheckboxText',
           label: 'Exposé-Checkbox — Text',
           type: 'text',
-          defaultValue: 'Grundrisse, Preisliste & Baubeschreibung — auf Deutsch per E-Mail',
+          defaultValue: 'Grundrisse, Preisliste & Baubeschreibung — per E-Mail',
         },
         {
           name: 'datenschutzText',
@@ -189,7 +201,7 @@ export const KontaktPage: GlobalConfig = {
           type: 'textarea',
           admin: {
             description:
-              'Wird nur angezeigt, wenn das gewählte Formular keine Checkbox mit dem Namen „datenschutz“ enthält. Das Wort „Datenschutzerklärung“ wird automatisch verlinkt.',
+              'Wird nur angezeigt, wenn das gewählte Formular keine Checkbox mit dem Namen „datenschutz“ enthält. Das im Feld „Wort, das auf die Datenschutzerklärung verlinkt“ eingetragene Wort wird automatisch verlinkt — in jeder Sprache passend eintragen.',
           },
           defaultValue:
             'Mit dem Absenden stimmen Sie zu, dass wir Ihre Daten zur Bearbeitung Ihrer Anfrage verwenden. Näheres in unserer Datenschutzerklärung.',
@@ -230,7 +242,7 @@ export const KontaktPage: GlobalConfig = {
           label: 'Danke-Seite — Text',
           type: 'textarea',
           defaultValue:
-            'Ihre Anfrage ist bei uns eingegangen. Wir melden uns in der Regel innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, direkt vom Bauträger.',
+            'Ihre Anfrage ist bei uns eingegangen. Wir melden uns in der Regel innerhalb von 24 Stunden persönlich bei Ihnen — auf Deutsch, Englisch, Montenegrinisch oder Türkisch, direkt vom Bauträger.',
         },
         {
           name: 'erfolgLinkLabel',
@@ -240,7 +252,7 @@ export const KontaktPage: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/kontakt'])],
   },

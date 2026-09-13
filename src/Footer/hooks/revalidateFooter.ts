@@ -1,19 +1,12 @@
 import type { GlobalAfterChangeHook } from 'payload'
 
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 
-import { allPagePaths } from '@/utilities/revalidatePages'
+import { revalidateAlleSeiten } from '@/utilities/revalidatePages'
 
-export const revalidateFooter: GlobalAfterChangeHook = ({ doc, req: { payload, context } }) => {
-  if (!context.disableRevalidate) {
-    payload.logger.info(`Revalidating footer`)
+export const revalidateFooter: GlobalAfterChangeHook = (args) => {
+  if (!args.req.context.disableRevalidate) revalidateTag('global_footer', 'max')
 
-    revalidateTag('global_footer', 'max')
-
-    // PageFooter liest das Global direkt (nicht tag-gecacht) und erscheint auf
-    // allen Unterseiten — die müssen daher einzeln neu erzeugt werden.
-    for (const path of allPagePaths) revalidatePath(path)
-  }
-
-  return doc
+  // Der Footer kommt aus dem Layout und erscheint auf allen Seiten aller Sprachen.
+  return revalidateAlleSeiten(args)
 }

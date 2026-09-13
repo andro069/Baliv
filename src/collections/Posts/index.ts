@@ -26,6 +26,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
+import { nichtUebersetzt } from '@/fields/lokalisiert'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -141,14 +142,14 @@ export const Posts: CollectionConfig<'posts'> = {
               descriptionPath: 'meta.description',
               imagePath: 'meta.image',
             }),
-            MetaTitleField({
+            nichtUebersetzt(MetaTitleField({
               hasGenerateFn: true,
-            }),
-            MetaImageField({
+            })),
+            nichtUebersetzt(MetaImageField({
               relationTo: 'media',
-            }),
+            })),
 
-            MetaDescriptionField({}),
+            nichtUebersetzt(MetaDescriptionField({})),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

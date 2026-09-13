@@ -3,17 +3,16 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-// EN und ME sind ausgeblendet, bis Übersetzungen vorliegen. Der Umschalter
-// erscheint automatisch wieder, sobald hier mehr als eine Sprache steht.
-const langs: string[] = ['DE']
+import { useRahmen } from '@/components/SeitenRahmen'
+import { localeNames, localeShort, pathFor, seiteAusPfad, htmlLang } from '@/i18n/config'
 
-type NavItem = { label: string; href: string }
-
-export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
+export function Navigation() {
+  const { locale, sprachen, navItems, ui } = useRahmen()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [lang, setLang] = useState('DE')
+  const pathname = usePathname() ?? '/'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -24,7 +23,11 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const zeigeSprachen = langs.length > 1
+  // Der Umschalter führt auf dieselbe Seite in der anderen Sprache und erscheint
+  // erst, wenn im Backend mindestens eine weitere Sprache freigegeben ist.
+  const { key } = seiteAusPfad(pathname)
+  const sprachLinks = sprachen.map((l) => ({ locale: l, href: pathFor(key ?? '', l) }))
+  const zeigeSprachen = sprachLinks.length > 1
 
   return (
     <>
@@ -34,7 +37,7 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex-shrink-0">
+          <Link href={pathFor('', locale)} className="flex-shrink-0">
             <Image
               src={scrolled ? '/logo-dark.svg' : '/logo-white.svg'}
               alt="Baliv Residence"
@@ -47,35 +50,39 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
 
           <div className="flex items-center gap-6">
             {zeigeSprachen && (
-              <div className="flex items-center gap-1">
-                {langs.map((l, i) => (
-                  <React.Fragment key={l}>
-                    <button
-                      onClick={() => setLang(l)}
+              <nav aria-label={ui.sprachwahl} className="flex items-center gap-1">
+                {sprachLinks.map((s, i) => (
+                  <React.Fragment key={s.locale}>
+                    <Link
+                      href={s.href}
+                      hrefLang={htmlLang[s.locale]}
+                      lang={htmlLang[s.locale]}
+                      aria-label={localeNames[s.locale]}
+                      aria-current={s.locale === locale ? 'true' : undefined}
                       className={`text-xs tracking-widest transition-colors font-raleway ${
-                        lang === l
+                        s.locale === locale
                           ? 'text-[#B69252]'
                           : scrolled
                             ? 'text-[#151E39]/60 hover:text-[#151E39]'
                             : 'text-white/60 hover:text-white'
                       }`}
                     >
-                      {l}
-                    </button>
-                    {i < langs.length - 1 && (
+                      {localeShort[s.locale]}
+                    </Link>
+                    {i < sprachLinks.length - 1 && (
                       <span className={`text-xs ${scrolled ? 'text-[#151E39]/20' : 'text-white/20'}`}>
                         /
                       </span>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
+              </nav>
             )}
 
             <button
               onClick={() => setOpen(true)}
               className="flex flex-col gap-[5px] group"
-              aria-label="Menü öffnen"
+              aria-label={ui.menueOeffnen}
             >
               {[0, 1, 2].map((i) => (
                 <span
@@ -101,7 +108,7 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
           <button
             onClick={() => setOpen(false)}
             className="text-white/60 hover:text-white transition-colors"
-            aria-label="Menü schließen"
+            aria-label={ui.menueSchliessen}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="1.5" />
@@ -123,19 +130,19 @@ export function NavigationClient({ navItems }: { navItems: NavItem[] }) {
           ))}
           {zeigeSprachen && (
             <div className="mt-8 flex items-center gap-4">
-              {langs.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => {
-                    setLang(l)
-                    setOpen(false)
-                  }}
+              {sprachLinks.map((s) => (
+                <Link
+                  key={s.locale}
+                  href={s.href}
+                  hrefLang={htmlLang[s.locale]}
+                  lang={htmlLang[s.locale]}
+                  onClick={() => setOpen(false)}
                   className={`text-sm tracking-widest font-raleway transition-colors ${
-                    lang === l ? 'text-[#B69252]' : 'text-white/40 hover:text-white'
+                    s.locale === locale ? 'text-[#B69252]' : 'text-white/40 hover:text-white'
                   }`}
                 >
-                  {l}
-                </button>
+                  {localeNames[s.locale]}
+                </Link>
               ))}
             </div>
           )}

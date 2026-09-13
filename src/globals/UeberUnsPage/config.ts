@@ -1,5 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 import { revalidatePages } from '@/utilities/revalidatePages'
+import { lokalisiert } from '@/fields/lokalisiert'
 
 const sektionskopf = (defaults: { eyebrow: string; headline: string }): Field[] => [
   {
@@ -46,7 +47,7 @@ export const UeberUnsPage: GlobalConfig = {
     group: 'Seiten-Inhalte',
     description: 'Keine Personennamen verwenden — Absender ist die Gesellschaft.',
   },
-  fields: [
+  fields: lokalisiert([
     {
       name: 'meta',
       label: 'SEO / Meta-Angaben',
@@ -63,7 +64,7 @@ export const UeberUnsPage: GlobalConfig = {
           label: 'Meta-Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Real Living d.o.o. baut Baliv Residence in Bar: inhabergeführt, deutschsprachig, direkt vom Bauträger. Die Baugenehmigung liegt vor, gekauft wird mit notariellem Hauptvertrag.',
+            'Real Living d.o.o. baut Baliv Residence in Bar: inhabergeführt, mehrsprachig, direkt vom Bauträger. Die Baugenehmigung liegt vor, gekauft wird mit notariellem Hauptvertrag.',
         },
       ],
     },
@@ -72,13 +73,14 @@ export const UeberUnsPage: GlobalConfig = {
       label: 'Hero',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Baliv Residence in Bar" },
         ...sektionskopf({ eyebrow: 'Über uns', headline: 'Wer Baliv Residence baut.' }),
         {
           name: 'description',
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Real Living d.o.o. ist der Bauträger von Baliv Residence — inhabergeführt, mit Sitz in Bar und mit Beratung auf Deutsch.',
+            'Real Living d.o.o. ist der Bauträger von Baliv Residence — inhabergeführt, mit Sitz in Bar und mit Beratung auf Deutsch, Englisch, Montenegrinisch und Türkisch.',
         },
         { name: 'image', label: 'Hintergrundbild', type: 'upload', relationTo: 'media' },
       ],
@@ -88,13 +90,13 @@ export const UeberUnsPage: GlobalConfig = {
       label: '1 · Wer wir sind',
       type: 'group',
       fields: [
-        ...sektionskopf({ eyebrow: 'Wer wir sind', headline: 'Inhabergeführt. Deutschsprachig. Direkt.' }),
+        ...sektionskopf({ eyebrow: 'Wer wir sind', headline: 'Inhabergeführt. Mehrsprachig. Direkt.' }),
         {
           name: 'text',
           label: 'Text',
           type: 'textarea',
           defaultValue:
-            'Hinter Baliv Residence steht Real Living d.o.o., eine in Montenegro registrierte Gesellschaft mit Sitz in Bar. Wir verkaufen selbst, ohne Makler dazwischen — Sie sprechen direkt mit dem Bauträger, und zwar auf Deutsch.',
+            'Hinter Baliv Residence steht Real Living d.o.o., eine in Montenegro registrierte Gesellschaft mit Sitz in Bar. Wir verkaufen selbst, ohne Makler dazwischen — Sie sprechen direkt mit dem Bauträger, und zwar auf Deutsch, Englisch, Montenegrinisch oder Türkisch.',
         },
         punkte('Eckdaten'),
       ],
@@ -104,6 +106,7 @@ export const UeberUnsPage: GlobalConfig = {
       label: '2 · Warum Bar',
       type: 'group',
       fields: [
+        { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Die Festungsstadt Stari Bar" },
         ...sektionskopf({ eyebrow: 'Warum Bar', headline: 'Ein Ort mit eigenem Alltag.' }),
         {
           name: 'text',
@@ -201,7 +204,7 @@ export const UeberUnsPage: GlobalConfig = {
           label: 'Beschreibung',
           type: 'textarea',
           defaultValue:
-            'Fragen zum Projekt, zum Kaufablauf oder zu einzelnen Einheiten beantworten wir persönlich — auf Deutsch, direkt vom Bauträger.',
+            'Fragen zum Projekt, zum Kaufablauf oder zu einzelnen Einheiten beantworten wir persönlich — auf Deutsch, Englisch, Montenegrinisch oder Türkisch, direkt vom Bauträger.',
         },
         {
           type: 'row',
@@ -226,11 +229,11 @@ export const UeberUnsPage: GlobalConfig = {
           name: 'note',
           label: 'Hinweis unter dem Button',
           type: 'text',
-          defaultValue: 'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachige Beratung',
+          defaultValue: 'In der Regel Antwort innerhalb von 24 Stunden · Beratung in vier Sprachen',
         },
       ],
     },
-  ],
+  ]),
   hooks: {
     afterChange: [revalidatePages(['/ueber-uns'])],
   },

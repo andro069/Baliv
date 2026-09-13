@@ -2,11 +2,14 @@
 
 import React, { useState } from 'react'
 
+import { useRahmen } from '@/components/SeitenRahmen'
+
 export function WhatsAppButton() {
+  const { ui } = useRahmen()
   const [hovered, setHovered] = useState(false)
   // wa.me erwartet die Nummer ohne Plus.
   const phone = '38268517873'
-  const message = 'Guten Tag, ich interessiere mich für Baliv Residence.'
+  const message = ui.whatsappNachricht
 
   return (
     <a
@@ -16,14 +19,14 @@ export function WhatsAppButton() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="fixed bottom-8 right-8 z-50 flex items-center gap-3 group"
-      aria-label="WhatsApp Kontakt"
+      aria-label={ui.whatsappAria}
     >
       <span
         className={`text-sm font-raleway tracking-wide text-[#151E39] bg-[#F0EDE8] px-3 py-2 rounded transition-all duration-300 shadow-sm ${
           hovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
         }`}
       >
-        Jetzt anfragen
+        {ui.whatsappHinweis}
       </span>
       <div className="w-12 h-12 rounded-full bg-[#151E39] border border-[#B69252]/40 flex items-center justify-center shadow-lg hover:bg-[#B69252] transition-colors duration-300">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="white">

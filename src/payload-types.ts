@@ -112,8 +112,14 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale:
+    | ('false' | 'none' | 'null')
+    | false
+    | null
+    | ('de' | 'en' | 'me' | 'tr')
+    | ('de' | 'en' | 'me' | 'tr')[];
   globals: {
+    website: Website;
     header: Header;
     footer: Footer;
     homepage: Homepage;
@@ -125,8 +131,11 @@ export interface Config {
     'kontakt-page': KontaktPage;
     'ueber-uns-page': UeberUnsPage;
     'architektur-page': ArchitekturPage;
+    'impressum-page': ImpressumPage;
+    'datenschutz-page': DatenschutzPage;
   };
   globalsSelect: {
+    website: WebsiteSelect<false> | WebsiteSelect<true>;
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
@@ -138,8 +147,10 @@ export interface Config {
     'kontakt-page': KontaktPageSelect<false> | KontaktPageSelect<true>;
     'ueber-uns-page': UeberUnsPageSelect<false> | UeberUnsPageSelect<true>;
     'architektur-page': ArchitekturPageSelect<false> | ArchitekturPageSelect<true>;
+    'impressum-page': ImpressumPageSelect<false> | ImpressumPageSelect<true>;
+    'datenschutz-page': DatenschutzPageSelect<false> | DatenschutzPageSelect<true>;
   };
-  locale: null;
+  locale: 'de' | 'en' | 'me' | 'tr';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -816,6 +827,10 @@ export interface ContactSubmission {
   nachricht?: string | null;
   expose?: boolean | null;
   /**
+   * Auf welcher Sprachfassung der Website die Anfrage abgeschickt wurde.
+   */
+  sprache?: ('de' | 'en' | 'me' | 'tr') | null;
+  /**
    * Antworten auf Felder, die im Backend zum Formular hinzugefügt wurden.
    */
   weitereAngaben?:
@@ -1468,6 +1483,7 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   interesse?: T;
   nachricht?: T;
   expose?: T;
+  sprache?: T;
   weitereAngaben?:
     | T
     | {
@@ -1772,6 +1788,57 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Sprachen freigeben und allgemeine Texte pflegen. Die Sprache der Texte wählen Sie oben rechts.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "website".
+ */
+export interface Website {
+  id: number;
+  /**
+   * Deutsch ist immer aktiv. Eine weitere Sprache erscheint erst im Sprachumschalter und in Suchmaschinen, wenn sie hier freigegeben ist. Fehlende Übersetzungen zeigen den deutschen Text.
+   */
+  sprachen?: {
+    en?: boolean | null;
+    me?: boolean | null;
+    tr?: boolean | null;
+  };
+  seo?: {
+    titel?: string | null;
+    beschreibung?: string | null;
+    ogTitel?: string | null;
+    ogBeschreibung?: string | null;
+    ogBildAlt?: string | null;
+  };
+  /**
+   * Texte in Bauteilen, die auf mehreren Seiten vorkommen.
+   */
+  ui?: {
+    menueOeffnen?: string | null;
+    menueSchliessen?: string | null;
+    sprachwahl?: string | null;
+    zurueckZurStartseite?: string | null;
+    whatsappNachricht?: string | null;
+    whatsappLabel?: string | null;
+    whatsappHinweis?: string | null;
+    whatsappAria?: string | null;
+    ab?: string | null;
+    proQm?: string | null;
+    sieSindHier?: string | null;
+    grundriss?: string | null;
+    sliderBild?: string | null;
+    bitteWaehlen?: string | null;
+    notFoundEyebrow?: string | null;
+    notFoundHeadline?: string | null;
+    notFoundText?: string | null;
+    notFoundStartseite?: string | null;
+    notFoundWohnungen?: string | null;
+    notFoundKontakt?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header".
  */
@@ -1779,7 +1846,7 @@ export interface Header {
   id: number;
   navItems?:
     | {
-        label: string;
+        label?: string | null;
         href: string;
         id?: string | null;
       }[]
@@ -1797,7 +1864,7 @@ export interface Footer {
   copyright?: string | null;
   legalLinks?:
     | {
-        label: string;
+        label?: string | null;
         href: string;
         id?: string | null;
       }[]
@@ -1817,8 +1884,8 @@ export interface Homepage {
     title?: string | null;
     description?: string | null;
   };
-  hero: {
-    headline: string;
+  hero?: {
+    headline?: string | null;
     subline?: string | null;
     description?: string | null;
     primaryButtonLabel?: string | null;
@@ -1834,13 +1901,14 @@ export interface Homepage {
       | null;
     stats?:
       | {
-          value: string;
-          label: string;
+          value?: string | null;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   lage?: {
+    eyebrow?: string | null;
     headline?: string | null;
     text1?: string | null;
     text2?: string | null;
@@ -1856,17 +1924,19 @@ export interface Homepage {
      */
     distances?:
       | {
-          value: string;
-          label: string;
+          value?: string | null;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   wohnungen?: {
+    eyebrow?: string | null;
+    detailsLabel?: string | null;
     headline?: string | null;
     types?:
       | {
-          type: string;
+          type?: string | null;
           tag?: string | null;
           units?: string | null;
           size?: string | null;
@@ -1879,6 +1949,9 @@ export interface Homepage {
     hinweis?: string | null;
   };
   investment?: {
+    eyebrow?: string | null;
+    linkLabel?: string | null;
+    imageAlt?: string | null;
     headline?: string | null;
     text?: string | null;
     /**
@@ -1886,8 +1959,8 @@ export interface Homepage {
      */
     stats?:
       | {
-          value: string;
-          label: string;
+          value?: string | null;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -1897,12 +1970,14 @@ export interface Homepage {
   vertrauen?:
     | {
         icon?: string | null;
-        title: string;
+        title?: string | null;
         sub?: string | null;
         id?: string | null;
       }[]
     | null;
   cta?: {
+    buttonLabel?: string | null;
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
@@ -1930,8 +2005,8 @@ export interface Preisstaffel {
   intro?: string | null;
   stages?:
     | {
-        phase: string;
-        price: string;
+        phase?: string | null;
+        price?: string | null;
         label?: string | null;
         description?: string | null;
         active?: boolean | null;
@@ -1952,6 +2027,7 @@ export interface WohnungenPage {
     description?: string | null;
   };
   hero?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
@@ -1959,12 +2035,13 @@ export interface WohnungenPage {
   };
   buildingStats?:
     | {
-        value: string;
-        label: string;
+        value?: string | null;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
   typesSection?: {
+    exampleLabel?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineLine2?: string | null;
@@ -1976,8 +2053,8 @@ export interface WohnungenPage {
   };
   types?:
     | {
-        nr: string;
-        type: string;
+        nr?: string | null;
+        type?: string | null;
         tag?: string | null;
         size?: string | null;
         terrace?: string | null;
@@ -2002,30 +2079,32 @@ export interface WohnungenPage {
   };
   premiumPaket?:
     | {
-        label: string;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
   interiorImages?:
     | {
         image?: (number | null) | Media;
-        alt: string;
+        alt?: string | null;
         id?: string | null;
       }[]
     | null;
   gebaeude?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     image?: (number | null) | Media;
   };
   gebaeudeFeatures?:
     | {
-        title: string;
+        title?: string | null;
         text?: string | null;
         id?: string | null;
       }[]
     | null;
   cta?: {
+    whatsappNachricht?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
@@ -2040,14 +2119,15 @@ export interface WohnungenPage {
    */
   ausstattung?:
     | {
-        brand: string;
-        label: string;
+        icon?: ('armatur' | 'klima' | 'erdbeben' | 'stein' | 'holz' | 'schluessel') | null;
+        brand?: string | null;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
   included?:
     | {
-        label: string;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -2060,6 +2140,10 @@ export interface WohnungenPage {
  */
 export interface PreisePage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero?: {
     eyebrow?: string | null;
     headline?: string | null;
@@ -2095,8 +2179,8 @@ export interface PreisePage {
   };
   nebenkosten?:
     | {
-        label: string;
-        value: string;
+        label?: string | null;
+        value?: string | null;
         note?: string | null;
         id?: string | null;
       }[]
@@ -2116,6 +2200,7 @@ export interface PreisePage {
     extraCostsRate?: number | null;
   };
   cta?: {
+    whatsappNachricht?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineAccent?: string | null;
@@ -2128,8 +2213,8 @@ export interface PreisePage {
   };
   types?:
     | {
-        nr: string;
-        type: string;
+        nr?: string | null;
+        type?: string | null;
         tag?: string | null;
         size?: string | null;
         pricePerSqm?: string | null;
@@ -2145,7 +2230,7 @@ export interface PreisePage {
         floorplan?: (number | null) | Media;
         features?:
           | {
-              label: string;
+              label?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -2154,17 +2239,17 @@ export interface PreisePage {
     | null;
   paymentSteps?:
     | {
-        step: string;
+        step?: string | null;
         date?: string | null;
-        label: string;
-        amount: string;
+        label?: string | null;
+        amount?: string | null;
         note?: string | null;
         id?: string | null;
       }[]
     | null;
   included?:
     | {
-        label: string;
+        label?: string | null;
         included?: boolean | null;
         note?: string | null;
         id?: string | null;
@@ -2179,33 +2264,41 @@ export interface PreisePage {
  */
 export interface InvestmentPage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero?: {
+    eyebrow?: string | null;
+    imageAlt?: string | null;
     headline?: string | null;
     description?: string | null;
     image?: (number | null) | Media;
     kennzahlen?:
       | {
-          value: string;
-          label: string;
+          value?: string | null;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   warumMontenegro?: {
+    eyebrow?: string | null;
+    imageAlt?: string | null;
     headline?: string | null;
     description?: string | null;
     image?: (number | null) | Media;
     vorteile?:
       | {
-          title: string;
+          title?: string | null;
           text?: string | null;
           id?: string | null;
         }[]
       | null;
     bildKennzahlen?:
       | {
-          value: string;
-          label: string;
+          value?: string | null;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -2228,14 +2321,15 @@ export interface InvestmentPage {
     zeitleisteTitel?: string | null;
     zeitleiste?:
       | {
-          year: string;
-          event: string;
+          year?: string | null;
+          event?: string | null;
           note?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   steuerSektion?: {
+    eyebrow?: string | null;
     headline?: string | null;
     headlineAccent?: string | null;
     description?: string | null;
@@ -2243,8 +2337,9 @@ export interface InvestmentPage {
   };
   steuerDaten?:
     | {
-        label: string;
-        value: string;
+        hervorheben?: boolean | null;
+        label?: string | null;
+        value?: string | null;
         note?: string | null;
         id?: string | null;
       }[]
@@ -2253,6 +2348,25 @@ export interface InvestmentPage {
    * Alle Beträge der Beispielrechnung werden aus diesen Feldern berechnet: Kaufpreis = Größe × Preis/m²; Brutto = Wochen × Wochenpreis je Saison; Ertrag vor Steuer = Brutto − Verwaltungsquote − Betriebskosten; Nettoertrag = Ertrag vor Steuer − Steuersatz; Rendite = Nettoertrag ÷ Kaufpreis.
    */
   mietRendite?: {
+    eyebrow?: string | null;
+    labelHauptsaison?: string | null;
+    labelNebensaison?: string | null;
+    labelGesamt?: string | null;
+    labelVerwaltung?: string | null;
+    vorlageSaison?: string | null;
+    vorlageGesamt?: string | null;
+    vorlageVerwaltung?: string | null;
+    rechnerTitel?: string | null;
+    zeileKaufpreis?: string | null;
+    zeileHauptsaison?: string | null;
+    zeileNebensaison?: string | null;
+    zeileBrutto?: string | null;
+    zeileVerwaltung?: string | null;
+    zeileBetrieb?: string | null;
+    zeileVorSteuer?: string | null;
+    zeileSteuer?: string | null;
+    zeileNetto?: string | null;
+    zeileRendite?: string | null;
     headline?: string | null;
     description?: string | null;
     size?: number | null;
@@ -2273,9 +2387,9 @@ export interface InvestmentPage {
   };
   paymentSteps?:
     | {
-        step: string;
-        label: string;
-        amount: string;
+        step?: string | null;
+        label?: string | null;
+        amount?: string | null;
         note?: string | null;
         id?: string | null;
       }[]
@@ -2288,7 +2402,7 @@ export interface InvestmentPage {
     buttonLabel?: string | null;
     tags?:
       | {
-          label: string;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -2302,6 +2416,10 @@ export interface InvestmentPage {
  */
 export interface LagePage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero?: {
     headline?: string | null;
     subline?: string | null;
@@ -2328,8 +2446,8 @@ export interface LagePage {
   distances?:
     | {
         icon?: ('ort' | 'kueste' | 'altstadt' | 'berge' | 'natur') | null;
-        place: string;
-        distance: string;
+        place?: string | null;
+        distance?: string | null;
         detail?: string | null;
         note?: string | null;
         id?: string | null;
@@ -2342,7 +2460,7 @@ export interface LagePage {
   };
   highlights?:
     | {
-        title: string;
+        title?: string | null;
         text?: string | null;
         image?: (number | null) | Media;
         id?: string | null;
@@ -2357,20 +2475,21 @@ export interface LagePage {
   };
   marktPreise?:
     | {
-        label: string;
-        price: string;
+        label?: string | null;
+        price?: string | null;
         highlight?: boolean | null;
         id?: string | null;
       }[]
     | null;
   stats?:
     | {
-        value: string;
-        label: string;
+        value?: string | null;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
   cta?: {
+    whatsappNachricht?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineAccent?: string | null;
@@ -2389,7 +2508,12 @@ export interface LagePage {
  */
 export interface KontaktPage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
@@ -2415,6 +2539,7 @@ export interface KontaktPage {
     text?: string | null;
   };
   formular?: {
+    datenschutzLinkWort?: string | null;
     /**
      * Die Felder selbst werden unter „Forms“ gepflegt. Dort lassen sich beliebig viele Formulare anlegen und hier auswählen.
      */
@@ -2451,6 +2576,7 @@ export interface UeberUnsPage {
     description?: string | null;
   };
   hero?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
@@ -2462,13 +2588,14 @@ export interface UeberUnsPage {
     text?: string | null;
     punkte?:
       | {
-          title: string;
+          title?: string | null;
           text?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   warumBar?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     text?: string | null;
@@ -2482,7 +2609,7 @@ export interface UeberUnsPage {
     text?: string | null;
     punkte?:
       | {
-          title: string;
+          title?: string | null;
           text?: string | null;
           id?: string | null;
         }[]
@@ -2495,7 +2622,7 @@ export interface UeberUnsPage {
     schritte?:
       | {
           step?: string | null;
-          title: string;
+          title?: string | null;
           amount?: string | null;
           text?: string | null;
           id?: string | null;
@@ -2520,7 +2647,12 @@ export interface UeberUnsPage {
  */
 export interface ArchitekturPage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineZweiteZeile?: string | null;
@@ -2537,6 +2669,7 @@ export interface ArchitekturPage {
     autor?: string | null;
   };
   prinzipien?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineAccent?: string | null;
@@ -2544,14 +2677,15 @@ export interface ArchitekturPage {
     image?: (number | null) | Media;
     items?:
       | {
-          nr: string;
-          title: string;
+          nr?: string | null;
+          title?: string | null;
           text?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   fassade?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineAccent?: string | null;
@@ -2559,13 +2693,14 @@ export interface ArchitekturPage {
     image?: (number | null) | Media;
     items?:
       | {
-          title: string;
+          title?: string | null;
           text?: string | null;
           id?: string | null;
         }[]
       | null;
   };
   materialien?: {
+    imageAlt?: string | null;
     eyebrow?: string | null;
     headline?: string | null;
     headlineAccent?: string | null;
@@ -2573,7 +2708,7 @@ export interface ArchitekturPage {
     image?: (number | null) | Media;
     items?:
       | {
-          name: string;
+          name?: string | null;
           use?: string | null;
           detail?: string | null;
           id?: string | null;
@@ -2599,14 +2734,14 @@ export interface ArchitekturPage {
     headline?: string | null;
     stats?:
       | {
-          value: string;
-          label: string;
+          value?: string | null;
+          label?: string | null;
           id?: string | null;
         }[]
       | null;
     features?:
       | {
-          title: string;
+          title?: string | null;
           text?: string | null;
           id?: string | null;
         }[]
@@ -2624,6 +2759,107 @@ export interface ArchitekturPage {
   };
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "impressum-page".
+ */
+export interface ImpressumPage {
+  id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  eyebrow?: string | null;
+  headline?: string | null;
+  stand?: string | null;
+  /**
+   * Leerzeile = neuer Absatz · Zeile mit „- " am Anfang = Aufzählungspunkt · E-Mail und Telefon werden automatisch verlinkt.
+   */
+  abschnitte?:
+    | {
+        titel?: string | null;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "datenschutz-page".
+ */
+export interface DatenschutzPage {
+  id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
+  eyebrow?: string | null;
+  headline?: string | null;
+  stand?: string | null;
+  /**
+   * Leerzeile = neuer Absatz · Zeile mit „- " am Anfang = Aufzählungspunkt · E-Mail und Telefon werden automatisch verlinkt.
+   */
+  abschnitte?:
+    | {
+        titel?: string | null;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "website_select".
+ */
+export interface WebsiteSelect<T extends boolean = true> {
+  sprachen?:
+    | T
+    | {
+        en?: T;
+        me?: T;
+        tr?: T;
+      };
+  seo?:
+    | T
+    | {
+        titel?: T;
+        beschreibung?: T;
+        ogTitel?: T;
+        ogBeschreibung?: T;
+        ogBildAlt?: T;
+      };
+  ui?:
+    | T
+    | {
+        menueOeffnen?: T;
+        menueSchliessen?: T;
+        sprachwahl?: T;
+        zurueckZurStartseite?: T;
+        whatsappNachricht?: T;
+        whatsappLabel?: T;
+        whatsappHinweis?: T;
+        whatsappAria?: T;
+        ab?: T;
+        proQm?: T;
+        sieSindHier?: T;
+        grundriss?: T;
+        sliderBild?: T;
+        bitteWaehlen?: T;
+        notFoundEyebrow?: T;
+        notFoundHeadline?: T;
+        notFoundText?: T;
+        notFoundStartseite?: T;
+        notFoundWohnungen?: T;
+        notFoundKontakt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2698,6 +2934,7 @@ export interface HomepageSelect<T extends boolean = true> {
   lage?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         text1?: T;
         text2?: T;
@@ -2719,6 +2956,8 @@ export interface HomepageSelect<T extends boolean = true> {
   wohnungen?:
     | T
     | {
+        eyebrow?: T;
+        detailsLabel?: T;
         headline?: T;
         types?:
           | T
@@ -2737,6 +2976,9 @@ export interface HomepageSelect<T extends boolean = true> {
   investment?:
     | T
     | {
+        eyebrow?: T;
+        linkLabel?: T;
+        imageAlt?: T;
         headline?: T;
         text?: T;
         stats?:
@@ -2760,6 +3002,8 @@ export interface HomepageSelect<T extends boolean = true> {
   cta?:
     | T
     | {
+        buttonLabel?: T;
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         description?: T;
@@ -2813,6 +3057,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         description?: T;
@@ -2828,6 +3073,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
   typesSection?:
     | T
     | {
+        exampleLabel?: T;
         eyebrow?: T;
         headline?: T;
         headlineLine2?: T;
@@ -2881,6 +3127,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
   gebaeude?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         image?: T;
@@ -2895,6 +3142,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
   cta?:
     | T
     | {
+        whatsappNachricht?: T;
         eyebrow?: T;
         headline?: T;
         description?: T;
@@ -2907,6 +3155,7 @@ export interface WohnungenPageSelect<T extends boolean = true> {
   ausstattung?:
     | T
     | {
+        icon?: T;
         brand?: T;
         label?: T;
         id?: T;
@@ -2926,6 +3175,12 @@ export interface WohnungenPageSelect<T extends boolean = true> {
  * via the `definition` "preise-page_select".
  */
 export interface PreisePageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
@@ -2991,6 +3246,7 @@ export interface PreisePageSelect<T extends boolean = true> {
   cta?:
     | T
     | {
+        whatsappNachricht?: T;
         eyebrow?: T;
         headline?: T;
         headlineAccent?: T;
@@ -3051,9 +3307,17 @@ export interface PreisePageSelect<T extends boolean = true> {
  * via the `definition` "investment-page_select".
  */
 export interface InvestmentPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
+        eyebrow?: T;
+        imageAlt?: T;
         headline?: T;
         description?: T;
         image?: T;
@@ -3068,6 +3332,8 @@ export interface InvestmentPageSelect<T extends boolean = true> {
   warumMontenegro?:
     | T
     | {
+        eyebrow?: T;
+        imageAlt?: T;
         headline?: T;
         description?: T;
         image?: T;
@@ -3110,6 +3376,7 @@ export interface InvestmentPageSelect<T extends boolean = true> {
   steuerSektion?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         headlineAccent?: T;
         description?: T;
@@ -3118,6 +3385,7 @@ export interface InvestmentPageSelect<T extends boolean = true> {
   steuerDaten?:
     | T
     | {
+        hervorheben?: T;
         label?: T;
         value?: T;
         note?: T;
@@ -3126,6 +3394,25 @@ export interface InvestmentPageSelect<T extends boolean = true> {
   mietRendite?:
     | T
     | {
+        eyebrow?: T;
+        labelHauptsaison?: T;
+        labelNebensaison?: T;
+        labelGesamt?: T;
+        labelVerwaltung?: T;
+        vorlageSaison?: T;
+        vorlageGesamt?: T;
+        vorlageVerwaltung?: T;
+        rechnerTitel?: T;
+        zeileKaufpreis?: T;
+        zeileHauptsaison?: T;
+        zeileNebensaison?: T;
+        zeileBrutto?: T;
+        zeileVerwaltung?: T;
+        zeileBetrieb?: T;
+        zeileVorSteuer?: T;
+        zeileSteuer?: T;
+        zeileNetto?: T;
+        zeileRendite?: T;
         headline?: T;
         description?: T;
         size?: T;
@@ -3179,6 +3466,12 @@ export interface InvestmentPageSelect<T extends boolean = true> {
  * via the `definition` "lage-page_select".
  */
 export interface LagePageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
@@ -3260,6 +3553,7 @@ export interface LagePageSelect<T extends boolean = true> {
   cta?:
     | T
     | {
+        whatsappNachricht?: T;
         eyebrow?: T;
         headline?: T;
         headlineAccent?: T;
@@ -3278,9 +3572,16 @@ export interface LagePageSelect<T extends boolean = true> {
  * via the `definition` "kontakt-page_select".
  */
 export interface KontaktPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         description?: T;
@@ -3314,6 +3615,7 @@ export interface KontaktPageSelect<T extends boolean = true> {
   formular?:
     | T
     | {
+        datenschutzLinkWort?: T;
         form?: T;
         headline?: T;
         subline?: T;
@@ -3346,6 +3648,7 @@ export interface UeberUnsPageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         description?: T;
@@ -3368,6 +3671,7 @@ export interface UeberUnsPageSelect<T extends boolean = true> {
   warumBar?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         text?: T;
@@ -3425,9 +3729,16 @@ export interface UeberUnsPageSelect<T extends boolean = true> {
  * via the `definition` "architektur-page_select".
  */
 export interface ArchitekturPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         headlineZweiteZeile?: T;
@@ -3448,6 +3759,7 @@ export interface ArchitekturPageSelect<T extends boolean = true> {
   prinzipien?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         headlineAccent?: T;
@@ -3465,6 +3777,7 @@ export interface ArchitekturPageSelect<T extends boolean = true> {
   fassade?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         headlineAccent?: T;
@@ -3481,6 +3794,7 @@ export interface ArchitekturPageSelect<T extends boolean = true> {
   materialien?:
     | T
     | {
+        imageAlt?: T;
         eyebrow?: T;
         headline?: T;
         headlineAccent?: T;
@@ -3542,6 +3856,56 @@ export interface ArchitekturPageSelect<T extends boolean = true> {
         buttonLink?: T;
         buttonSecondaryLabel?: T;
         buttonSecondaryLink?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "impressum-page_select".
+ */
+export interface ImpressumPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  eyebrow?: T;
+  headline?: T;
+  stand?: T;
+  abschnitte?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "datenschutz-page_select".
+ */
+export interface DatenschutzPageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  eyebrow?: T;
+  headline?: T;
+  stand?: T;
+  abschnitte?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

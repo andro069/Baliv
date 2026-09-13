@@ -20,6 +20,7 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { nichtUebersetzt } from '@/fields/lokalisiert'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -90,14 +91,14 @@ export const Pages: CollectionConfig<'pages'> = {
               descriptionPath: 'meta.description',
               imagePath: 'meta.image',
             }),
-            MetaTitleField({
+            nichtUebersetzt(MetaTitleField({
               hasGenerateFn: true,
-            }),
-            MetaImageField({
+            })),
+            nichtUebersetzt(MetaImageField({
               relationTo: 'media',
-            }),
+            })),
 
-            MetaDescriptionField({}),
+            nichtUebersetzt(MetaDescriptionField({})),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

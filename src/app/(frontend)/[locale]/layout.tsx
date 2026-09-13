@@ -1,0 +1,76 @@
+import type { Metadata } from 'next'
+import { Playfair_Display, Raleway } from 'next/font/google'
+import { notFound } from 'next/navigation'
+import React from 'react'
+
+import { RahmenProvider } from '@/components/SeitenRahmen'
+import { defaultLocale, htmlLang, isLocale, locales } from '@/i18n/config'
+import { getRahmen, getWebsite, ogFuer } from '@/i18n/server'
+import { Providers } from '@/providers'
+import { getServerSideURL } from '@/utilities/getURL'
+import '../globals.css'
+
+const playfair = Playfair_Display({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
+
+const raleway = Raleway({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-raleway',
+  display: 'swap',
+})
+
+/** Alle Sprachen vorrendern; nicht freigegebene zeigen über `seitenLocale` die 404-Seite. */
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
+  const rahmen = await getRahmen(locale)
+
+  return (
+    <html
+      className={`${playfair.variable} ${raleway.variable}`}
+      lang={htmlLang[locale]}
+      suppressHydrationWarning
+    >
+      <head>
+        <link href="/favicon.ico" rel="icon" sizes="32x32" />
+        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+      </head>
+      <body>
+        <Providers>
+          <RahmenProvider value={rahmen}>{children}</RahmenProvider>
+        </Providers>
+      </body>
+    </html>
+  )
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale: roh } = await params
+  const locale = isLocale(roh) ? roh : defaultLocale
+  const { seo } = await getWebsite(locale)
+  return {
+    metadataBase: new URL(getServerSideURL()),
+    // Standard für Seiten ohne eigenen Titel, z. B. die 404-Seite. Unterseiten setzen
+    // ihren Titel vollständig selbst, daher das neutrale Template.
+    title: { default: seo.titel, template: '%s' },
+    description: seo.beschreibung,
+    openGraph: ogFuer(locale, seo),
+  }
+}
