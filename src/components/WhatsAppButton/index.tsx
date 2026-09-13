@@ -4,8 +4,9 @@ import React, { useState } from 'react'
 
 export function WhatsAppButton() {
   const [hovered, setHovered] = useState(false)
-  const phone = '+38268517873'
-  const message = 'Guten Tag, ich interessiere mich für Baliv Residence und würde gerne mehr erfahren.'
+  // wa.me erwartet die Nummer ohne Plus.
+  const phone = '38268517873'
+  const message = 'Guten Tag, ich interessiere mich für Baliv Residence.'
 
   return (
     <a

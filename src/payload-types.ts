@@ -117,6 +117,7 @@ export interface Config {
     header: Header;
     footer: Footer;
     homepage: Homepage;
+    preisstaffel: Preisstaffel;
     'wohnungen-page': WohnungenPage;
     'preise-page': PreisePage;
     'investment-page': InvestmentPage;
@@ -128,6 +129,7 @@ export interface Config {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    preisstaffel: PreisstaffelSelect<false> | PreisstaffelSelect<true>;
     'wohnungen-page': WohnungenPageSelect<false> | WohnungenPageSelect<true>;
     'preise-page': PreisePageSelect<false> | PreisePageSelect<true>;
     'investment-page': InvestmentPageSelect<false> | InvestmentPageSelect<true>;
@@ -1802,15 +1804,25 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Die Preisstaffelung wird separat unter „Preisstaffelung" gepflegt.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homepage".
  */
 export interface Homepage {
   id: number;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+  };
   hero: {
     headline: string;
     subline?: string | null;
     description?: string | null;
+    primaryButtonLabel?: string | null;
+    primaryButtonLink?: string | null;
+    secondaryButtonLabel?: string | null;
+    secondaryButtonLink?: string | null;
     slides?:
       | {
           image: number | Media;
@@ -1837,6 +1849,9 @@ export interface Homepage {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Bitte mit der Erreichbarkeitstabelle auf der Lage-Seite abstimmen.
+     */
     distances?:
       | {
           value: string;
@@ -1851,17 +1866,22 @@ export interface Homepage {
       | {
           type: string;
           tag?: string | null;
+          units?: string | null;
           size?: string | null;
-          description?: string | null;
           price?: string | null;
+          description?: string | null;
           image?: (number | null) | Media;
           id?: string | null;
         }[]
       | null;
+    hinweis?: string | null;
   };
   investment?: {
     headline?: string | null;
     text?: string | null;
+    /**
+     * Nur belegbare Angaben — keine Rendite- oder Wachstumszahlen ohne Quelle.
+     */
     stats?:
       | {
           value: string;
@@ -1869,9 +1889,19 @@ export interface Homepage {
           id?: string | null;
         }[]
       | null;
-    badge?: string | null;
+    badgeValue?: string | null;
+    badgeLabel?: string | null;
   };
+  vertrauen?:
+    | {
+        icon?: string | null;
+        title: string;
+        sub?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   cta?: {
+    eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
     note?: string | null;
@@ -1880,6 +1910,32 @@ export interface Homepage {
     email?: string | null;
     whatsapp?: string | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Erscheint auf der Startseite und auf der Wohnungen-Seite.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "preisstaffel".
+ */
+export interface Preisstaffel {
+  id: number;
+  eyebrow?: string | null;
+  headlineStart?: string | null;
+  headlineAccent?: string | null;
+  headlineEnd?: string | null;
+  intro?: string | null;
+  stages?:
+    | {
+        phase: string;
+        price: string;
+        label?: string | null;
+        description?: string | null;
+        active?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2455,12 +2511,22 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "homepage_select".
  */
 export interface HomepageSelect<T extends boolean = true> {
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
   hero?:
     | T
     | {
         headline?: T;
         subline?: T;
         description?: T;
+        primaryButtonLabel?: T;
+        primaryButtonLink?: T;
+        secondaryButtonLabel?: T;
+        secondaryButtonLink?: T;
         slides?:
           | T
           | {
@@ -2506,12 +2572,14 @@ export interface HomepageSelect<T extends boolean = true> {
           | {
               type?: T;
               tag?: T;
+              units?: T;
               size?: T;
-              description?: T;
               price?: T;
+              description?: T;
               image?: T;
               id?: T;
             };
+        hinweis?: T;
       };
   investment?:
     | T
@@ -2525,11 +2593,21 @@ export interface HomepageSelect<T extends boolean = true> {
               label?: T;
               id?: T;
             };
-        badge?: T;
+        badgeValue?: T;
+        badgeLabel?: T;
+      };
+  vertrauen?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        sub?: T;
+        id?: T;
       };
   cta?:
     | T
     | {
+        eyebrow?: T;
         headline?: T;
         description?: T;
         note?: T;
@@ -2539,6 +2617,30 @@ export interface HomepageSelect<T extends boolean = true> {
     | {
         email?: T;
         whatsapp?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "preisstaffel_select".
+ */
+export interface PreisstaffelSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headlineStart?: T;
+  headlineAccent?: T;
+  headlineEnd?: T;
+  intro?: T;
+  stages?:
+    | T
+    | {
+        phase?: T;
+        price?: T;
+        label?: T;
+        description?: T;
+        active?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

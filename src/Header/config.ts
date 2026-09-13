@@ -15,14 +15,12 @@ export const Header: GlobalConfig = {
       type: 'array',
       maxRows: 10,
       defaultValue: [
-        { label: 'Projekt', href: '/projekt' },
         { label: 'Lage', href: '/lage' },
         { label: 'Architektur', href: '/architektur' },
         { label: 'Wohnungen', href: '/wohnungen' },
         { label: 'Investment', href: '/investment' },
         { label: 'Preise', href: '/preise' },
-        { label: 'FAQ', href: '/faq' },
-        { label: 'Kontakt', href: '#kontakt' },
+        { label: 'Kontakt', href: '/kontakt' },
       ],
       fields: [
         {

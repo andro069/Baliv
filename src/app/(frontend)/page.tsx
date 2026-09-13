@@ -1,4 +1,5 @@
 import React from 'react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getPayload } from 'payload'
@@ -7,6 +8,7 @@ import { Navigation } from '@/components/Navigation'
 import { HeroSlider } from '@/components/HeroSlider'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PricingTimeline } from '@/components/PricingTimeline'
+import { mergeOpenGraph, SITE_URL } from '@/utilities/mergeOpenGraph'
 import type { Media } from '@/payload-types'
 
 // Resolve media URL from a Payload upload field
@@ -16,86 +18,192 @@ function mediaUrl(field: number | string | Media | null | undefined, fallback: s
   return field.url ?? fallback
 }
 
+/** CMS-Text oder Rückfallwert — auch leere Felder fallen zurück. */
+function t(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value : fallback
+}
+
+const defaultMeta = {
+  title: 'Baliv Residence — Neubau in Bar, Montenegro',
+  description:
+    '39 Wohneinheiten am Fuße von Stari Bar, zwischen Olivenhainen, Bergen und Meer. Ab 2.500 €/m², direkt vom Bauträger, deutschsprachig, ohne Makler.',
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  let title = defaultMeta.title
+  let description = defaultMeta.description
+  try {
+    const payload = await getPayload({ config })
+    const cms = (await payload.findGlobal({ slug: 'homepage', depth: 0 })) as any
+    title = t(cms?.meta?.title, title)
+    description = t(cms?.meta?.description, description)
+  } catch {
+    // Datenbank nicht erreichbar — Standardwerte verwenden.
+  }
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: `${SITE_URL}/` },
+    openGraph: mergeOpenGraph({ url: `${SITE_URL}/` }),
+  }
+}
+
 export default async function HomePage() {
   const payload = await getPayload({ config })
-  const [cms, footerCms] = await Promise.all([
+  const [cmsRaw, footerCms] = await Promise.all([
     payload.findGlobal({ slug: 'homepage' }).catch(() => null),
     payload.findGlobal({ slug: 'footer' }).catch(() => null),
   ])
+  const cms = cmsRaw as any
 
-  // ── Hero defaults ────────────────────────────────────────────────────
-  const heroHeadline = cms?.hero?.headline ?? 'Modern wohnen. Ursprünglich leben.'
-  const heroSubline = cms?.hero?.subline ?? 'BAR · MONTENEGRO'
-  const heroDescription =
-    cms?.hero?.description ??
-    'Am Fuße von Stari Bar entsteht ein Wohnensemble mit 39 Einheiten, zwischen Olivenhainen, Bergen und Meer.'
+  // ── Hero ─────────────────────────────────────────────────────────────
+  const heroHeadline = t(cms?.hero?.headline, 'Modern wohnen. Ursprünglich leben.')
+  const heroSubline = t(cms?.hero?.subline, 'BAR · MONTENEGRO')
+  const heroDescription = t(
+    cms?.hero?.description,
+    'Am Fuße von Stari Bar entsteht ein Wohnensemble mit 39 Einheiten, zwischen Olivenhainen, Bergen und Meer.',
+  )
+  const heroButtons = [
+    {
+      label: t(cms?.hero?.primaryButtonLabel, 'Exposé anfragen'),
+      href: t(cms?.hero?.primaryButtonLink, '/kontakt'),
+      primary: true,
+    },
+    {
+      label: t(cms?.hero?.secondaryButtonLabel, 'Projekt entdecken'),
+      href: t(cms?.hero?.secondaryButtonLink, '/architektur'),
+      primary: false,
+    },
+  ]
   const heroSlides =
     cms?.hero?.slides && cms.hero.slides.length > 0
-      ? cms.hero.slides
+      ? (cms.hero.slides as any[])
           .map((s) => ({
-            src: typeof s.image === 'object' && s.image !== null ? (s.image as any).url ?? '' : '',
+            src: typeof s.image === 'object' && s.image !== null ? s.image.url ?? '' : '',
             alt: s.alt ?? '',
           }))
           .filter((s) => s.src)
       : undefined
 
-  const heroStats = cms?.hero?.stats ?? [
-    { value: '39', label: 'Wohneinheiten' },
-    { value: '2.500 €/m²', label: 'Ab Preis' },
-    { value: 'Q1 2028', label: 'Fertigstellung' },
-  ]
+  const heroStats: { value: string; label: string }[] = cms?.hero?.stats?.length
+    ? cms.hero.stats
+    : [
+        { value: '39', label: 'Wohneinheiten' },
+        { value: '2.500 €/m²', label: 'Ab Preis' },
+        { value: 'Q2 2028', label: 'Übergabe' },
+      ]
 
-  // ── Lage defaults ────────────────────────────────────────────────────
-  const lageHeadline = cms?.lage?.headline ?? 'Zwischen Festung, Meer und Olivenhain.'
-  const lageText1 =
-    cms?.lage?.text1 ??
-    'Stari Bar zu Füßen, Rumija im Rücken, die Adria in Sichtweite. Ein Ort, an dem sich Orient und Okzident seit Jahrhunderten begegnen — und an dem Baliv Residence entsteht.'
-  const lageText2 =
-    cms?.lage?.text2 ??
-    'Eingebettet in über 100.000 Olivenbäume, nur 1,4 Kilometer unterhalb der historischen Festungsstadt. Sieben Minuten zur Bucht, zehn zum Hafen.'
-  const lageDistances = cms?.lage?.distances ?? [
-    { value: '1,4 km', label: 'Stari Bar Festung' },
-    { value: '10 Min', label: 'Erster Strand' },
-    { value: '10 Min', label: 'Hafen von Bar' },
-    { value: '45 Min', label: 'Flughafen Podgorica' },
-  ]
+  // ── Lage ─────────────────────────────────────────────────────────────
+  const lageHeadline = t(cms?.lage?.headline, 'Zwischen Festung, Meer und Olivenhain.')
+  const lageText1 = t(
+    cms?.lage?.text1,
+    'Stari Bar zu Füßen, Rumija im Rücken, die Adria in Sichtweite. Ein Ort, an dem sich Orient und Okzident seit Jahrhunderten begegnen — und an dem Baliv Residence entsteht.',
+  )
+  const lageText2 = t(
+    cms?.lage?.text2,
+    'Eingebettet in über 100.000 Olivenbäume, nur rund einen Kilometer unterhalb der historischen Festungsstadt. Acht Minuten zum ersten Strand, acht zum Hafen.',
+  )
+  const lageDistances: { value: string; label: string }[] = cms?.lage?.distances?.length
+    ? cms.lage.distances
+    : [
+        { value: 'ca. 1 km', label: 'Stari Bar Festung' },
+        { value: 'ca. 2,5 km', label: 'Erster Strand' },
+        { value: 'ca. 2 km', label: 'Hafen von Bar' },
+        { value: '32 km', label: 'Flughafen Podgorica' },
+      ]
 
-  // ── Wohnungen defaults ───────────────────────────────────────────────
-  const wohnungenHeadline = cms?.wohnungen?.headline ?? 'Drei Typen. Ihre Wahl.'
-  const wohnungenTypes = cms?.wohnungen?.types ?? [
-    { type: 'Studio', tag: 'Erdgeschoss', size: '28–30 m²', description: 'Kompakter Einstieg mit Terrasse und direktem Gartenzugang. Ideal als Pied-à-terre oder Renditeobjekt.', price: 'ab 2.500 €/m²', image: null },
-    { type: 'Zweizimmer', tag: 'Alle Etagen', size: '47–52 m²', description: 'Die Wahl der meisten Käufer — mit Balkon oder Terrasse, verfügbar auf allen Stockwerken.', price: 'ab 2.500 €/m²', image: null },
-    { type: 'Penthouse', tag: 'Dachgeschoss', size: '73–81 m²', description: 'Dachterrasse 30–50 m², unverbauter Rundblick auf Meer, Berge und Stari Bar.', price: 'ab 3.000 €/m²', image: null },
-  ]
-  const fallbackImgs = ['/interieur-01.webp', '/interieur-wohnen-01.webp', '/interieur-wohnen-02.webp']
+  // ── Wohnungen ────────────────────────────────────────────────────────
+  const wohnungenHeadline = t(cms?.wohnungen?.headline, 'Drei Typen. Ihre Wahl.')
+  type Unit = {
+    type: string
+    tag?: string | null
+    units?: string | null
+    size?: string | null
+    description?: string | null
+    price?: string | null
+    image?: number | Media | null
+  }
+  const wohnungenTypes: Unit[] = cms?.wohnungen?.types?.length
+    ? cms.wohnungen.types
+    : [
+        {
+          type: 'Studio',
+          tag: 'Erdgeschoss',
+          units: '2 Einheiten',
+          size: '28,1–29,7 m²',
+          description: 'Kompakter Einstieg mit eigenem Garten, mindestens 4 Meter tief.',
+          price: 'ab 2.700 €/m²',
+        },
+        {
+          type: 'Zweizimmer',
+          tag: 'Alle Etagen',
+          units: '34 Einheiten',
+          size: '46,7–48,8 m²',
+          description:
+            'Die Wahl der meisten Käufer — mit Balkon oder Terrasse auf allen Etagen. Im Erdgeschoss mit Terrasse und eigenem Gartenanteil, mindestens 4 Meter tief.',
+          price: 'ab 2.500 €/m²',
+        },
+        {
+          type: 'Penthouse-Ebene',
+          tag: '6. Obergeschoss',
+          units: '3 Einheiten',
+          size: '51,6–81,2 m²',
+          description:
+            'Eigene Dachterrasse zur alleinigen Nutzung — nicht Bestandteil der Wohnfläche. Panoramablick auf Meer, Berge und Stari Bar.',
+          price: 'ab 3.600 €/m²',
+        },
+      ]
+  const fallbackImgs = ['/terrasse-meer.webp', '/interieur-wohnen-01.webp', '/terrasse-berge.webp']
+  const wohnungenHinweis = t(
+    cms?.wohnungen?.hinweis,
+    'Alle Flächen sind Netto-Nutzflächen einschließlich Terrasse. Der Preis richtet sich nach Etage und Aussicht. Die vollständige Preisliste erhalten Sie mit dem Exposé.',
+  )
 
-  // ── Investment defaults ──────────────────────────────────────────────
-  const investHeadline = cms?.investment?.headline ?? 'Warum Bar. Warum jetzt.'
-  const investText =
-    cms?.investment?.text ??
-    'Montenegro ist der am schnellsten wachsende Immobilienmarkt Europas. Während vergleichbare Neubauten in Budva oder Kotor 2.700–5.000 €/m² kosten, starten Sie bei Baliv Residence ab 2.500 €/m² — schlüsselfertig, hochwertig ausgestattet.'
-  const investStats = cms?.investment?.stats ?? [
-    { value: '6–8%', label: 'Bruttorendite' },
-    { value: '+130%', label: 'Preis 2020–2025' },
-    { value: '2028', label: 'EU-Beitritt' },
-  ]
-  const investBadge = cms?.investment?.badge ?? '+20% Preissteigerung 2025'
+  // ── Investment ───────────────────────────────────────────────────────
+  const investHeadline = t(cms?.investment?.headline, 'Warum Bar. Warum jetzt.')
+  const investText = t(
+    cms?.investment?.text,
+    'Ein Neubau am Fuß von Stari Bar, ab 2.500 €/m² — direkt vom Bauträger, ohne Makler. Schlüsselfertig übergeben; Einbauküche und Tiefgaragenplatz optional.',
+  )
+  const investStats: { value: string; label: string }[] = cms?.investment?.stats?.length
+    ? cms.investment.stats
+    : [
+        { value: '2.500 €/m²', label: 'Einstiegspreis' },
+        { value: '9 %', label: 'Einkommensteuer auf Mieteinnahmen' },
+        { value: 'Ziel 2028', label: 'EU-Beitritt, Verhandlungen laufen' },
+      ]
+  const investBadgeValue = t(cms?.investment?.badgeValue, '0 €')
+  const investBadgeLabel = t(cms?.investment?.badgeLabel, 'Maklerprovision — direkt vom Bauträger')
 
-  // ── CTA defaults ─────────────────────────────────────────────────────
-  const ctaHeadline = cms?.cta?.headline ?? 'Bereit für das erste Gespräch?'
-  const ctaDescription =
-    cms?.cta?.description ??
-    'Vollständiges Exposé mit Grundrissen, Preisliste und Verfügbarkeit — direkt vom Bauträger, deutschsprachig, ohne Makler.'
-  const ctaNote =
-    cms?.cta?.note ??
-    'Antwort in < 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger'
+  // ── Vertrauen ────────────────────────────────────────────────────────
+  const vertrauen: { icon?: string | null; title: string; sub?: string | null }[] =
+    cms?.vertrauen?.length
+      ? cms.vertrauen
+      : [
+          { icon: '€', title: 'Euro seit 2002', sub: 'Kein Währungsrisiko' },
+          { icon: '★', title: 'NATO seit 2017', sub: 'Politische Stabilität' },
+          { icon: '✦', title: 'EU-Beitritt: Ziel 2028', sub: 'Verhandlungen laufen' },
+          { icon: '§', title: 'Volleigentum', sub: 'Svojina 1/1, notariell' },
+        ]
 
-  // ── Kontakt defaults ─────────────────────────────────────────────────
-  const email = cms?.kontakt?.email ?? 'info@baliv-residence.com'
-  const whatsapp = cms?.kontakt?.whatsapp ?? '+38268517873'
-  const whatsappClean = whatsapp.replace(/\D/g, '')
+  // ── CTA ──────────────────────────────────────────────────────────────
+  const ctaEyebrow = t(cms?.cta?.eyebrow, '39 Einheiten · Die Auswahl ist jetzt am größten')
+  const ctaHeadline = t(cms?.cta?.headline, 'Bereit für das erste Gespräch?')
+  const ctaDescription = t(
+    cms?.cta?.description,
+    'Vollständiges Exposé mit Grundrissen, Preisliste und Verfügbarkeit — direkt vom Bauträger, deutschsprachig, ohne Makler.',
+  )
+  const ctaNote = t(
+    cms?.cta?.note,
+    'In der Regel Antwort innerhalb von 24 Stunden · Deutschsprachige Beratung · Direkt vom Bauträger',
+  )
 
-  // ── Footer CMS ───────────────────────────────────────────────────────
+  // ── Kontakt ──────────────────────────────────────────────────────────
+  const email = t(cms?.kontakt?.email, 'info@baliv-residence.com')
+  const telefon = t(cms?.kontakt?.whatsapp, '+382 68 517 873')
+  const telefonZiffern = telefon.replace(/\D/g, '')
+
+  // ── Footer ───────────────────────────────────────────────────────────
   const footerAddress = footerCms?.address ?? 'Bjeliši BB · 85000 Bar, Montenegro'
   const footerCopyright =
     footerCms?.copyright ?? '© 2026 Real Living d.o.o. · Baliv Residence, Bar, Montenegro'
@@ -124,7 +232,8 @@ export default async function HomePage() {
             >
               {heroHeadline.split('. ').map((line, i, arr) => (
                 <React.Fragment key={i}>
-                  {line}{i < arr.length - 1 ? '.' : ''}
+                  {line}
+                  {i < arr.length - 1 ? '.' : ''}
                   {i < arr.length - 1 && <br />}
                 </React.Fragment>
               ))}
@@ -133,18 +242,19 @@ export default async function HomePage() {
               {heroDescription}
             </p>
             <div className="flex flex-wrap gap-4">
-              <a
-                href="/kontakt"
-                className="px-8 py-4 bg-[#B69252] text-white text-sm tracking-widest uppercase hover:bg-[#a07e3e] transition-colors duration-300"
-              >
-                Exposé anfragen
-              </a>
-              <a
-                href="/projekt"
-                className="px-8 py-4 border border-white/50 text-white text-sm tracking-widest uppercase hover:border-white hover:bg-white/10 transition-all duration-300"
-              >
-                Projekt entdecken
-              </a>
+              {heroButtons.map((btn) => (
+                <Link
+                  key={btn.label}
+                  href={btn.href}
+                  className={
+                    btn.primary
+                      ? 'px-8 py-4 bg-[#B69252] text-white text-sm tracking-widest uppercase hover:bg-[#a07e3e] transition-colors duration-300'
+                      : 'px-8 py-4 border border-white/50 text-white text-sm tracking-widest uppercase hover:border-white hover:bg-white/10 transition-all duration-300'
+                  }
+                >
+                  {btn.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -152,7 +262,7 @@ export default async function HomePage() {
         {/* Stats bar */}
         <div className="absolute bottom-0 left-0 right-0 z-10 bg-[#151E39]/80 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-2 md:px-8 py-4 md:py-5 grid grid-cols-3 divide-x divide-white/10">
-            {heroStats.map((stat: { value: string; label: string }) => (
+            {heroStats.map((stat) => (
               <div key={stat.label} className="text-center px-1 md:px-4">
                 <p
                   className="text-white text-sm md:text-xl font-light leading-tight"
@@ -183,7 +293,7 @@ export default async function HomePage() {
             <p className="text-[#151E39]/60 text-base leading-relaxed font-light mb-6">{lageText1}</p>
             <p className="text-[#151E39]/60 text-base leading-relaxed font-light mb-10">{lageText2}</p>
             <div className="grid grid-cols-2 gap-6">
-              {lageDistances.map((item: { value: string; label: string }) => (
+              {lageDistances.map((item) => (
                 <div key={item.label} className="border-l-2 border-[#B69252]/30 pl-4">
                   <p className="text-[#151E39] text-sm font-semibold">{item.value}</p>
                   <p className="text-[#151E39]/50 text-xs tracking-wide mt-0.5">{item.label}</p>
@@ -218,11 +328,11 @@ export default async function HomePage() {
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-px bg-white/10">
-            {wohnungenTypes.map((unit: { type: string; tag?: string | null; size?: string | null; description?: string | null; price?: string | null; image?: number | Media | null }, i: number) => (
+            {wohnungenTypes.map((unit, i) => (
               <div key={unit.type} className="group bg-[#151E39] overflow-hidden">
                 <div className="relative h-64 overflow-hidden">
                   <Image
-                    src={mediaUrl(unit.image, fallbackImgs[i] ?? '/interieur-01.webp')}
+                    src={mediaUrl(unit.image, fallbackImgs[i] ?? '/interieur-wohnen-01.webp')}
                     alt={unit.type}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -241,7 +351,9 @@ export default async function HomePage() {
                   >
                     {unit.type}
                   </h3>
-                  <p className="text-[#B69252] text-sm tracking-wide mb-4">{unit.size}</p>
+                  <p className="text-[#B69252] text-sm tracking-wide mb-4">
+                    {[unit.units, unit.size].filter(Boolean).join(' · ')}
+                  </p>
                   <p className="text-white/50 text-sm leading-relaxed mb-6">{unit.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-white text-sm">{unit.price}</span>
@@ -259,6 +371,11 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
+          {wohnungenHinweis && (
+            <p className="text-white/40 text-xs leading-relaxed text-center max-w-2xl mx-auto mt-8">
+              {wohnungenHinweis}
+            </p>
+          )}
           <PricingTimeline />
         </div>
       </section>
@@ -270,11 +387,11 @@ export default async function HomePage() {
             <div className="aspect-[3/4] relative overflow-hidden">
               <Image src="/view-hafen.webp" alt="Bar Hafen" fill className="object-cover" />
             </div>
-            <div className="absolute -bottom-4 -right-4 bg-[#B69252] text-white p-8 max-w-[200px]">
+            <div className="absolute -bottom-4 -right-4 bg-[#B69252] text-white p-8 max-w-[220px]">
               <p className="text-3xl mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                {investBadge.split(' ')[0]}
+                {investBadgeValue}
               </p>
-              <p className="text-xs tracking-wide opacity-80">{investBadge.split(' ').slice(1).join(' ')}</p>
+              <p className="text-xs tracking-wide opacity-80">{investBadgeLabel}</p>
             </div>
           </div>
           <div>
@@ -287,15 +404,17 @@ export default async function HomePage() {
             </h2>
             <p className="text-[#151E39]/60 font-light leading-relaxed mb-10">{investText}</p>
             <div className="grid grid-cols-3 gap-8 mb-10">
-              {investStats.map((stat: { value: string; label: string }) => (
+              {investStats.map((stat) => (
                 <div key={stat.label}>
                   <p
-                    className="text-[#151E39] text-2xl md:text-3xl mb-1"
+                    className="text-[#151E39] text-xl md:text-2xl mb-1"
                     style={{ fontFamily: 'var(--font-playfair), serif' }}
                   >
                     {stat.value}
                   </p>
-                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase">{stat.label}</p>
+                  <p className="text-[#151E39]/40 text-xs tracking-widest uppercase leading-relaxed">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -316,16 +435,11 @@ export default async function HomePage() {
       <section className="py-16 bg-[#F0EDE8] border-t border-[#151E39]/10">
         <div className="max-w-7xl mx-auto px-8 md:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { icon: '€', title: 'Euro seit 2002', sub: 'Kein Währungsrisiko' },
-              { icon: '★', title: 'NATO seit 2017', sub: 'Politische Stabilität' },
-              { icon: '✦', title: 'EU-Beitritt 2028', sub: 'Verhandlungen laufen' },
-              { icon: '§', title: 'Volleigentum', sub: 'Svojina 1/1, notariell' },
-            ].map((item) => (
+            {vertrauen.map((item) => (
               <div key={item.title} className="flex flex-col items-center">
-                <span className="text-[#B69252] text-2xl mb-3">{item.icon}</span>
+                {item.icon && <span className="text-[#B69252] text-2xl mb-3">{item.icon}</span>}
                 <p className="text-[#151E39] text-sm font-semibold tracking-wide">{item.title}</p>
-                <p className="text-[#151E39]/40 text-xs mt-1">{item.sub}</p>
+                {item.sub && <p className="text-[#151E39]/40 text-xs mt-1">{item.sub}</p>}
               </div>
             ))}
           </div>
@@ -339,27 +453,23 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-[#151E39]/75" />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto px-8 text-center">
-          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-6">
-            Vorverkaufsphase — frühe Käufer sichern sich die besten Einheiten
-          </p>
+          <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-6">{ctaEyebrow}</p>
           <h2
             className="text-white text-4xl md:text-6xl leading-tight mb-6"
             style={{ fontFamily: 'var(--font-playfair), serif' }}
           >
             {ctaHeadline}
           </h2>
-          <p className="text-white/60 font-light text-lg mb-12 max-w-xl mx-auto">
-            {ctaDescription}
-          </p>
+          <p className="text-white/60 font-light text-lg mb-12 max-w-xl mx-auto">{ctaDescription}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
+            <Link
               href="/kontakt"
               className="px-10 py-4 bg-[#B69252] text-white text-sm tracking-widest uppercase hover:bg-[#a07e3e] transition-colors duration-300"
             >
               Exposé anfragen
-            </a>
+            </Link>
             <a
-              href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent('Guten Tag, ich interessiere mich für Baliv Residence.')}`}
+              href={`https://wa.me/${telefonZiffern}?text=${encodeURIComponent('Guten Tag, ich interessiere mich für Baliv Residence.')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-10 py-4 border border-white/40 text-white text-sm tracking-widest uppercase hover:border-white hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-3"
@@ -381,7 +491,13 @@ export default async function HomePage() {
             <Image src="/logo-white.svg" alt="Baliv Residence" width={140} height={58} />
             <p className="text-white/30 text-xs mt-4">{footerAddress}</p>
             <p className="text-white/30 text-xs mt-1">
-              {email} · {whatsapp}
+              <a href={`mailto:${email}`} className="hover:text-white/60 transition-colors">
+                {email}
+              </a>
+              {' · '}
+              <a href={`tel:+${telefonZiffern}`} className="hover:text-white/60 transition-colors">
+                {telefon}
+              </a>
             </p>
           </div>
           <div className="flex gap-6">
