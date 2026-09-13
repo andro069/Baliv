@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Navigation } from '@/components/Navigation'
 import { HeroSlider } from '@/components/HeroSlider'
+import { HeroVideo } from '@/components/HeroVideo'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { PricingTimeline } from '@/components/PricingTimeline'
 import type { Media } from '@/payload-types'
@@ -84,6 +85,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           }))
           .filter((s) => s.src)
       : undefined
+
+  // Ein im Backend gewähltes Hintergrundvideo ersetzt den Slider.
+  const heroVideoSrc = mediaUrl(cms?.hero?.video, '')
+  const heroVideoPoster = mediaUrl(cms?.hero?.videoPoster, '') || undefined
 
   const heroStats: { value: string; label: string }[] = cms?.hero?.stats?.length
     ? cms.hero.stats
@@ -233,7 +238,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <section className="relative h-screen min-h-[600px]">
-        <HeroSlider slides={heroSlides} />
+        {heroVideoSrc ? (
+          <HeroVideo src={heroVideoSrc} poster={heroVideoPoster} />
+        ) : (
+          <HeroSlider slides={heroSlides} />
+        )}
         <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <div className="max-w-xl">
             <p className="text-[#B69252] text-xs tracking-[0.3em] uppercase mb-6 font-raleway">

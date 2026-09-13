@@ -99,8 +99,28 @@ export const Homepage: GlobalConfig = {
           ],
         },
         {
+          name: 'video',
+          label: 'Hintergrundvideo',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Ersetzt den Bilder-Slider, solange ein Video gewählt ist. MP4 (H.264), ohne Ton, möglichst unter 3 MB. Gilt für alle Sprachen.',
+          },
+        },
+        {
+          name: 'videoPoster',
+          label: 'Standbild zum Video',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Erscheint, bis das Video geladen ist, und bei Besuchern, die „Bewegung reduzieren“ eingestellt haben.',
+          },
+        },
+        {
           name: 'slides',
-          label: 'Slider Bilder',
+          label: 'Slider Bilder (nur ohne Hintergrundvideo)',
           type: 'array',
           minRows: 1,
           maxRows: 5,

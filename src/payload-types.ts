@@ -1892,6 +1892,14 @@ export interface Homepage {
     primaryButtonLink?: string | null;
     secondaryButtonLabel?: string | null;
     secondaryButtonLink?: string | null;
+    /**
+     * Ersetzt den Bilder-Slider, solange ein Video gewählt ist. MP4 (H.264), ohne Ton, möglichst unter 3 MB. Gilt für alle Sprachen.
+     */
+    video?: (number | null) | Media;
+    /**
+     * Erscheint, bis das Video geladen ist, und bei Besuchern, die „Bewegung reduzieren“ eingestellt haben.
+     */
+    videoPoster?: (number | null) | Media;
     slides?:
       | {
           image: number | Media;
@@ -1909,6 +1917,9 @@ export interface Homepage {
   };
   lage?: {
     eyebrow?: string | null;
+    imageAlt1?: string | null;
+    imageAlt2?: string | null;
+    imageAlt3?: string | null;
     headline?: string | null;
     text1?: string | null;
     text2?: string | null;
@@ -2115,7 +2126,7 @@ export interface WohnungenPage {
     note?: string | null;
   };
   /**
-   * Keine Markennamen als Zusage verwenden. Das Symbol richtet sich nach Stichworten im Titel (Armatur/Bad, Klima, Eurocode/Erdbeben, Stein, Holz, Schlüssel).
+   * Keine Markennamen als Zusage verwenden. Das Symbol bitte über das Feld „Symbol“ wählen — es gilt für alle Sprachen. Ohne Auswahl richtet es sich nach deutschen Stichworten im Titel (Armatur/Bad, Klima, Eurocode/Erdbeben, Stein, Holz, Schlüssel), in Übersetzungen nach der Position der Kachel.
    */
   ausstattung?:
     | {
@@ -2549,7 +2560,7 @@ export interface KontaktPage {
     exposeCheckboxTitle?: string | null;
     exposeCheckboxText?: string | null;
     /**
-     * Wird nur angezeigt, wenn das gewählte Formular keine Checkbox mit dem Namen „datenschutz“ enthält. Das Wort „Datenschutzerklärung“ wird automatisch verlinkt.
+     * Wird nur angezeigt, wenn das gewählte Formular keine Checkbox mit dem Namen „datenschutz“ enthält. Das im Feld „Wort, das auf die Datenschutzerklärung verlinkt“ eingetragene Wort wird automatisch verlinkt — in jeder Sprache passend eintragen.
      */
     datenschutzText?: string | null;
     fehlerText?: string | null;
@@ -2774,11 +2785,14 @@ export interface ImpressumPage {
   headline?: string | null;
   stand?: string | null;
   /**
-   * Leerzeile = neuer Absatz · Zeile mit „- " am Anfang = Aufzählungspunkt · E-Mail und Telefon werden automatisch verlinkt.
+   * Leerzeile = neuer Absatz · einfacher Zeilenumbruch = neue Zeile (z. B. Anschrift) · Zeile mit „- " am Anfang = Aufzählungspunkt · **Text** = fett · E-Mail-Adressen, Telefonnummern mit „+" (z. B. +382 68 517 873) und Adressen mit https:// werden automatisch verlinkt.
    */
   abschnitte?:
     | {
         titel?: string | null;
+        /**
+         * Leerzeile = neuer Absatz · einfacher Zeilenumbruch = neue Zeile (z. B. Anschrift) · Zeile mit „- " am Anfang = Aufzählungspunkt · **Text** = fett · E-Mail-Adressen, Telefonnummern mit „+" (z. B. +382 68 517 873) und Adressen mit https:// werden automatisch verlinkt.
+         */
         text?: string | null;
         id?: string | null;
       }[]
@@ -2800,11 +2814,14 @@ export interface DatenschutzPage {
   headline?: string | null;
   stand?: string | null;
   /**
-   * Leerzeile = neuer Absatz · Zeile mit „- " am Anfang = Aufzählungspunkt · E-Mail und Telefon werden automatisch verlinkt.
+   * Leerzeile = neuer Absatz · einfacher Zeilenumbruch = neue Zeile (z. B. Anschrift) · Zeile mit „- " am Anfang = Aufzählungspunkt · **Text** = fett · E-Mail-Adressen, Telefonnummern mit „+" (z. B. +382 68 517 873) und Adressen mit https:// werden automatisch verlinkt.
    */
   abschnitte?:
     | {
         titel?: string | null;
+        /**
+         * Leerzeile = neuer Absatz · einfacher Zeilenumbruch = neue Zeile (z. B. Anschrift) · Zeile mit „- " am Anfang = Aufzählungspunkt · **Text** = fett · E-Mail-Adressen, Telefonnummern mit „+" (z. B. +382 68 517 873) und Adressen mit https:// werden automatisch verlinkt.
+         */
         text?: string | null;
         id?: string | null;
       }[]
@@ -2916,6 +2933,8 @@ export interface HomepageSelect<T extends boolean = true> {
         primaryButtonLink?: T;
         secondaryButtonLabel?: T;
         secondaryButtonLink?: T;
+        video?: T;
+        videoPoster?: T;
         slides?:
           | T
           | {
@@ -2935,6 +2954,9 @@ export interface HomepageSelect<T extends boolean = true> {
     | T
     | {
         eyebrow?: T;
+        imageAlt1?: T;
+        imageAlt2?: T;
+        imageAlt3?: T;
         headline?: T;
         text1?: T;
         text2?: T;
