@@ -105,7 +105,17 @@ export const Homepage: GlobalConfig = {
           relationTo: 'media',
           admin: {
             description:
-              'Ersetzt den Bilder-Slider, solange ein Video gewählt ist. MP4 (H.264), ohne Ton, möglichst unter 3 MB. Gilt für alle Sprachen.',
+              'Ersetzt den Bilder-Slider, solange ein Video gewählt ist. Querformat, MP4 (H.264), ohne Ton. Gilt für alle Sprachen.',
+          },
+        },
+        {
+          name: 'videoMobile',
+          label: 'Hintergrundvideo Handy (Hochformat)',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Wird auf Bildschirmen bis 767 px Breite gezeigt. Ohne Handy-Video läuft dort das normale Hintergrundvideo.',
           },
         },
         {

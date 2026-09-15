@@ -1893,9 +1893,13 @@ export interface Homepage {
     secondaryButtonLabel?: string | null;
     secondaryButtonLink?: string | null;
     /**
-     * Ersetzt den Bilder-Slider, solange ein Video gewählt ist. MP4 (H.264), ohne Ton, möglichst unter 3 MB. Gilt für alle Sprachen.
+     * Ersetzt den Bilder-Slider, solange ein Video gewählt ist. Querformat, MP4 (H.264), ohne Ton. Gilt für alle Sprachen.
      */
     video?: (number | null) | Media;
+    /**
+     * Wird auf Bildschirmen bis 767 px Breite gezeigt. Ohne Handy-Video läuft dort das normale Hintergrundvideo.
+     */
+    videoMobile?: (number | null) | Media;
     /**
      * Erscheint, bis das Video geladen ist, und bei Besuchern, die „Bewegung reduzieren“ eingestellt haben.
      */
@@ -2942,6 +2946,7 @@ export interface HomepageSelect<T extends boolean = true> {
         secondaryButtonLabel?: T;
         secondaryButtonLink?: T;
         video?: T;
+        videoMobile?: T;
         videoPoster?: T;
         slides?:
           | T

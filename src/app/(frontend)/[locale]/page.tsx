@@ -239,7 +239,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <section className="relative h-screen min-h-[600px]">
         {heroVideoSrc ? (
-          <HeroVideo src={heroVideoSrc} poster={heroVideoPoster} />
+          <HeroVideo
+            src={heroVideoSrc}
+            mobileSrc={mediaUrl(cms?.hero?.videoMobile, '') || undefined}
+            poster={heroVideoPoster}
+          />
         ) : (
           <HeroSlider slides={heroSlides} />
         )}
