@@ -114,7 +114,11 @@ export default async function KontaktPage({ params }: { params: Promise<{ locale
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative h-[55vh] min-h-[440px]">
         <Image
-          src="/terrasse-meer.webp"
+          src={
+            typeof cms?.hero?.image === 'object' && cms?.hero?.image?.url
+              ? cms.hero.image.url
+              : '/terrasse-meer.webp'
+          }
           alt={heroImageAlt}
           fill
           className="object-cover"

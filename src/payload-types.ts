@@ -2525,6 +2525,10 @@ export interface KontaktPage {
   };
   hero?: {
     imageAlt?: string | null;
+    /**
+     * Gilt für alle Sprachen. Ohne Bild wird die Terrasse mit Meerblick gezeigt.
+     */
+    image?: (number | null) | Media;
     eyebrow?: string | null;
     headline?: string | null;
     description?: string | null;
@@ -3604,6 +3608,7 @@ export interface KontaktPageSelect<T extends boolean = true> {
     | T
     | {
         imageAlt?: T;
+        image?: T;
         eyebrow?: T;
         headline?: T;
         description?: T;

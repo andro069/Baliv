@@ -29,6 +29,13 @@ export const KontaktPage: GlobalConfig = {
       fields: [
         { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Terrasse der Baliv Residence mit Meerblick" },
         {
+          name: 'image',
+          label: 'Hintergrundbild',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Gilt für alle Sprachen. Ohne Bild wird die Terrasse mit Meerblick gezeigt.' },
+        },
+        {
           name: 'eyebrow',
           label: 'Kleine Überschrift',
           type: 'text',
