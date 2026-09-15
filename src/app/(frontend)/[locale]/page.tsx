@@ -325,14 +325,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
+            {/* Bilder aus der Galerie im Backend; ohne Eintrag die bisherigen Dateien. */}
             <div className="col-span-2 aspect-[16/9] relative overflow-hidden">
-              <Image src="/stari-bar-altstadt.webp" alt={lageAlt1} fill className="object-cover" />
+              <Image src={mediaUrl(cms?.lage?.gallery?.[0]?.image, '/stari-bar-altstadt.webp')} alt={lageAlt1} fill className="object-cover" />
             </div>
             <div className="aspect-square relative overflow-hidden">
-              <Image src="/view-olivenhain.webp" alt={lageAlt2} fill className="object-cover" />
+              <Image src={mediaUrl(cms?.lage?.gallery?.[1]?.image, '/view-olivenhain.webp')} alt={lageAlt2} fill className="object-cover" />
             </div>
             <div className="aspect-square relative overflow-hidden">
-              <Image src="/view-hafen.webp" alt={lageAlt3} fill className="object-cover" />
+              <Image src={mediaUrl(cms?.lage?.gallery?.[2]?.image, '/view-hafen.webp')} alt={lageAlt3} fill className="object-cover" />
             </div>
           </div>
         </div>
