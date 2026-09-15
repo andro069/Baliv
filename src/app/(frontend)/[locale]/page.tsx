@@ -409,7 +409,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="max-w-7xl mx-auto px-8 md:px-16 grid md:grid-cols-2 gap-16 items-center">
           <div className="relative">
             <div className="aspect-[3/4] relative overflow-hidden">
-              <Image src="/view-hafen.webp" alt={investImageAlt} fill className="object-cover" />
+              <Image src={mediaUrl(cms?.investment?.image, '/view-hafen.webp')} alt={investImageAlt} fill className="object-cover" />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-[#B69252] text-white p-8 max-w-[220px]">
               <p className="text-3xl mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>

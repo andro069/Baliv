@@ -1963,6 +1963,10 @@ export interface Homepage {
     eyebrow?: string | null;
     linkLabel?: string | null;
     imageAlt?: string | null;
+    /**
+     * Gilt für alle Sprachen. Ohne Bild wird der Blick über den Hafen gezeigt.
+     */
+    image?: (number | null) | Media;
     headline?: string | null;
     text?: string | null;
     /**
@@ -3005,6 +3009,7 @@ export interface HomepageSelect<T extends boolean = true> {
         eyebrow?: T;
         linkLabel?: T;
         imageAlt?: T;
+        image?: T;
         headline?: T;
         text?: T;
         stats?:

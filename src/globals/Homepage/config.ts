@@ -337,6 +337,13 @@ export const Homepage: GlobalConfig = {
         { name: 'linkLabel', label: "Link-Text", type: 'text', defaultValue: "Vollständige Investment-Analyse" },
         { name: 'imageAlt', label: "Bildbeschreibung", type: 'text', defaultValue: "Blick über den Hafen von Bar" },
         {
+          name: 'image',
+          label: 'Bild',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Gilt für alle Sprachen. Ohne Bild wird der Blick über den Hafen gezeigt.' },
+        },
+        {
           name: 'headline',
           label: 'Überschrift',
           type: 'text',
