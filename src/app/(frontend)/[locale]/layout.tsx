@@ -46,13 +46,18 @@ export default async function RootLayout({
   if (!isLocale(locale)) notFound()
   const rahmen = await getRahmen(locale)
 
+  // `translate="no"` schaltet die automatische Browser-Übersetzung ab: Sie erfindet
+  // Typenbezeichnungen, Preise und Rechtstexte neu. Die vier Sprachfassungen stehen
+  // im Umschalter bereit. Chrome und Edge halten sich daran, Safari und Firefox teils.
   return (
     <html
       className={`${playfair.variable} ${raleway.variable}`}
       lang={htmlLang[locale]}
+      translate="no"
       suppressHydrationWarning
     >
       <head>
+        <meta name="google" content="notranslate" />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
