@@ -22,6 +22,14 @@ const raleway = Raleway({
   display: 'swap',
 })
 
+/**
+ * Sicherheitsnetz: Jede Seite wird spätestens 60 Sekunden nach einer Änderung neu
+ * erzeugt. Die gezielte Auffrischung per `revalidatePath` nach dem Speichern im
+ * Backend hat sich auf Vercel als unzuverlässig erwiesen — Änderungen blieben
+ * stundenlang unsichtbar. Beide Wege greifen jetzt nebeneinander.
+ */
+export const revalidate = 60
+
 /** Alle Sprachen vorrendern; nicht freigegebene zeigen über `seitenLocale` die 404-Seite. */
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
